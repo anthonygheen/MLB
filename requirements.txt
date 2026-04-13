@@ -1,0 +1,8 @@
+duckdb==1.2.2
+pandas==2.2.3
+requests==2.32.3
+python-dotenv==1.0.1
+tqdm==4.67.1
+pyarrow==19.0.1
+scikit-learn==1.6.1
+numpy==2.2.4

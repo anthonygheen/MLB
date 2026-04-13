@@ -1,0 +1,50 @@
+name: Daily MLB Ingestion
+
+on:
+  schedule:
+    # 8 AM ET (12:00 UTC) — after West Coast night games are final
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to ingest (YYYY-MM-DD). Defaults to yesterday.'
+        required: false
+        type: string
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run ingestion
+        env:
+          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
+          DB_PATH: data/mlb_modeling.db
+          RAW_DATA_PATH: data/raw
+          PARQUET_PATH: data/parquet
+        run: |
+          cd ingestion
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            python ingest.py --date ${{ github.event.inputs.date }}
+          else
+            python ingest.py
+          fi
+
+      - name: Upload DB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlb-db-${{ github.run_id }}
+          path: data/mlb_modeling.db
+          retention-days: 7
