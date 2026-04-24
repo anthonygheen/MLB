@@ -16,6 +16,8 @@ on:
 jobs:
   predict:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to commit JSON files back to repo
 
     steps:
       - name: Checkout repo
@@ -30,45 +32,56 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Ingest today's games
-        env:
-          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
-          DB_PATH: data/mlb_modeling.db
+      - name: Set target date
+        id: date
         run: |
           TARGET="${{ github.event.inputs.date }}"
           if [ -z "$TARGET" ]; then
             TARGET=$(date +%Y-%m-%d)
           fi
+          echo "target=$TARGET" >> $GITHUB_OUTPUT
+
+      - name: Initialize DB and ingest today's games
+        env:
+          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
+          DB_PATH: data/mlb_modeling.db
+        run: |
           python ingestion/schema.py
-          python ingestion/ingest.py --date "$TARGET"
+          python ingestion/ingest.py --date ${{ steps.date.outputs.target }}
 
       - name: Pull today's props
         env:
           BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
           DB_PATH: data/mlb_modeling.db
         run: |
-          TARGET="${{ github.event.inputs.date }}"
-          if [ -z "$TARGET" ]; then
-            TARGET=$(date +%Y-%m-%d)
-          fi
-          python ingestion/ingest_props.py --date "$TARGET"
+          python ingestion/ingest_props.py --date ${{ steps.date.outputs.target }}
 
       - name: Run predictions
         env:
           BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
           DB_PATH: data/mlb_modeling.db
         run: |
-          TARGET="${{ github.event.inputs.date }}"
-          THRESHOLD="${{ github.event.inputs.threshold }}"
-          if [ -z "$TARGET" ]; then
-            TARGET=$(date +%Y-%m-%d)
-          fi
           python scripts/predict_today.py \
-            --date "$TARGET" \
-            --threshold "$THRESHOLD" \
+            --date ${{ steps.date.outputs.target }} \
+            --threshold ${{ github.event.inputs.threshold || '0.75' }} \
             | tee predictions_output.txt
 
-      - name: Upload predictions
+      - name: Generate dashboard data
+        env:
+          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
+          DB_PATH: data/mlb_modeling.db
+        run: |
+          python scripts/generate_data.py --date ${{ steps.date.outputs.target }}
+
+      - name: Commit dashboard data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/
+          git diff --staged --quiet || git commit -m "Dashboard data: ${{ steps.date.outputs.target }}"
+          git push
+
+      - name: Upload predictions artifact
         uses: actions/upload-artifact@v4
         with:
           name: predictions-${{ github.run_id }}
