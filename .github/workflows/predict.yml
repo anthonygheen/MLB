@@ -1,0 +1,92 @@
+name: K Prop Predictions
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to predict (YYYY-MM-DD). Defaults to today.'
+        required: false
+        type: string
+      threshold:
+        description: 'Edge threshold in Ks to flag a bet (default: 0.75)'
+        required: false
+        default: '0.75'
+        type: string
+
+jobs:
+  predict:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download latest DB artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: daily_ingest.yml
+          name_is_regexp: true
+          name: mlb-db-.*
+          path: data/
+          search_artifacts: true
+        continue-on-error: true   # first run won't have an artifact yet
+
+      - name: Rename DB if downloaded
+        run: |
+          # Artifact may be nested — find and move it
+          find data/ -name "mlb_modeling.db" | head -1 | xargs -I {} mv {} data/mlb_modeling.db 2>/dev/null || true
+
+      - name: Pull today's props
+        env:
+          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
+          DB_PATH: data/mlb_modeling.db
+        run: |
+          TARGET="${{ github.event.inputs.date }}"
+          if [ -z "$TARGET" ]; then
+            TARGET=$(date +%Y-%m-%d)
+          fi
+          python ingestion/ingest_props.py --date "$TARGET"
+
+      - name: Download latest model
+        env:
+          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
+          DB_PATH: data/mlb_modeling.db
+        run: |
+          # Check if a saved model exists — if not, train one
+          if [ ! "$(ls -A models/saved/*.pkl 2>/dev/null)" ]; then
+            echo "No saved model found — training now..."
+            python models/k_prop_model.py
+          else
+            echo "Model found — skipping training"
+          fi
+
+      - name: Run predictions
+        env:
+          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
+          DB_PATH: data/mlb_modeling.db
+        run: |
+          TARGET="${{ github.event.inputs.date }}"
+          THRESHOLD="${{ github.event.inputs.threshold }}"
+          if [ -z "$TARGET" ]; then
+            TARGET=$(date +%Y-%m-%d)
+          fi
+          python scripts/predict_today.py \
+            --date "$TARGET" \
+            --threshold "$THRESHOLD" \
+            | tee predictions_output.txt
+
+      - name: Upload predictions
+        uses: actions/upload-artifact@v4
+        with:
+          name: predictions-${{ github.run_id }}
+          path: predictions_output.txt
+          retention-days: 30
