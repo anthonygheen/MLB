@@ -130,12 +130,12 @@ def generate_predictions(con, target_date: str) -> list:
         results.append({
             'pitcher_id':   pitcher_id,
             'pitcher_hand': hands.get(pitcher_id, '?'),
-            'line':         float(row['line']) if row['line'] else None,
+            'line':         float(row['line']) if pd.notna(row['line']) else None,
             'predicted_ks': round(predicted_ks, 1) if predicted_ks else None,
             'edge':         edge,
             'direction':    ('OVER' if edge and edge > 0 else 'UNDER') if edge else None,
-            'over_odds':    int(row['over_odds']) if row['over_odds'] else None,
-            'under_odds':   int(row['under_odds']) if row['under_odds'] else None,
+            'over_odds':    int(row['over_odds']) if pd.notna(row['over_odds']) else None,
+            'under_odds':   int(row['under_odds']) if pd.notna(row['under_odds']) else None,
             'book':         row['book'],
             'flagged':      abs(edge) >= 0.75 if edge else False,
         })
@@ -147,18 +147,25 @@ def generate_stuff_grades(con) -> list:
     """Top 50 pitchers by fastball whiff rate this season."""
     current_season = date.today().year
     sql = f"""
+        WITH league_avg AS (
+            SELECT AVG(release_speed) as lg_avg_velo
+            FROM pitches p
+            JOIN plate_appearances pa ON p.pa_id = pa.pa_id
+            JOIN games g ON pa.game_id = g.game_id
+            WHERE g.season = {current_season}
+              AND g.season_type = 'regular'
+              AND p.pitch_type_code = 'FF'
+              AND p.release_speed IS NOT NULL
+        )
         SELECT
             pa.pitcher_id,
-            p.pitch_type,
             COUNT(*) as pitch_count,
             AVG(p.release_speed) as avg_velo,
             AVG(p.spin_rate) as avg_spin,
             AVG(p.induced_vertical_break) as avg_ivb,
             SUM(CASE WHEN p.pitch_call = 'S' THEN 1 ELSE 0 END) * 1.0
                 / COUNT(*) as whiff_rate,
-            AVG(p.release_speed) - AVG(AVG(p.release_speed)) OVER (
-                PARTITION BY p.pitch_type_code
-            ) as velo_vs_avg
+            AVG(p.release_speed) - (SELECT lg_avg_velo FROM league_avg) as velo_vs_avg
         FROM pitches p
         JOIN plate_appearances pa ON p.pa_id = pa.pa_id
         JOIN games g ON pa.game_id = g.game_id
@@ -167,7 +174,7 @@ def generate_stuff_grades(con) -> list:
           AND p.pitch_type_code = 'FF'
           AND p.release_speed IS NOT NULL
           AND p.spin_rate IS NOT NULL
-        GROUP BY pa.pitcher_id, p.pitch_type
+        GROUP BY pa.pitcher_id
         HAVING COUNT(*) >= 50
         ORDER BY whiff_rate DESC
         LIMIT 50

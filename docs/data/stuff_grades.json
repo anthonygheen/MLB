@@ -1,0 +1,77 @@
+{
+  "season": 2026,
+  "pitchers": [
+    {
+      "pitcher_id": 1017,
+      "pitch_count": 91,
+      "avg_velo": 97.358,
+      "avg_spin": 2473.78,
+      "avg_ivb": 15.923,
+      "whiff_rate": 0.615,
+      "velo_vs_avg": 2.385
+    },
+    {
+      "pitcher_id": 178,
+      "pitch_count": 85,
+      "avg_velo": 96.473,
+      "avg_spin": 2315.529,
+      "avg_ivb": 16.506,
+      "whiff_rate": 0.6,
+      "velo_vs_avg": 1.5
+    },
+    {
+      "pitcher_id": 2183925,
+      "pitch_count": 94,
+      "avg_velo": 97.284,
+      "avg_spin": 2446.0,
+      "avg_ivb": 17.362,
+      "whiff_rate": 0.585,
+      "velo_vs_avg": 2.311
+    },
+    {
+      "pitcher_id": 51,
+      "pitch_count": 75,
+      "avg_velo": 96.832,
+      "avg_spin": 2455.573,
+      "avg_ivb": 17.333,
+      "whiff_rate": 0.573,
+      "velo_vs_avg": 1.859
+    },
+    {
+      "pitcher_id": 114,
+      "pitch_count": 58,
+      "avg_velo": 93.507,
+      "avg_spin": 2383.5,
+      "avg_ivb": 16.379,
+      "whiff_rate": 0.534,
+      "velo_vs_avg": -1.466
+    },
+    {
+      "pitcher_id": 878,
+      "pitch_count": 51,
+      "avg_velo": 95.916,
+      "avg_spin": 2222.275,
+      "avg_ivb": 18.235,
+      "whiff_rate": 0.529,
+      "velo_vs_avg": 0.942
+    },
+    {
+      "pitcher_id": 4100,
+      "pitch_count": 50,
+      "avg_velo": 93.198,
+      "avg_spin": 2346.48,
+      "avg_ivb": 18.06,
+      "whiff_rate": 0.5,
+      "velo_vs_avg": -1.775
+    },
+    {
+      "pitcher_id": 3015008,
+      "pitch_count": 78,
+      "avg_velo": 98.504,
+      "avg_spin": 2377.282,
+      "avg_ivb": 18.051,
+      "whiff_rate": 0.462,
+      "velo_vs_avg": 3.53
+    }
+  ]
+}

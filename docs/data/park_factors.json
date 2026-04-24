@@ -1,0 +1,214 @@
+{
+  "parks": [
+    {
+      "venue": "T-Mobile Park",
+      "season": 2025,
+      "total_pa": 6015,
+      "venue_k_rate": 0.2499,
+      "park_k_factor": 1.1276
+    },
+    {
+      "venue": "Daikin Park",
+      "season": 2025,
+      "total_pa": 5995,
+      "venue_k_rate": 0.2437,
+      "park_k_factor": 1.0997
+    },
+    {
+      "venue": "Angel Stadium",
+      "season": 2025,
+      "total_pa": 6063,
+      "venue_k_rate": 0.2395,
+      "park_k_factor": 1.0807
+    },
+    {
+      "venue": "Citizens Bank Park",
+      "season": 2025,
+      "total_pa": 6098,
+      "venue_k_rate": 0.2368,
+      "park_k_factor": 1.0686
+    },
+    {
+      "venue": "Progressive Field",
+      "season": 2025,
+      "total_pa": 5962,
+      "venue_k_rate": 0.232,
+      "park_k_factor": 1.0468
+    },
+    {
+      "venue": "American Family Field",
+      "season": 2025,
+      "total_pa": 6073,
+      "venue_k_rate": 0.2318,
+      "park_k_factor": 1.0462
+    },
+    {
+      "venue": "Yankee Stadium",
+      "season": 2025,
+      "total_pa": 6058,
+      "venue_k_rate": 0.2313,
+      "park_k_factor": 1.0436
+    },
+    {
+      "venue": "Great American Ball Park",
+      "season": 2025,
+      "total_pa": 5965,
+      "venue_k_rate": 0.231,
+      "park_k_factor": 1.0425
+    },
+    {
+      "venue": "Truist Park",
+      "season": 2025,
+      "total_pa": 6158,
+      "venue_k_rate": 0.2308,
+      "park_k_factor": 1.0413
+    },
+    {
+      "venue": "George M. Steinbrenner Field",
+      "season": 2025,
+      "total_pa": 6040,
+      "venue_k_rate": 0.2301,
+      "park_k_factor": 1.0385
+    },
+    {
+      "venue": "Dodger Stadium",
+      "season": 2025,
+      "total_pa": 6115,
+      "venue_k_rate": 0.2296,
+      "park_k_factor": 1.0361
+    },
+    {
+      "venue": "Oriole Park at Camden Yards",
+      "season": 2025,
+      "total_pa": 6078,
+      "venue_k_rate": 0.2295,
+      "park_k_factor": 1.0357
+    },
+    {
+      "venue": "Comerica Park",
+      "season": 2025,
+      "total_pa": 6096,
+      "venue_k_rate": 0.2265,
+      "park_k_factor": 1.0223
+    },
+    {
+      "venue": "Globe Life Field",
+      "season": 2025,
+      "total_pa": 5951,
+      "venue_k_rate": 0.2265,
+      "park_k_factor": 1.0222
+    },
+    {
+      "venue": "Petco Park",
+      "season": 2025,
+      "total_pa": 5986,
+      "venue_k_rate": 0.2219,
+      "park_k_factor": 1.0011
+    },
+    {
+      "venue": "PNC Park",
+      "season": 2025,
+      "total_pa": 6028,
+      "venue_k_rate": 0.2216,
+      "park_k_factor": 1.0001
+    },
+    {
+      "venue": "Citi Field",
+      "season": 2025,
+      "total_pa": 6080,
+      "venue_k_rate": 0.2215,
+      "park_k_factor": 0.9997
+    },
+    {
+      "venue": "Sutter Health Park",
+      "season": 2025,
+      "total_pa": 6324,
+      "venue_k_rate": 0.2196,
+      "park_k_factor": 0.9911
+    },
+    {
+      "venue": "Wrigley Field",
+      "season": 2025,
+      "total_pa": 5864,
+      "venue_k_rate": 0.2186,
+      "park_k_factor": 0.9865
+    },
+    {
+      "venue": "Target Field",
+      "season": 2025,
+      "total_pa": 6191,
+      "venue_k_rate": 0.2179,
+      "park_k_factor": 0.9833
+    },
+    {
+      "venue": "Oracle Park",
+      "season": 2025,
+      "total_pa": 6123,
+      "venue_k_rate": 0.2138,
+      "park_k_factor": 0.9647
+    },
+    {
+      "venue": "Rate Field",
+      "season": 2025,
+      "total_pa": 6049,
+      "venue_k_rate": 0.2136,
+      "park_k_factor": 0.9638
+    },
+    {
+      "venue": "Fenway Park",
+      "season": 2025,
+      "total_pa": 6193,
+      "venue_k_rate": 0.2109,
+      "park_k_factor": 0.9516
+    },
+    {
+      "venue": "Nationals Park",
+      "season": 2025,
+      "total_pa": 6175,
+      "venue_k_rate": 0.2099,
+      "park_k_factor": 0.9471
+    },
+    {
+      "venue": "loanDepot park",
+      "season": 2025,
+      "total_pa": 6114,
+      "venue_k_rate": 0.2077,
+      "park_k_factor": 0.9374
+    },
+    {
+      "venue": "Rogers Centre",
+      "season": 2025,
+      "total_pa": 6098,
+      "venue_k_rate": 0.2066,
+      "park_k_factor": 0.9324
+    },
+    {
+      "venue": "Chase Field",
+      "season": 2025,
+      "total_pa": 6215,
+      "venue_k_rate": 0.2024,
+      "park_k_factor": 0.9134
+    },
+    {
+      "venue": "Coors Field",
+      "season": 2025,
+      "total_pa": 6395,
+      "venue_k_rate": 0.1986,
+      "park_k_factor": 0.8962
+    },
+    {
+      "venue": "Busch Stadium",
+      "season": 2025,
+      "total_pa": 6045,
+      "venue_k_rate": 0.1974,
+      "park_k_factor": 0.8906
+    },
+    {
+      "venue": "Kauffman Stadium",
+      "season": 2025,
+      "total_pa": 5953,
+      "venue_k_rate": 0.197,
+      "park_k_factor": 0.8892
+    }
+  ]
+}
