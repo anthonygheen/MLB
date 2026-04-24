@@ -51,17 +51,16 @@ def load_latest_model():
 
 
 def generate_predictions(con, target_date: str) -> list:
-    """Pull today's predictions from player_props joined with pitcher data."""
+    """Pull today's predictions joined with pitcher names, team, and game info."""
     sql = f"""
         SELECT
             pp.game_id,
             pp.player_id AS pitcher_id,
-            pp.line,
-            pp.over_odds,
-            pp.under_odds,
-            pp.book,
-            pp.market_type
+            pp.line, pp.over_odds, pp.under_odds, pp.book,
+            pl.full_name  AS pitcher_name,
+            pl.team_name  AS pitcher_team
         FROM player_props pp
+        LEFT JOIN players pl ON pp.player_id = pl.player_id
         WHERE pp.market_type = 'pitcher_strikeouts'
           AND DATE_TRUNC('day', pp.recorded_at) = '{target_date}'::DATE
     """
@@ -69,71 +68,85 @@ def generate_predictions(con, target_date: str) -> list:
     if props.empty:
         return []
 
-    # Get player names
-    pitcher_ids = props['pitcher_id'].unique().tolist()
-    id_list = ','.join(str(p) for p in pitcher_ids)
-
-    name_sql = f"""
-        SELECT DISTINCT pa.pitcher_id,
-               MAX(pa.pitcher_hand) as pitcher_hand
-        FROM plate_appearances pa
-        WHERE pa.pitcher_id IN ({id_list})
+    # Pitcher hands from PA history
+    id_list = ','.join(str(p) for p in props['pitcher_id'].unique().tolist())
+    hands = con.execute(f"""
+        SELECT pa.pitcher_id, MAX(pa.pitcher_hand) as pitcher_hand
+        FROM plate_appearances pa WHERE pa.pitcher_id IN ({id_list})
         GROUP BY pa.pitcher_id
-    """
-    hands = con.execute(name_sql).df().set_index('pitcher_id')['pitcher_hand'].to_dict()
+    """).df().set_index('pitcher_id')['pitcher_hand'].to_dict()
+
+    # Game info — today's games may not be in DB yet, so use LEFT JOIN fallback
+    gid_list = ','.join(str(g) for g in props['game_id'].unique().tolist())
+    try:
+        games_map = con.execute(f"""
+            SELECT game_id, home_team_name, away_team_name, venue
+            FROM games WHERE game_id IN ({gid_list})
+        """).df().set_index('game_id').to_dict('index')
+    except Exception:
+        games_map = {}
 
     model, features = load_latest_model()
-
-    results = []
-    results_df = get_pitcher_game_results(con)
+    results_df  = get_pitcher_game_results(con)
     results_df  = add_rolling_features(results_df)
     stuff_raw   = get_pitch_stuff_grades(con)
     stuff_pivot = pivot_stuff_grades(stuff_raw)
     parks       = get_park_k_factors(con)
     current_season = date.today().year
 
+    results = []
     for _, row in props.iterrows():
-        pitcher_id = int(row['pitcher_id'])
-        hist = results_df[results_df['pitcher_id'] == pitcher_id]
+        pitcher_id   = int(row['pitcher_id'])
+        pitcher_name = row.get('pitcher_name') or f'ID {pitcher_id}'
+        pitcher_team = row.get('pitcher_team') or '—'
+        game_id      = int(row['game_id'])
 
-        if hist.empty or model is None:
-            predicted_ks = None
-            edge = None
-        else:
+        # Game context
+        g         = games_map.get(game_id, {})
+        home_team = g.get('home_team_name', '—')
+        away_team = g.get('away_team_name', '—')
+        venue     = g.get('venue', '—')
+        matchup   = f"{away_team} @ {home_team}" if home_team != '—' else f"Game {game_id}"
+
+        # Feature vector
+        hist = results_df[results_df['pitcher_id'] == pitcher_id]
+        predicted_ks = edge = None
+
+        if not hist.empty and model is not None:
             latest = hist.sort_values('game_date').iloc[-1].copy()
 
-            pitcher_stuff = stuff_pivot[
-                (stuff_pivot['pitcher_id'] == pitcher_id) &
-                (stuff_pivot['season'] == current_season)
-            ]
-            if pitcher_stuff.empty:
-                pitcher_stuff = stuff_pivot[stuff_pivot['pitcher_id'] == pitcher_id]\
-                                    .sort_values('season').tail(1)
-
-            if not pitcher_stuff.empty:
-                for col in pitcher_stuff.columns:
+            ps = stuff_pivot[(stuff_pivot['pitcher_id'] == pitcher_id) &
+                             (stuff_pivot['season'] == current_season)]
+            if ps.empty:
+                ps = stuff_pivot[stuff_pivot['pitcher_id'] == pitcher_id].sort_values('season').tail(1)
+            if not ps.empty:
+                for col in ps.columns:
                     if col not in ['pitcher_id', 'season']:
-                        latest[col] = pitcher_stuff.iloc[0][col]
+                        latest[col] = ps.iloc[0][col]
 
-            latest['park_k_factor']    = 1.0
-            latest['pitcher_hand_enc'] = 1 if latest.get('pitcher_hand') == 'R' else 0
-            latest['month']            = pd.Timestamp(target_date).month
-            latest['lineup_k_rate_weighted'] = 0.228
-            latest['lineup_k_rate_raw']      = 0.228
+            park_row = parks[(parks['venue'] == venue) & (parks['season'] == current_season)]
+            latest['park_k_factor']          = park_row['park_k_factor'].values[0] if not park_row.empty else 1.0
+            latest['pitcher_hand_enc']        = 1 if latest.get('pitcher_hand') == 'R' else 0
+            latest['month']                   = pd.Timestamp(target_date).month
+            latest['lineup_k_rate_weighted']  = 0.228
+            latest['lineup_k_rate_raw']       = 0.228
 
-            feat_vec = {f: (0 if pd.isna(latest.get(f, 0)) else latest.get(f, 0))
-                        for f in features}
+            feat_vec = {f: (0 if pd.isna(latest.get(f, 0)) else latest.get(f, 0)) for f in features}
             X = np.array([feat_vec[f] for f in features]).reshape(1, -1)
             predicted_ks = float(np.clip(model.predict(X)[0], 0, 20))
-            edge = round(predicted_ks - float(row['line']), 2) if row['line'] else None
+            edge = round(predicted_ks - float(row['line']), 2) if pd.notna(row['line']) else None
 
         results.append({
             'pitcher_id':   pitcher_id,
+            'pitcher_name': pitcher_name,
+            'pitcher_team': pitcher_team,
             'pitcher_hand': hands.get(pitcher_id, '?'),
+            'matchup':      matchup,
+            'venue':        venue,
             'line':         float(row['line']) if pd.notna(row['line']) else None,
-            'predicted_ks': round(predicted_ks, 1) if predicted_ks else None,
+            'predicted_ks': round(predicted_ks, 1) if predicted_ks is not None else None,
             'edge':         edge,
-            'direction':    ('OVER' if edge and edge > 0 else 'UNDER') if edge else None,
+            'direction':    ('OVER' if edge > 0 else 'UNDER') if edge else None,
             'over_odds':    int(row['over_odds']) if pd.notna(row['over_odds']) else None,
             'under_odds':   int(row['under_odds']) if pd.notna(row['under_odds']) else None,
             'book':         row['book'],
@@ -159,6 +172,8 @@ def generate_stuff_grades(con) -> list:
         )
         SELECT
             pa.pitcher_id,
+            pl.full_name  AS pitcher_name,
+            pl.team_name  AS pitcher_team,
             COUNT(*) as pitch_count,
             AVG(p.release_speed) as avg_velo,
             AVG(p.spin_rate) as avg_spin,
@@ -169,12 +184,13 @@ def generate_stuff_grades(con) -> list:
         FROM pitches p
         JOIN plate_appearances pa ON p.pa_id = pa.pa_id
         JOIN games g ON pa.game_id = g.game_id
+        LEFT JOIN players pl ON pa.pitcher_id = pl.player_id
         WHERE g.season = {current_season}
           AND g.season_type = 'regular'
           AND p.pitch_type_code = 'FF'
           AND p.release_speed IS NOT NULL
           AND p.spin_rate IS NOT NULL
-        GROUP BY pa.pitcher_id
+        GROUP BY pa.pitcher_id, pl.full_name, pl.team_name
         HAVING COUNT(*) >= 50
         ORDER BY whiff_rate DESC
         LIMIT 50

@@ -3,6 +3,8 @@
   "pitchers": [
     {
       "pitcher_id": 1017,
+      "pitcher_name": "Jacob deGrom",
+      "pitcher_team": "Texas Rangers",
       "pitch_count": 91,
       "avg_velo": 97.358,
       "avg_spin": 2473.78,
@@ -12,6 +14,8 @@
     },
     {
       "pitcher_id": 178,
+      "pitcher_name": "Tarik Skubal",
+      "pitcher_team": "Detroit Tigers",
       "pitch_count": 85,
       "avg_velo": 96.473,
       "avg_spin": 2315.529,
@@ -21,6 +25,8 @@
     },
     {
       "pitcher_id": 2183925,
+      "pitcher_name": "Cam Schlittler",
+      "pitcher_team": "New York Yankees",
       "pitch_count": 94,
       "avg_velo": 97.284,
       "avg_spin": 2446.0,
@@ -30,6 +36,8 @@
     },
     {
       "pitcher_id": 51,
+      "pitcher_name": "Jack Leiter",
+      "pitcher_team": "Texas Rangers",
       "pitch_count": 75,
       "avg_velo": 96.832,
       "avg_spin": 2455.573,
@@ -39,6 +47,8 @@
     },
     {
       "pitcher_id": 114,
+      "pitcher_name": "Freddy Peralta",
+      "pitcher_team": "New York Mets",
       "pitch_count": 58,
       "avg_velo": 93.507,
       "avg_spin": 2383.5,
@@ -48,6 +58,8 @@
     },
     {
       "pitcher_id": 878,
+      "pitcher_name": "Taj Bradley",
+      "pitcher_team": "Minnesota Twins",
       "pitch_count": 51,
       "avg_velo": 95.916,
       "avg_spin": 2222.275,
@@ -57,6 +69,8 @@
     },
     {
       "pitcher_id": 4100,
+      "pitcher_name": "Tyler Mahle",
+      "pitcher_team": "San Francisco Giants",
       "pitch_count": 50,
       "avg_velo": 93.198,
       "avg_spin": 2346.48,
@@ -66,6 +80,8 @@
     },
     {
       "pitcher_id": 3015008,
+      "pitcher_name": "Bubba Chandler",
+      "pitcher_team": "Pittsburgh Pirates",
       "pitch_count": 78,
       "avg_velo": 98.504,
       "avg_spin": 2377.282,

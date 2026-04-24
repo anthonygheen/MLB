@@ -235,6 +235,9 @@ function predCard(p) {
   const cls = p.flagged ? (p.direction==='OVER'?'over':'under') : '';
   const ep  = p.edge != null ? (p.edge > 0 ? 'ep' : 'en') : '';
   const edgeStr = p.edge != null ? (p.edge > 0 ? '+' : '') + fmt2(p.edge) : '—';
+  const name = p.pitcher_name || `ID ${p.pitcher_id}`;
+  const team = p.pitcher_team && p.pitcher_team !== '—' ? ` · ${esc(p.pitcher_team)}` : '';
+  const venue = p.venue && p.venue !== '—' ? `<div style="font-size:.62rem;color:var(--muted);margin-bottom:.75rem">${esc(p.venue)}</div>` : '';
   const bet = p.flagged
     ? `<div class="bet ${p.direction.toLowerCase()}">
         <span><span class="dot ${p.direction==='OVER'?'dg':'dr'}"></span>${p.direction} ${fmt1(p.line)}</span>
@@ -244,7 +247,9 @@ function predCard(p) {
 
   return `
     <div class="pcard ${cls}">
-      <div class="pcard-id">ID ${p.pitcher_id}<span class="hand-badge">${p.pitcher_hand==='R'?'RHP':'LHP'}</span></div>
+      <div class="pcard-id">${esc(name)}<span class="hand-badge">${p.pitcher_hand==='R'?'RHP':'LHP'}</span></div>
+      <div style="font-size:.68rem;color:var(--dim);margin-bottom:.3rem">${esc(p.matchup||'—')}${team}</div>
+      ${venue}
       <div class="pnums">
         <div><div class="pnum-label">Line</div><div class="pnum-val line">${fmt1(p.line)}</div></div>
         <div><div class="pnum-label">Model</div><div class="pnum-val pred">${fmt1(p.predicted_ks)}</div></div>
@@ -286,7 +291,7 @@ function drawStuff() {
         <div class="card-title">Whiff Rate Leaders</div>
         ${pitchers.slice(0,15).map(p=>`
           <div class="bar-row">
-            <div class="bar-label">ID ${p.pitcher_id}</div>
+            <div class="bar-label">${esc(p.pitcher_name||'ID '+p.pitcher_id)}</div>
             <div class="bar-track"><div class="bar-fill b" style="width:${maxW?((p.whiff_rate||0)/maxW*100):0}%"></div></div>
             <div class="bar-val">${fmtP(p.whiff_rate)}</div>
           </div>`).join('')}
@@ -295,7 +300,7 @@ function drawStuff() {
         <div class="card-title">Velocity Leaders</div>
         ${byVelo.slice(0,15).map(p=>`
           <div class="bar-row">
-            <div class="bar-label">ID ${p.pitcher_id}</div>
+            <div class="bar-label">${esc(p.pitcher_name||'ID '+p.pitcher_id)}</div>
             <div class="bar-track"><div class="bar-fill b" style="width:${maxV?((p.avg_velo||0)/maxV*100):0}%"></div></div>
             <div class="bar-val">${p.avg_velo?((+p.avg_velo).toFixed(1)):'—'}</div>
           </div>`).join('')}
@@ -315,7 +320,7 @@ function drawStuff() {
         <tbody>
           ${pitchers.map((p,i)=>`<tr>
             <td style="color:var(--muted)">${i+1}</td>
-            <td class="name">ID ${p.pitcher_id}</td>
+            <td class="name">${esc(p.pitcher_name||'ID '+p.pitcher_id)}</td>
             <td class="r">${p.pitch_count?p.pitch_count.toLocaleString():'—'}</td>
             <td class="r">${p.avg_velo?((+p.avg_velo).toFixed(1)):'—'}</td>
             <td class="r">${p.avg_spin?Math.round(p.avg_spin):'—'}</td>
