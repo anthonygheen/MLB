@@ -30,20 +30,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Download latest DB artifact
-        uses: dawidd6/action-download-artifact@v3
-        with:
-          workflow: daily_ingest.yml
-          name_is_regexp: true
-          name: mlb-db-.*
-          path: data/
-          search_artifacts: true
-        continue-on-error: true   # first run won't have an artifact yet
-
-      - name: Rename DB if downloaded
+      - name: Ingest today's games
+        env:
+          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
+          DB_PATH: data/mlb_modeling.db
         run: |
-          # Artifact may be nested — find and move it
-          find data/ -name "mlb_modeling.db" | head -1 | xargs -I {} mv {} data/mlb_modeling.db 2>/dev/null || true
+          TARGET="${{ github.event.inputs.date }}"
+          if [ -z "$TARGET" ]; then
+            TARGET=$(date +%Y-%m-%d)
+          fi
+          python ingestion/schema.py
+          python ingestion/ingest.py --date "$TARGET"
 
       - name: Pull today's props
         env:
@@ -55,19 +52,6 @@ jobs:
             TARGET=$(date +%Y-%m-%d)
           fi
           python ingestion/ingest_props.py --date "$TARGET"
-
-      - name: Download latest model
-        env:
-          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
-          DB_PATH: data/mlb_modeling.db
-        run: |
-          # Check if a saved model exists — if not, train one
-          if [ ! "$(ls -A models/saved/*.pkl 2>/dev/null)" ]; then
-            echo "No saved model found — training now..."
-            python models/k_prop_model.py
-          else
-            echo "Model found — skipping training"
-          fi
 
       - name: Run predictions
         env:
