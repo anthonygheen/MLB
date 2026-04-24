@@ -116,14 +116,14 @@ class BDLClient:
             params["game_id"] = game_id
         if date:
             params["date"] = date
-        yield from self.paginate("player_props", params)
+        yield from self.paginate("odds/player_props", params)
 
     def get_betting_odds(self, game_id: int = None) -> Generator:
         """Fetch betting odds, optionally filtered by game."""
         params = {}
         if game_id:
             params["game_id"] = game_id
-        yield from self.paginate("betting_odds", params)
+        yield from self.paginate("odds/betting_odds", params)
 
     def get_lineups(self, game_id: int) -> dict:
         """Fetch confirmed lineups for a game."""

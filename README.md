@@ -1,29 +1,52 @@
-# MLB Modeling
+# MLB K Prop Modeling Pipeline
 
-Pitch-level MLB modeling pipeline built on the BallDontLie GOAT tier API.
-Stores Statcast-grade plate appearance and pitch data in a local DuckDB database.
+Pitch-level MLB pitcher strikeout prop model built on BallDontLie GOAT tier API data.
+Predicts starter K totals using Statcast-grade stuff metrics, rolling performance,
+opposing lineup K rates, and park factors. Compares projections against book lines to find edges.
+
+---
+
+## How It Works
+
+**The edge:** Books price K props primarily off recent K totals and ERA. This model prices them off *stuff quality* — velocity, spin rate, induced vertical break, and whiff rate per pitch type, z-scored against league average. A pitcher can have a bad box score with elite underlying metrics. That divergence is where the edge lives.
+
+**Target:** Strikeouts recorded by the starting pitcher in a game.
+
+**Models:** Gradient Boosting (primary) + Poisson GLM. Evaluated with time-series cross-validation only — always train on past, test on future.
+
+**Results:** ~1.75 MAE, ~65% over/under accuracy in CV across 2021-2025 data.
+
+---
 
 ## Project Structure
 
 ```
 mlb-modeling/
 ├── ingestion/
-│   ├── schema.py        # DuckDB schema — run once to initialize DB
-│   ├── bdl_client.py    # BallDontLie API wrapper
-│   └── ingest.py        # Main ingestion script
-├── models/              # Model training scripts (coming soon)
-├── notebooks/           # EDA and feature engineering notebooks
-├── scripts/             # One-off utility scripts
-├── data/
-│   ├── mlb_modeling.db  # DuckDB database (gitignored)
-│   ├── raw/             # Raw JSON responses (gitignored)
-│   └── parquet/         # Exported parquet files (gitignored)
+│   ├── schema.py           # DuckDB schema — run once to initialize
+│   ├── bdl_client.py       # BallDontLie API wrapper (rate limiting, pagination)
+│   ├── ingest.py           # Historical + daily game/PA ingestion
+│   └── ingest_props.py     # Daily pitcher K prop line ingestion
+├── features/
+│   ├── pitcher_features.py # Stuff grades, rolling metrics, park factors
+│   └── lineup_features.py  # Opposing lineup K rate by pitcher hand
+├── models/
+│   ├── k_prop_model.py     # Training, CV, grid search, evaluation
+│   └── saved/              # Saved model pkl files (gitignored)
+├── evaluate/
+│   └── edge_finder.py      # Backtest and live edge detection vs book lines
+├── scripts/
+│   └── predict_today.py    # Daily predictions table with over/under flags
+├── data/                   # DuckDB database (gitignored)
 ├── .github/workflows/
-│   └── daily_ingest.yml # Scheduled daily pull
+│   └── daily_ingest.yml    # Automated daily pull via GitHub Actions
+├── .env                    # API key and paths (gitignored)
 ├── .env.example
-├── .gitignore
-└── requirements.txt
+├── requirements.txt
+└── README.md
 ```
+
+---
 
 ## Setup
 
@@ -35,11 +58,11 @@ cd mlb-modeling
 
 python -m venv .venv
 
+# Windows
+.venv\Scripts\Activate.ps1
+
 # Mac/Linux
 source .venv/bin/activate
-
-# Windows
-.venv\Scripts\activate
 
 pip install -r requirements.txt
 ```
@@ -48,71 +71,92 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# Edit .env and add your BDL_API_KEY
+# Edit .env and add your BDL_API_KEY and set DB_PATH to an absolute path
 ```
 
-### 3. Initialize the database
+`.env` contents:
+```
+BDL_API_KEY=your_key_here
+DB_PATH=C:\projects\mlb-modeling\data\mlb_modeling.db
+RAW_DATA_PATH=data/raw
+PARQUET_PATH=data/parquet
+```
+
+### 3. Initialize database
 
 ```bash
-cd ingestion
-python schema.py
+python ingestion/schema.py
 ```
 
-### 4. Run your first ingestion
+### 4. Backfill historical data
 
 ```bash
-# Yesterday's games (default)
-python ingest.py
-
-# Specific date
-python ingest.py --date 2026-04-12
-
-# Full season backfill (~2,430 games, takes a while)
-python ingest.py --season 2025
-
-# Date range
-python ingest.py --start-date 2026-04-01 --end-date 2026-04-13
+python ingestion/ingest.py --season 2021
+python ingestion/ingest.py --season 2022
+python ingestion/ingest.py --season 2023
+python ingestion/ingest.py --season 2024
+python ingestion/ingest.py --season 2025
 ```
 
-## GitHub Actions (automated daily pulls)
+### 5. Train the model
+
+```bash
+# Cross-validation only (fast)
+python models/k_prop_model.py --cv-only
+
+# Train with grid search and save (recommended, ~15-20 min)
+python models/k_prop_model.py --tune
+
+# Train with default params and save (fast)
+python models/k_prop_model.py
+```
+
+---
+
+## Daily Workflow
+
+```bash
+# 1. Pull yesterday's completed games
+python ingestion/ingest.py
+
+# 2. Pull today's prop lines
+python ingestion/ingest_props.py
+
+# 3. Generate predictions and flag edges
+python scripts/predict_today.py
+
+# Adjust edge threshold
+python scripts/predict_today.py --threshold 0.5
+```
+
+---
+
+## GitHub Actions
+
+Game data pulls automatically at 8 AM ET daily.
 
 1. Push repo to GitHub
-2. Go to **Settings → Secrets and variables → Actions**
-3. Add secret: `BDL_API_KEY` = your key
-4. Workflow runs daily at 8 AM ET automatically
+2. Settings → Secrets → Actions → add `BDL_API_KEY`
+3. Workflow runs daily, also manually triggerable from Actions tab
 
-You can also trigger manually from the Actions tab with an optional date override.
+---
 
-## Key Tables
+## Feature Groups
 
-| Table | Description |
-|---|---|
-| `games` | One row per game, scores, venue |
-| `plate_appearances` | One row per PA, batter/pitcher/situation |
-| `pitches` | One row per pitch — Statcast-grade |
-| `player_splits` | Pre-aggregated L/R, home/away, arena splits |
-| `betting_odds` | Market lines at time of recording |
-| `player_props` | Player prop lines |
-| `model_predictions` | Your model outputs + results tracking |
+| Group | Features | Source |
+|---|---|---|
+| Rolling form | K rate, SwStr%, Zone%, BB rate, raw Ks — last 3/5/10 starts | plate_appearances |
+| Stuff grades | Velo, spin, IVB, whiff rate z-scored vs league avg by pitch type | pitches |
+| Pitch mix | % FF/SL/CH/CU/SI last 3 starts | pitches |
+| Lineup | Opposing lineup K rate vs pitcher hand, weighted by lineup position | plate_appearances |
+| Context | Park K factor, days rest, pitcher hand, month | games |
 
-## Example Query
+---
 
-```python
-import duckdb
+## Roadmap
 
-con = duckdb.connect('data/mlb_modeling.db')
-
-# Pitcher K rate by handedness matchup
-df = con.execute("""
-    SELECT
-        pa.pitcher_id,
-        pa.batter_side,
-        COUNT(*) as total_pa,
-        SUM(CASE WHEN pa.result = 'Strikeout' THEN 1 ELSE 0 END) as strikeouts,
-        ROUND(SUM(CASE WHEN pa.result = 'Strikeout' THEN 1 ELSE 0 END) * 1.0
-              / COUNT(*), 3) as k_rate
-    FROM plate_appearances pa
-    GROUP BY pa.pitcher_id, pa.batter_side
-    ORDER BY k_rate DESC
-""").df()
-```
+- [ ] Live deviation monitor — in-game stuff vs baseline, update projection before line moves
+- [ ] Props ingestion automation via GitHub Actions
+- [ ] Batter props model — hits/total bases using exit velocity and barrel rate
+- [ ] Backtest dashboard — Plotly Dash showing edge accuracy by threshold
+- [ ] Webhook integration — BDL ALL-ACCESS real-time K tracking
