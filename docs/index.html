@@ -1,864 +1,440 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MLB K Prop Analytics</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>K Prop Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080c12;--bg2:#0d1420;--bg3:#121b2e;
+  --border:#1e2d45;--border2:#243552;
+  --text:#c8d8f0;--dim:#5a7299;--muted:#3a5070;
+  --accent:#00d4ff;--accent2:#0099cc;
+  --green:#00e676;--green-dim:#00e67618;
+  --red:#ff4444;--red-dim:#ff444418;
+  --gold:#ffc107;
+  --fh:'Bebas Neue',sans-serif;
+  --fm:'DM Mono',monospace;
+  --fb:'DM Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fb)}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
-    :root {
-      --bg:         #080c12;
-      --bg2:        #0d1420;
-      --bg3:        #121b2e;
-      --border:     #1e2d45;
-      --border2:    #243552;
-      --text:       #c8d8f0;
-      --text-dim:   #5a7299;
-      --text-muted: #3a5070;
-      --accent:     #00d4ff;
-      --accent2:    #0099cc;
-      --green:      #00e676;
-      --green-dim:  #00e67622;
-      --red:        #ff4444;
-      --red-dim:    #ff444422;
-      --gold:       #ffc107;
-      --gold-dim:   #ffc10722;
-      --font-head:  'Bebas Neue', sans-serif;
-      --font-mono:  'DM Mono', monospace;
-      --font-body:  'DM Sans', sans-serif;
-    }
+.header{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:0 2rem;display:flex;align-items:center;
+  justify-content:space-between;height:60px;
+  position:sticky;top:0;z-index:100;
+}
+.logo{font-family:var(--fh);font-size:1.7rem;letter-spacing:.08em;color:var(--accent)}
+.logo span{color:var(--dim)}
+.meta{font-family:var(--fm);font-size:.65rem;color:var(--dim);text-align:right;line-height:1.6}
 
-    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-body); }
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;padding:0 2rem}
+.tab{
+  padding:.85rem 1.4rem;font-size:.72rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
+  cursor:pointer;border-bottom:2px solid transparent;
+  transition:all .15s;background:none;border-left:none;border-right:none;border-top:none;
+  font-family:var(--fb);
+}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 
-    #root { min-height: 100vh; display: flex; flex-direction: column; }
+.main{padding:2rem;max-width:1400px;margin:0 auto;width:100%}
+.panel{display:none}.panel.active{display:block}
 
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg2); }
-    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2rem}
+.stat{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem}
+.stat-label{font-size:.6rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+.stat-val{font-family:var(--fm);font-size:1.75rem;font-weight:500;color:var(--text);line-height:1}
+.stat-val.a{color:var(--accent)}.stat-val.g{color:var(--green)}.stat-val.r{color:var(--red)}.stat-val.gold{color:var(--gold)}
 
-    /* Header */
-    .header {
-      background: var(--bg2);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .header-logo {
-      font-family: var(--font-head);
-      font-size: 1.8rem;
-      letter-spacing: 0.08em;
-      color: var(--accent);
-      line-height: 1;
-    }
-    .header-logo span { color: var(--text-dim); }
-    .header-meta {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      text-align: right;
-    }
+.filter-row{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.fbtn{
+  padding:.3rem .85rem;border-radius:4px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--dim);font-size:.68rem;font-weight:600;
+  letter-spacing:.08em;cursor:pointer;font-family:var(--fb);transition:all .15s;
+}
+.fbtn:hover{color:var(--text);border-color:var(--border2)}
+.fbtn.active{background:var(--accent2);border-color:var(--accent);color:#fff}
 
-    /* Nav */
-    .nav {
-      background: var(--bg2);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      padding: 0 2rem;
-      gap: 0;
-    }
-    .nav-tab {
-      padding: 0.9rem 1.5rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.15s;
-      background: none;
-      border-left: none;
-      border-right: none;
-      border-top: none;
-      font-family: var(--font-body);
-    }
-    .nav-tab:hover { color: var(--text); }
-    .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+.pcard{
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:1.25rem;position:relative;overflow:hidden;transition:border-color .15s;
+}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--border)}
+.pcard.over::before{background:var(--green)}
+.pcard.under::before{background:var(--red)}
+.pcard:hover{border-color:var(--border2)}
+.pcard-id{font-family:var(--fh);font-size:1.25rem;letter-spacing:.04em;margin-bottom:.9rem}
+.hand-badge{font-size:.62rem;font-family:var(--fm);color:var(--dim);background:var(--bg2);padding:.12rem .38rem;border-radius:3px;margin-left:.5rem}
+.pnums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.9rem}
+.pnum-label{font-size:.58rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem}
+.pnum-val{font-family:var(--fm);font-size:1.35rem;font-weight:500}
+.pnum-val.line{color:var(--dim)}
+.pnum-val.pred{color:var(--accent)}
+.pnum-val.ep{color:var(--green)}.pnum-val.en{color:var(--red)}
+.bet{display:flex;align-items:center;justify-content:space-between;padding:.55rem .7rem;border-radius:5px;font-size:.72rem;font-weight:600}
+.bet.over{background:var(--green-dim);color:var(--green)}
+.bet.under{background:var(--red-dim);color:var(--red)}
+.bet.neutral{background:var(--bg2);color:var(--dim)}
+.bet-odds{font-family:var(--fm);font-size:.75rem}
 
-    /* Main content */
-    .main { flex: 1; padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.5rem}
+.card-title{font-family:var(--fh);font-size:1rem;letter-spacing:.08em;color:var(--dim);margin-bottom:1rem}
 
-    /* Cards */
-    .card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-    }
-    .card-title {
-      font-family: var(--font-head);
-      font-size: 1.1rem;
-      letter-spacing: 0.08em;
-      color: var(--text-dim);
-      margin-bottom: 1rem;
-    }
+.bar-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.45rem}
+.bar-label{width:100px;font-size:.72rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.bar-track{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.bar-fill.b{background:linear-gradient(90deg,var(--accent2),var(--accent))}
+.bar-fill.g{background:var(--green)}.bar-fill.r{background:var(--red)}
+.bar-val{width:52px;text-align:right;font-family:var(--fm);font-size:.68rem;color:var(--dim);flex-shrink:0}
 
-    /* Stats row */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .stat-card {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.25rem 1.5rem;
-    }
-    .stat-label {
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.4rem;
-    }
-    .stat-value {
-      font-family: var(--font-mono);
-      font-size: 1.8rem;
-      font-weight: 500;
-      color: var(--text);
-      line-height: 1;
-    }
-    .stat-value.accent { color: var(--accent); }
-    .stat-value.green  { color: var(--green); }
-    .stat-value.gold   { color: var(--gold); }
+.sh{display:flex;align-items:baseline;gap:1rem;margin-bottom:1.25rem}
+.sh-title{font-family:var(--fh);font-size:1.4rem;letter-spacing:.06em}
+.sh-sub{font-size:.7rem;color:var(--muted);font-family:var(--fm)}
 
-    /* Prediction cards */
-    .predictions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 1rem;
-    }
-    .pred-card {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.25rem;
-      transition: border-color 0.15s;
-      position: relative;
-      overflow: hidden;
-    }
-    .pred-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--border);
-    }
-    .pred-card.flagged-over::before  { background: var(--green); }
-    .pred-card.flagged-under::before { background: var(--red); }
-    .pred-card:hover { border-color: var(--border2); }
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+thead th{padding:.55rem .7rem;text-align:left;font-size:.58rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);cursor:pointer}
+thead th:hover{color:var(--text)}
+thead th.r{text-align:right}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+tbody tr:hover{background:var(--bg3)}
+tbody td{padding:.6rem .7rem;font-family:var(--fm);font-size:.75rem}
+tbody td.r{text-align:right}
+tbody td.name{font-family:var(--fb);font-weight:500}
 
-    .pred-matchup {
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.4rem;
-    }
-    .pred-pitcher {
-      font-family: var(--font-head);
-      font-size: 1.3rem;
-      letter-spacing: 0.04em;
-      color: var(--text);
-      margin-bottom: 1rem;
-    }
-    .pred-hand {
-      font-size: 0.65rem;
-      font-family: var(--font-mono);
-      color: var(--text-dim);
-      background: var(--bg2);
-      padding: 0.15rem 0.4rem;
-      border-radius: 3px;
-      margin-left: 0.5rem;
-    }
+.empty{text-align:center;padding:4rem 2rem;color:var(--muted)}
+.empty-icon{font-size:2.5rem;margin-bottom:1rem}
+.empty-title{font-family:var(--fh);font-size:1.4rem;letter-spacing:.08em;margin-bottom:.5rem;color:var(--dim)}
+.empty-sub{font-size:.78rem;line-height:1.7;color:var(--muted)}
+.empty-sub code{background:var(--bg3);padding:.1rem .35rem;border-radius:3px;color:var(--text);font-family:var(--fm);font-size:.72rem}
 
-    .pred-numbers {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    .pred-num-block { text-align: center; }
-    .pred-num-label {
-      font-size: 0.6rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
-    .pred-num-value {
-      font-family: var(--font-mono);
-      font-size: 1.4rem;
-      font-weight: 500;
-      color: var(--text);
-    }
-    .pred-num-value.line  { color: var(--text-dim); }
-    .pred-num-value.pred  { color: var(--accent); }
-    .pred-num-value.edge-pos { color: var(--green); }
-    .pred-num-value.edge-neg { color: var(--red); }
+.loading{display:flex;align-items:center;justify-content:center;height:180px;color:var(--muted);font-family:var(--fm);font-size:.78rem}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.dg{background:var(--green)}.dr{background:var(--red)}
 
-    .pred-bet {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.6rem 0.75rem;
-      border-radius: 5px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-    }
-    .pred-bet.over  { background: var(--green-dim); color: var(--green); }
-    .pred-bet.under { background: var(--red-dim);   color: var(--red); }
-    .pred-bet.neutral { background: var(--bg2); color: var(--text-dim); }
-    .pred-odds { font-family: var(--font-mono); font-size: 0.8rem; }
-
-    /* Table */
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-    thead th {
-      padding: 0.6rem 0.75rem;
-      text-align: left;
-      font-size: 0.6rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
-    }
-    thead th.right { text-align: right; }
-    tbody tr {
-      border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
-    }
-    tbody tr:hover { background: var(--bg3); }
-    tbody td {
-      padding: 0.65rem 0.75rem;
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-    }
-    tbody td.right { text-align: right; }
-    tbody td.name  { font-family: var(--font-body); font-weight: 500; color: var(--text); }
-    .badge {
-      display: inline-block;
-      padding: 0.15rem 0.5rem;
-      border-radius: 3px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-    }
-    .badge-rh { background: #1a3a5c; color: #4da6ff; }
-    .badge-lh { background: #1a3a2a; color: #4dff80; }
-
-    /* Bar chart rows */
-    .bar-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.5rem;
-    }
-    .bar-label {
-      width: 160px;
-      font-size: 0.75rem;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      flex-shrink: 0;
-    }
-    .bar-track {
-      flex: 1;
-      height: 6px;
-      background: var(--bg3);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .bar-fill {
-      height: 100%;
-      border-radius: 3px;
-      transition: width 0.6s ease;
-    }
-    .bar-fill.pitcher { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
-    .bar-fill.park-pos { background: var(--green); }
-    .bar-fill.park-neg { background: var(--red); }
-    .bar-val {
-      width: 48px;
-      text-align: right;
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      flex-shrink: 0;
-    }
-
-    /* Empty state */
-    .empty {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--text-muted);
-    }
-    .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
-    .empty-title { font-family: var(--font-head); font-size: 1.5rem; letter-spacing: 0.08em; margin-bottom: 0.5rem; color: var(--text-dim); }
-    .empty-sub { font-size: 0.8rem; line-height: 1.6; }
-
-    /* Loading */
-    .loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 200px;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-    }
-
-    /* Section headers */
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
-    }
-    .section-title {
-      font-family: var(--font-head);
-      font-size: 1.4rem;
-      letter-spacing: 0.06em;
-      color: var(--text);
-    }
-    .section-sub {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-    }
-
-    /* Two col layout */
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-    @media (max-width: 900px) {
-      .two-col { grid-template-columns: 1fr; }
-      .predictions-grid { grid-template-columns: 1fr; }
-    }
-
-    /* Accuracy chart placeholder */
-    .accuracy-chart {
-      height: 220px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Filter row */
-    .filter-row {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
-    .filter-btn {
-      padding: 0.35rem 0.9rem;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-      background: var(--bg3);
-      color: var(--text-dim);
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      cursor: pointer;
-      font-family: var(--font-body);
-      transition: all 0.15s;
-    }
-    .filter-btn:hover { border-color: var(--border2); color: var(--text); }
-    .filter-btn.active { background: var(--accent2); border-color: var(--accent); color: #fff; }
-
-    .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; }
-    .dot-green { background: var(--green); }
-    .dot-red   { background: var(--red); }
-    .dot-gold  { background: var(--gold); }
-  </style>
+@media(max-width:900px){.two-col{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-<div id="root"></div>
 
-<script type="text/babel">
-const { useState, useEffect, useMemo } = React;
+<header class="header">
+  <div class="logo">K<span>PROP</span> ANALYTICS</div>
+  <div class="meta">MLB · Pitcher Strikeout Model<br>GBM · 1.74 MAE · 64.4% OU Acc</div>
+</header>
 
-// ── Data fetching ──────────────────────────────────────────────
-const BASE = window.location.hostname === 'localhost' ? '' : '';
+<nav class="nav">
+  <button class="tab active" onclick="showTab('predictions',this)">Predictions</button>
+  <button class="tab" onclick="showTab('stuff',this)">Stuff Grades</button>
+  <button class="tab" onclick="showTab('accuracy',this)">Accuracy</button>
+  <button class="tab" onclick="showTab('parks',this)">Park Factors</button>
+</nav>
 
-async function fetchJSON(path) {
+<main class="main">
+  <div id="predictions" class="panel active"><div class="loading">Loading predictions...</div></div>
+  <div id="stuff"       class="panel"><div class="loading">Loading stuff grades...</div></div>
+  <div id="accuracy"    class="panel"><div class="loading">Loading accuracy data...</div></div>
+  <div id="parks"       class="panel"><div class="loading">Loading park factors...</div></div>
+</main>
+
+<script>
+// ── Utilities ──────────────────────────────────────────────────
+const fmt1  = v => v != null ? (+v).toFixed(1) : '—';
+const fmt2  = v => v != null ? (+v).toFixed(2) : '—';
+const fmt3  = v => v != null ? (+v).toFixed(3) : '—';
+const fmtP  = v => v != null ? ((+v)*100).toFixed(1)+'%' : '—';
+const fmtO  = v => v != null ? (v > 0 ? '+'+v : ''+v) : '—';
+const esc   = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+async function load(path) {
   try {
-    const r = await fetch(`${BASE}/data/${path}?t=${Date.now()}`);
+    const r = await fetch(path + '?t=' + Date.now());
     if (!r.ok) return null;
     return await r.json();
-  } catch { return null; }
+  } catch(e) { return null; }
 }
 
-// ── Formatting helpers ─────────────────────────────────────────
-const fmt1  = v => v != null ? v.toFixed(1) : '—';
-const fmt2  = v => v != null ? v.toFixed(2) : '—';
-const fmt3  = v => v != null ? v.toFixed(3) : '—';
-const fmtPct = v => v != null ? `${(v * 100).toFixed(1)}%` : '—';
-const fmtOdds = v => v != null ? (v > 0 ? `+${v}` : `${v}`) : '—';
+// ── Tab switching ──────────────────────────────────────────────
+const loaded = {};
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (!loaded[id]) { loaded[id] = true; renderTab(id); }
+}
 
-// ── Predictions Tab ────────────────────────────────────────────
-function PredictionsTab() {
-  const [data, setData]     = useState(null);
-  const [filter, setFilter] = useState('ALL');
+async function renderTab(id) {
+  if (id === 'predictions') await renderPredictions();
+  if (id === 'stuff')       await renderStuff();
+  if (id === 'accuracy')    await renderAccuracy();
+  if (id === 'parks')       await renderParks();
+}
 
-  useEffect(() => { fetchJSON('predictions.json').then(setData); }, []);
+// ── Predictions ────────────────────────────────────────────────
+let predFilter = 'ALL';
+let predData = null;
 
-  if (!data) return <div className="loading">Loading predictions...</div>;
+async function renderPredictions() {
+  predData = await load('data/predictions.json');
+  drawPredictions();
+}
 
-  const preds = data.predictions || [];
-  const filtered = filter === 'ALL'   ? preds
-    : filter === 'EDGE'  ? preds.filter(p => p.flagged)
-    : filter === 'OVER'  ? preds.filter(p => p.flagged && p.direction === 'OVER')
+function drawPredictions() {
+  const el = document.getElementById('predictions');
+  if (!predData) {
+    el.innerHTML = empty('No Data', 'Run <code>generate_data.py</code> to populate.');
+    return;
+  }
+  const preds = predData.predictions || [];
+  const filtered = predFilter === 'ALL'   ? preds
+    : predFilter === 'EDGE'  ? preds.filter(p => p.flagged)
+    : predFilter === 'OVER'  ? preds.filter(p => p.flagged && p.direction === 'OVER')
     : preds.filter(p => p.flagged && p.direction === 'UNDER');
 
-  const edges = preds.filter(p => p.flagged);
-  const overs = edges.filter(p => p.direction === 'OVER').length;
+  const edges  = preds.filter(p => p.flagged);
+  const overs  = edges.filter(p => p.direction === 'OVER').length;
   const unders = edges.filter(p => p.direction === 'UNDER').length;
 
-  return (
-    <div>
-      <div className="stats-row">
-        <div className="stat-card">
-          <div className="stat-label">Games Today</div>
-          <div className="stat-value accent">{preds.length}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Edges Flagged</div>
-          <div className="stat-value gold">{edges.length}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Overs</div>
-          <div className="stat-value green">{overs}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Unders</div>
-          <div className="stat-value" style={{color:'var(--red)'}}>{unders}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Updated</div>
-          <div className="stat-value" style={{fontSize:'0.9rem', color:'var(--text-dim)'}}>
-            {data.date || '—'}
-          </div>
-        </div>
-      </div>
+  const cards = filtered.length === 0
+    ? empty('No Predictions', predFilter === 'ALL'
+        ? 'Run <code>predict_today.py</code> then <code>generate_data.py</code> to populate.'
+        : 'No predictions match this filter.')
+    : `<div class="grid">${filtered.map(predCard).join('')}</div>`;
 
-      <div className="filter-row">
-        {['ALL','EDGE','OVER','UNDER'].map(f => (
-          <button key={f} className={`filter-btn ${filter === f ? 'active' : ''}`}
-            onClick={() => setFilter(f)}>{f}</button>
-        ))}
-      </div>
-
-      {filtered.length === 0 ? (
-        <div className="empty">
-          <div className="empty-icon">⚾</div>
-          <div className="empty-title">No Predictions Yet</div>
-          <div className="empty-sub">
-            Run <code>python scripts/predict_today.py</code> then<br/>
-            <code>python scripts/generate_data.py</code> to populate.
-          </div>
-        </div>
-      ) : (
-        <div className="predictions-grid">
-          {filtered.map((p, i) => {
-            const edgePos = p.edge > 0;
-            const flagClass = p.flagged ? (edgePos ? 'flagged-over' : 'flagged-under') : '';
-            return (
-              <div key={i} className={`pred-card ${flagClass}`}>
-                <div className="pred-pitcher">
-                  ID {p.pitcher_id}
-                  <span className="pred-hand">{p.pitcher_hand === 'R' ? 'RHP' : 'LHP'}</span>
-                </div>
-                <div className="pred-numbers">
-                  <div className="pred-num-block">
-                    <div className="pred-num-label">Line</div>
-                    <div className="pred-num-value line">{fmt1(p.line)}</div>
-                  </div>
-                  <div className="pred-num-block">
-                    <div className="pred-num-label">Model</div>
-                    <div className="pred-num-value pred">{fmt1(p.predicted_ks)}</div>
-                  </div>
-                  <div className="pred-num-block">
-                    <div className="pred-num-label">Edge</div>
-                    <div className={`pred-num-value ${p.edge > 0 ? 'edge-pos' : 'edge-neg'}`}>
-                      {p.edge != null ? (p.edge > 0 ? '+' : '') + fmt2(p.edge) : '—'}
-                    </div>
-                  </div>
-                </div>
-                {p.flagged ? (
-                  <div className={`pred-bet ${p.direction === 'OVER' ? 'over' : 'under'}`}>
-                    <span>
-                      <span className={`dot ${p.direction === 'OVER' ? 'dot-green' : 'dot-red'}`}/>
-                      {p.direction} {fmt1(p.line)}
-                    </span>
-                    <span className="pred-odds">
-                      {fmtOdds(p.direction === 'OVER' ? p.over_odds : p.under_odds)}
-                      {p.book ? ` · ${p.book}` : ''}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="pred-bet neutral">
-                    <span>Below threshold</span>
-                    <span className="pred-odds">{fmt2(p.edge)} Ks</span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+  el.innerHTML = `
+    <div class="stats-row">
+      <div class="stat"><div class="stat-label">Pitchers</div><div class="stat-val a">${preds.length}</div></div>
+      <div class="stat"><div class="stat-label">Edges</div><div class="stat-val gold">${edges.length}</div></div>
+      <div class="stat"><div class="stat-label">Overs</div><div class="stat-val g">${overs}</div></div>
+      <div class="stat"><div class="stat-label">Unders</div><div class="stat-val r">${unders}</div></div>
+      <div class="stat"><div class="stat-label">Date</div><div class="stat-val" style="font-size:.9rem;color:var(--dim)">${predData.date||'—'}</div></div>
     </div>
-  );
+    <div class="filter-row">
+      ${['ALL','EDGE','OVER','UNDER'].map(f =>
+        `<button class="fbtn ${predFilter===f?'active':''}" onclick="setPredFilter('${f}')">${f}</button>`
+      ).join('')}
+    </div>
+    ${cards}`;
 }
 
-// ── Stuff Grades Tab ───────────────────────────────────────────
-function StuffTab() {
-  const [data, setData]   = useState(null);
-  const [sort, setSort]   = useState('whiff_rate');
+function setPredFilter(f) { predFilter = f; drawPredictions(); }
 
-  useEffect(() => { fetchJSON('stuff_grades.json').then(setData); }, []);
-  if (!data) return <div className="loading">Loading stuff grades...</div>;
+function predCard(p) {
+  const cls = p.flagged ? (p.direction==='OVER'?'over':'under') : '';
+  const ep  = p.edge != null ? (p.edge > 0 ? 'ep' : 'en') : '';
+  const edgeStr = p.edge != null ? (p.edge > 0 ? '+' : '') + fmt2(p.edge) : '—';
+  const bet = p.flagged
+    ? `<div class="bet ${p.direction.toLowerCase()}">
+        <span><span class="dot ${p.direction==='OVER'?'dg':'dr'}"></span>${p.direction} ${fmt1(p.line)}</span>
+        <span class="bet-odds">${fmtO(p.direction==='OVER'?p.over_odds:p.under_odds)}${p.book?' · '+esc(p.book):''}</span>
+       </div>`
+    : `<div class="bet neutral"><span>Below threshold</span><span class="bet-odds">${edgeStr} Ks</span></div>`;
 
-  const pitchers = [...(data.pitchers || [])].sort((a, b) => b[sort] - a[sort]);
-  const maxWhiff = Math.max(...pitchers.map(p => p.whiff_rate || 0));
+  return `
+    <div class="pcard ${cls}">
+      <div class="pcard-id">ID ${p.pitcher_id}<span class="hand-badge">${p.pitcher_hand==='R'?'RHP':'LHP'}</span></div>
+      <div class="pnums">
+        <div><div class="pnum-label">Line</div><div class="pnum-val line">${fmt1(p.line)}</div></div>
+        <div><div class="pnum-label">Model</div><div class="pnum-val pred">${fmt1(p.predicted_ks)}</div></div>
+        <div><div class="pnum-label">Edge</div><div class="pnum-val ${ep}">${edgeStr}</div></div>
+      </div>
+      ${bet}
+    </div>`;
+}
+
+// ── Stuff Grades ───────────────────────────────────────────────
+let stuffSort = 'whiff_rate';
+let stuffData = null;
+
+async function renderStuff() {
+  stuffData = await load('data/stuff_grades.json');
+  drawStuff();
+}
+
+function drawStuff() {
+  const el = document.getElementById('stuff');
+  if (!stuffData || !(stuffData.pitchers||[]).length) {
+    el.innerHTML = empty('No Stuff Data', 'Run <code>generate_data.py</code> to populate.');
+    return;
+  }
+  const pitchers = [...stuffData.pitchers].sort((a,b) => (b[stuffSort]||0)-(a[stuffSort]||0));
+  const byVelo   = [...stuffData.pitchers].sort((a,b) => (b.avg_velo||0)-(a.avg_velo||0));
+  const maxW = Math.max(...pitchers.map(p=>p.whiff_rate||0));
+  const maxV = Math.max(...byVelo.map(p=>p.avg_velo||0));
 
   const cols = [
-    { key: 'whiff_rate', label: 'Whiff%' },
-    { key: 'avg_velo',   label: 'Velo' },
-    { key: 'avg_spin',   label: 'Spin' },
-    { key: 'avg_ivb',    label: 'IVB' },
-    { key: 'pitch_count',label: 'Pitches' },
+    {k:'whiff_rate',l:'Whiff%'},{k:'avg_velo',l:'Velo'},
+    {k:'avg_spin',l:'Spin'},{k:'avg_ivb',l:'IVB'},{k:'pitch_count',l:'Pitches'}
   ];
 
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-title">Fastball Stuff Grades</div>
-        <div className="section-sub">{data.season} season · min 50 pitches</div>
+  el.innerHTML = `
+    <div class="sh"><div class="sh-title">Fastball Stuff Grades</div><div class="sh-sub">${stuffData.season} season · min 50 pitches</div></div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Whiff Rate Leaders</div>
+        ${pitchers.slice(0,15).map(p=>`
+          <div class="bar-row">
+            <div class="bar-label">ID ${p.pitcher_id}</div>
+            <div class="bar-track"><div class="bar-fill b" style="width:${maxW?((p.whiff_rate||0)/maxW*100):0}%"></div></div>
+            <div class="bar-val">${fmtP(p.whiff_rate)}</div>
+          </div>`).join('')}
       </div>
-
-      <div className="two-col" style={{marginBottom:'2rem'}}>
-        <div className="card">
-          <div className="card-title">Whiff Rate Leaders</div>
-          {pitchers.slice(0, 15).map((p, i) => (
-            <div key={i} className="bar-row">
-              <div className="bar-label">ID {p.pitcher_id}</div>
-              <div className="bar-track">
-                <div className="bar-fill pitcher"
-                  style={{width: `${(p.whiff_rate / maxWhiff) * 100}%`}} />
-              </div>
-              <div className="bar-val">{fmtPct(p.whiff_rate)}</div>
-            </div>
-          ))}
-        </div>
-        <div className="card">
-          <div className="card-title">Velocity Leaders</div>
-          {[...pitchers].sort((a,b) => b.avg_velo - a.avg_velo).slice(0, 15).map((p, i) => {
-            const maxV = 100;
-            return (
-              <div key={i} className="bar-row">
-                <div className="bar-label">ID {p.pitcher_id}</div>
-                <div className="bar-track">
-                  <div className="bar-fill pitcher"
-                    style={{width: `${Math.min(100, (p.avg_velo / maxV) * 100)}%`}} />
-                </div>
-                <div className="bar-val">{p.avg_velo ? p.avg_velo.toFixed(1) : '—'}</div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="card">
-        <div className="card-title" style={{marginBottom:'0.75rem'}}>
-          Full Leaderboard · Click column to sort
-        </div>
-        <div className="filter-row">
-          {cols.map(c => (
-            <button key={c.key} className={`filter-btn ${sort === c.key ? 'active' : ''}`}
-              onClick={() => setSort(c.key)}>{c.label}</button>
-          ))}
-        </div>
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Pitcher ID</th>
-                <th className="right">Pitches</th>
-                <th className="right">Velo</th>
-                <th className="right">Spin</th>
-                <th className="right">IVB</th>
-                <th className="right">Whiff%</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pitchers.map((p, i) => (
-                <tr key={i}>
-                  <td style={{color:'var(--text-muted)'}}>{i + 1}</td>
-                  <td className="name">ID {p.pitcher_id}</td>
-                  <td className="right">{p.pitch_count?.toLocaleString()}</td>
-                  <td className="right">{p.avg_velo ? p.avg_velo.toFixed(1) : '—'}</td>
-                  <td className="right">{p.avg_spin ? Math.round(p.avg_spin) : '—'}</td>
-                  <td className="right">{p.avg_ivb ? p.avg_ivb.toFixed(1) : '—'}</td>
-                  <td className="right" style={{color: p.whiff_rate > 0.3 ? 'var(--green)' : 'inherit'}}>
-                    {fmtPct(p.whiff_rate)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <div class="card">
+        <div class="card-title">Velocity Leaders</div>
+        ${byVelo.slice(0,15).map(p=>`
+          <div class="bar-row">
+            <div class="bar-label">ID ${p.pitcher_id}</div>
+            <div class="bar-track"><div class="bar-fill b" style="width:${maxV?((p.avg_velo||0)/maxV*100):0}%"></div></div>
+            <div class="bar-val">${p.avg_velo?((+p.avg_velo).toFixed(1)):'—'}</div>
+          </div>`).join('')}
       </div>
     </div>
-  );
+    <div class="card">
+      <div class="card-title">Full Leaderboard</div>
+      <div class="filter-row">
+        ${cols.map(c=>`<button class="fbtn ${stuffSort===c.k?'active':''}" onclick="setStuffSort('${c.k}')">${c.l}</button>`).join('')}
+      </div>
+      <div class="tw"><table>
+        <thead><tr>
+          <th>#</th><th>Pitcher ID</th>
+          <th class="r">Pitches</th><th class="r">Velo</th>
+          <th class="r">Spin</th><th class="r">IVB</th><th class="r">Whiff%</th>
+        </tr></thead>
+        <tbody>
+          ${pitchers.map((p,i)=>`<tr>
+            <td style="color:var(--muted)">${i+1}</td>
+            <td class="name">ID ${p.pitcher_id}</td>
+            <td class="r">${p.pitch_count?p.pitch_count.toLocaleString():'—'}</td>
+            <td class="r">${p.avg_velo?((+p.avg_velo).toFixed(1)):'—'}</td>
+            <td class="r">${p.avg_spin?Math.round(p.avg_spin):'—'}</td>
+            <td class="r">${p.avg_ivb?((+p.avg_ivb).toFixed(1)):'—'}</td>
+            <td class="r" style="color:${(p.whiff_rate||0)>.3?'var(--green)':'inherit'}">${fmtP(p.whiff_rate)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
 }
 
-// ── Accuracy Tab ───────────────────────────────────────────────
-function AccuracyTab() {
-  const [data, setData] = useState(null);
-  useEffect(() => { fetchJSON('accuracy.json').then(setData); }, []);
-  if (!data) return <div className="loading">Loading accuracy data...</div>;
+function setStuffSort(k) { stuffSort = k; drawStuff(); }
 
-  const { summary, records } = data;
-
-  if (!records || records.length === 0) {
-    return (
-      <div className="empty">
-        <div className="empty-icon">📊</div>
-        <div className="empty-title">Accuracy Builds Over Time</div>
-        <div className="empty-sub">
-          {summary?.message || 'Track predictions against actual results to see accuracy here.'}<br/><br/>
-          Results are logged to the <code>model_predictions</code> table automatically.
-        </div>
-      </div>
-    );
+// ── Accuracy ───────────────────────────────────────────────────
+async function renderAccuracy() {
+  const data = await load('data/accuracy.json');
+  const el = document.getElementById('accuracy');
+  if (!data || !(data.records||[]).length) {
+    el.innerHTML = empty('Accuracy Builds Over Time',
+      (data?.summary?.message || 'Track predictions against results to see accuracy here.') +
+      '<br><br>Results log to the <code>model_predictions</code> table automatically.');
+    return;
   }
+  const s = data.summary;
+  el.innerHTML = `
+    <div class="stats-row">
+      <div class="stat"><div class="stat-label">Total Bets</div><div class="stat-val a">${s.total_bets}</div></div>
+      <div class="stat"><div class="stat-label">Correct</div><div class="stat-val g">${s.correct_bets}</div></div>
+      <div class="stat"><div class="stat-label">OU Accuracy</div><div class="stat-val gold">${fmtP(s.accuracy)}</div></div>
+      <div class="stat"><div class="stat-label">Avg Edge</div><div class="stat-val">${fmt2(s.avg_edge)} Ks</div></div>
+      <div class="stat"><div class="stat-label">Breakeven</div><div class="stat-val" style="color:var(--dim)">52.4%</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Daily Accuracy Log</div>
+      <div class="tw"><table>
+        <thead><tr>
+          <th>Date</th><th class="r">Bets</th>
+          <th class="r">Correct</th><th class="r">Accuracy</th><th class="r">Avg Edge</th>
+        </tr></thead>
+        <tbody>
+          ${data.records.map(r=>`<tr>
+            <td>${r.pred_date}</td>
+            <td class="r">${r.total_bets}</td>
+            <td class="r">${r.correct_bets}</td>
+            <td class="r" style="color:${(r.accuracy||0)>.524?'var(--green)':(r.accuracy||0)<.45?'var(--red)':'inherit'}">${fmtP(r.accuracy)}</td>
+            <td class="r">${fmt2(r.avg_edge)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
+}
 
-  return (
-    <div>
-      <div className="stats-row">
-        <div className="stat-card">
-          <div className="stat-label">Total Bets Tracked</div>
-          <div className="stat-value accent">{summary.total_bets}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Correct</div>
-          <div className="stat-value green">{summary.correct_bets}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">OU Accuracy</div>
-          <div className="stat-value gold">{fmtPct(summary.accuracy)}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Avg Edge</div>
-          <div className="stat-value">{fmt2(summary.avg_edge)} Ks</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Breakeven</div>
-          <div className="stat-value" style={{color:'var(--text-dim)'}}>52.4%</div>
-        </div>
+// ── Park Factors ───────────────────────────────────────────────
+async function renderParks() {
+  const data = await load('data/park_factors.json');
+  const el = document.getElementById('parks');
+  if (!data || !(data.parks||[]).length) {
+    el.innerHTML = empty('No Park Data', 'Run <code>generate_data.py</code> to populate.');
+    return;
+  }
+  const maxSeason = Math.max(...data.parks.map(p=>p.season||0));
+  const parks  = data.parks.filter(p=>p.season===maxSeason).sort((a,b)=>b.park_k_factor-a.park_k_factor);
+  const maxF   = Math.max(...parks.map(p=>p.park_k_factor||0));
+  const minF   = Math.min(...parks.map(p=>p.park_k_factor||0));
+  const range  = maxF - minF || 1;
+
+  el.innerHTML = `
+    <div class="sh"><div class="sh-title">Park K Factors</div><div class="sh-sub">Strikeout rate vs league avg · &gt;1.0 = pitcher friendly</div></div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Most K-Friendly</div>
+        ${parks.slice(0,15).map(p=>`
+          <div class="bar-row">
+            <div class="bar-label">${esc(p.venue)}</div>
+            <div class="bar-track"><div class="bar-fill g" style="width:${((p.park_k_factor-minF)/range*100).toFixed(1)}%"></div></div>
+            <div class="bar-val" style="color:var(--green)">${fmt3(p.park_k_factor)}</div>
+          </div>`).join('')}
       </div>
-
-      <div className="card">
-        <div className="card-title">Daily Accuracy Log</div>
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th className="right">Bets</th>
-                <th className="right">Correct</th>
-                <th className="right">Accuracy</th>
-                <th className="right">Avg Edge</th>
-              </tr>
-            </thead>
-            <tbody>
-              {records.map((r, i) => (
-                <tr key={i}>
-                  <td>{r.pred_date}</td>
-                  <td className="right">{r.total_bets}</td>
-                  <td className="right">{r.correct_bets}</td>
-                  <td className="right" style={{
-                    color: r.accuracy > 0.524 ? 'var(--green)' :
-                           r.accuracy < 0.45  ? 'var(--red)'   : 'inherit'
-                  }}>{fmtPct(r.accuracy)}</td>
-                  <td className="right">{fmt2(r.avg_edge)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <div class="card">
+        <div class="card-title">Least K-Friendly</div>
+        ${[...parks].reverse().slice(0,15).map(p=>`
+          <div class="bar-row">
+            <div class="bar-label">${esc(p.venue)}</div>
+            <div class="bar-track"><div class="bar-fill r" style="width:${((maxF-p.park_k_factor)/range*100).toFixed(1)}%"></div></div>
+            <div class="bar-val" style="color:var(--red)">${fmt3(p.park_k_factor)}</div>
+          </div>`).join('')}
       </div>
     </div>
-  );
+    <div class="card">
+      <div class="card-title">All Parks — ${maxSeason}</div>
+      <div class="tw"><table>
+        <thead><tr>
+          <th>Venue</th><th class="r">Total PA</th>
+          <th class="r">K Rate</th><th class="r">Park Factor</th>
+        </tr></thead>
+        <tbody>
+          ${parks.map(p=>`<tr>
+            <td class="name">${esc(p.venue)}</td>
+            <td class="r">${p.total_pa?(+p.total_pa).toLocaleString():'—'}</td>
+            <td class="r">${fmtP(p.venue_k_rate)}</td>
+            <td class="r" style="color:${(p.park_k_factor||1)>1.02?'var(--green)':(p.park_k_factor||1)<.98?'var(--red)':'inherit'};font-weight:600">${fmt3(p.park_k_factor)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
 }
 
-// ── Park Factors Tab ───────────────────────────────────────────
-function ParksTab() {
-  const [data, setData] = useState(null);
-  useEffect(() => { fetchJSON('park_factors.json').then(setData); }, []);
-  if (!data) return <div className="loading">Loading park factors...</div>;
-
-  const parks = (data.parks || []).filter(p => p.season === Math.max(...(data.parks || []).map(x => x.season)));
-  const sorted = [...parks].sort((a, b) => b.park_k_factor - a.park_k_factor);
-  const maxFactor = Math.max(...sorted.map(p => p.park_k_factor));
-  const minFactor = Math.min(...sorted.map(p => p.park_k_factor));
-
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-title">Park K Factors</div>
-        <div className="section-sub">Strikeout rate vs league average · &gt;1.0 = pitcher friendly</div>
-      </div>
-
-      <div className="two-col">
-        <div className="card">
-          <div className="card-title">Most K-Friendly Parks</div>
-          {sorted.slice(0, 15).map((p, i) => {
-            const pct = ((p.park_k_factor - minFactor) / (maxFactor - minFactor)) * 100;
-            return (
-              <div key={i} className="bar-row">
-                <div className="bar-label">{p.venue}</div>
-                <div className="bar-track">
-                  <div className="bar-fill park-pos" style={{width: `${pct}%`}} />
-                </div>
-                <div className="bar-val" style={{color:'var(--green)'}}>
-                  {p.park_k_factor?.toFixed(3)}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="card">
-          <div className="card-title">Least K-Friendly Parks</div>
-          {[...sorted].reverse().slice(0, 15).map((p, i) => {
-            const pct = ((maxFactor - p.park_k_factor) / (maxFactor - minFactor)) * 100;
-            return (
-              <div key={i} className="bar-row">
-                <div className="bar-label">{p.venue}</div>
-                <div className="bar-track">
-                  <div className="bar-fill park-neg" style={{width: `${pct}%`}} />
-                </div>
-                <div className="bar-val" style={{color:'var(--red)'}}>
-                  {p.park_k_factor?.toFixed(3)}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="card" style={{marginTop:'1.5rem'}}>
-        <div className="card-title">All Parks</div>
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Venue</th>
-                <th className="right">Season</th>
-                <th className="right">Total PA</th>
-                <th className="right">K Rate</th>
-                <th className="right">Park Factor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.map((p, i) => (
-                <tr key={i}>
-                  <td className="name">{p.venue}</td>
-                  <td className="right">{p.season}</td>
-                  <td className="right">{p.total_pa?.toLocaleString()}</td>
-                  <td className="right">{fmtPct(p.venue_k_rate)}</td>
-                  <td className="right" style={{
-                    color: p.park_k_factor > 1.02 ? 'var(--green)' :
-                           p.park_k_factor < 0.98 ? 'var(--red)'   : 'inherit',
-                    fontWeight: 600
-                  }}>{p.park_k_factor?.toFixed(3)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
+// ── Empty state helper ─────────────────────────────────────────
+function empty(title, sub) {
+  return `<div class="empty">
+    <div class="empty-icon">⚾</div>
+    <div class="empty-title">${title}</div>
+    <div class="empty-sub">${sub}</div>
+  </div>`;
 }
 
-// ── App Shell ──────────────────────────────────────────────────
-const TABS = [
-  { id: 'predictions', label: 'Predictions' },
-  { id: 'stuff',       label: 'Stuff Grades' },
-  { id: 'accuracy',    label: 'Accuracy' },
-  { id: 'parks',       label: 'Park Factors' },
-];
-
-function App() {
-  const [tab, setTab] = useState('predictions');
-
-  const content = tab === 'predictions' ? <PredictionsTab />
-    : tab === 'stuff'    ? <StuffTab />
-    : tab === 'accuracy' ? <AccuracyTab />
-    : <ParksTab />;
-
-  return (
-    <>
-      <header className="header">
-        <div className="header-logo">K<span>PROP</span> ANALYTICS</div>
-        <div className="header-meta">
-          MLB · Pitcher Strikeout Model<br/>
-          GBM · 1.74 MAE · 64.4% OU Acc
-        </div>
-      </header>
-      <nav className="nav">
-        {TABS.map(t => (
-          <button key={t.id}
-            className={`nav-tab ${tab === t.id ? 'active' : ''}`}
-            onClick={() => setTab(t.id)}>
-            {t.label}
-          </button>
-        ))}
-      </nav>
-      <main className="main">{content}</main>
-    </>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+// ── Init ───────────────────────────────────────────────────────
+loaded['predictions'] = true;
+renderPredictions();
 </script>
 </body>
 </html>
