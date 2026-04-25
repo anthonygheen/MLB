@@ -92,7 +92,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .card-title{font-family:var(--fh);font-size:1rem;letter-spacing:.08em;color:var(--dim);margin-bottom:1rem}
 
 .bar-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.45rem}
-.bar-label{width:100px;font-size:.72rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.bar-label{width:140px;font-size:.72rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
 .bar-track{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
 .bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
 .bar-fill.b{background:linear-gradient(90deg,var(--accent2),var(--accent))}
@@ -184,6 +184,7 @@ async function renderTab(id) {
 
 // ── Predictions ────────────────────────────────────────────────
 let predFilter = 'ALL';
+let bookFilter = 'ALL';
 let predData = null;
 
 async function renderPredictions() {
@@ -197,7 +198,20 @@ function drawPredictions() {
     el.innerHTML = empty('No Data', 'Run <code>generate_data.py</code> to populate.');
     return;
   }
-  const preds = predData.predictions || [];
+  const all = predData.predictions || [];
+
+  // Get unique books for filter
+  const books = ['ALL', ...new Set(all.map(p => p.book).filter(Boolean))].sort((a,b) => {
+    if (a === 'ALL') return -1;
+    if (b === 'ALL') return 1;
+    // Put DraftKings first after ALL
+    if (a === 'draftkings') return -1;
+    if (b === 'draftkings') return 1;
+    return a.localeCompare(b);
+  });
+
+  // Apply filters
+  let preds = bookFilter === 'ALL' ? all : all.filter(p => p.book === bookFilter);
   const filtered = predFilter === 'ALL'   ? preds
     : predFilter === 'EDGE'  ? preds.filter(p => p.flagged)
     : predFilter === 'OVER'  ? preds.filter(p => p.flagged && p.direction === 'OVER')
@@ -215,12 +229,21 @@ function drawPredictions() {
 
   el.innerHTML = `
     <div class="stats-row">
-      <div class="stat"><div class="stat-label">Pitchers</div><div class="stat-val a">${preds.length}</div></div>
+      <div class="stat"><div class="stat-label">Lines</div><div class="stat-val a">${preds.length}</div></div>
       <div class="stat"><div class="stat-label">Edges</div><div class="stat-val gold">${edges.length}</div></div>
       <div class="stat"><div class="stat-label">Overs</div><div class="stat-val g">${overs}</div></div>
       <div class="stat"><div class="stat-label">Unders</div><div class="stat-val r">${unders}</div></div>
       <div class="stat"><div class="stat-label">Date</div><div class="stat-val" style="font-size:.9rem;color:var(--dim)">${predData.date||'—'}</div></div>
     </div>
+
+    <div style="margin-bottom:.5rem;font-size:.6rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">Sportsbook</div>
+    <div class="filter-row" style="margin-bottom:1rem">
+      ${books.map(b =>
+        `<button class="fbtn ${bookFilter===b?'active':''}" onclick="setBookFilter('${b}')">${b==='ALL'?'All Books':b}</button>`
+      ).join('')}
+    </div>
+
+    <div style="margin-bottom:.5rem;font-size:.6rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">Direction</div>
     <div class="filter-row">
       ${['ALL','EDGE','OVER','UNDER'].map(f =>
         `<button class="fbtn ${predFilter===f?'active':''}" onclick="setPredFilter('${f}')">${f}</button>`
@@ -230,6 +253,7 @@ function drawPredictions() {
 }
 
 function setPredFilter(f) { predFilter = f; drawPredictions(); }
+function setBookFilter(b) { bookFilter = b; drawPredictions(); }
 
 function predCard(p) {
   const cls = p.flagged ? (p.direction==='OVER'?'over':'under') : '';
@@ -237,13 +261,23 @@ function predCard(p) {
   const edgeStr = p.edge != null ? (p.edge > 0 ? '+' : '') + fmt2(p.edge) : '—';
   const name = p.pitcher_name || `ID ${p.pitcher_id}`;
   const team = p.pitcher_team && p.pitcher_team !== '—' ? ` · ${esc(p.pitcher_team)}` : '';
-  const venue = p.venue && p.venue !== '—' ? `<div style="font-size:.62rem;color:var(--muted);margin-bottom:.75rem">${esc(p.venue)}</div>` : '';
+  const venue = p.venue && p.venue !== '—'
+    ? `<div style="font-size:.62rem;color:var(--muted);margin-bottom:.6rem">📍 ${esc(p.venue)}</div>` : '';
+  const updated = p.line_updated && p.line_updated !== '—'
+    ? `<div style="font-size:.6rem;color:var(--muted);margin-top:.6rem">Line updated ${esc(p.line_updated)}</div>` : '';
+
+  const overOdds  = p.over_odds  != null ? fmtO(p.over_odds)  : '—';
+  const underOdds = p.under_odds != null ? fmtO(p.under_odds) : '—';
+
   const bet = p.flagged
     ? `<div class="bet ${p.direction.toLowerCase()}">
         <span><span class="dot ${p.direction==='OVER'?'dg':'dr'}"></span>${p.direction} ${fmt1(p.line)}</span>
-        <span class="bet-odds">${fmtO(p.direction==='OVER'?p.over_odds:p.under_odds)}${p.book?' · '+esc(p.book):''}</span>
+        <span class="bet-odds">${p.direction==='OVER'?overOdds:underOdds}${p.book?' · '+esc(p.book):''}</span>
        </div>`
-    : `<div class="bet neutral"><span>Below threshold</span><span class="bet-odds">${edgeStr} Ks</span></div>`;
+    : `<div class="bet neutral">
+        <span>Below threshold · ${esc(p.book||'')}</span>
+        <span class="bet-odds">${edgeStr} Ks</span>
+       </div>`;
 
   return `
     <div class="pcard ${cls}">
@@ -255,7 +289,18 @@ function predCard(p) {
         <div><div class="pnum-label">Model</div><div class="pnum-val pred">${fmt1(p.predicted_ks)}</div></div>
         <div><div class="pnum-label">Edge</div><div class="pnum-val ${ep}">${edgeStr}</div></div>
       </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.6rem">
+        <div style="text-align:center;background:var(--green-dim);border-radius:4px;padding:.3rem">
+          <div style="font-size:.55rem;color:var(--muted);margin-bottom:.1rem">OVER</div>
+          <div style="font-family:var(--fm);font-size:.82rem;color:var(--green)">${overOdds}</div>
+        </div>
+        <div style="text-align:center;background:var(--red-dim);border-radius:4px;padding:.3rem">
+          <div style="font-size:.55rem;color:var(--muted);margin-bottom:.1rem">UNDER</div>
+          <div style="font-family:var(--fm);font-size:.82rem;color:var(--red)">${underOdds}</div>
+        </div>
+      </div>
       ${bet}
+      ${updated}
     </div>`;
 }
 

@@ -20,6 +20,7 @@ import sys
 import json
 import pickle
 import argparse
+import requests
 import duckdb
 import numpy as np
 import pandas as pd
@@ -36,8 +37,24 @@ from features.pitcher_features import (
 )
 
 DB_PATH    = os.getenv("DB_PATH", "data/mlb_modeling.db")
+API_KEY    = os.getenv("BDL_API_KEY")
+BASE_URL   = "https://api.balldontlie.io/mlb/v1"
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models", "saved")
 OUT_DIR    = os.path.join(os.path.dirname(__file__), "..", "docs", "data")
+
+
+def fetch_games_from_api(target_date: str) -> dict:
+    """Fetch game info directly from BDL API as fallback when not in DB."""
+    try:
+        resp = requests.get(
+            f"{BASE_URL}/games",
+            headers={"Authorization": API_KEY},
+            params={"dates[]": target_date, "season_type": "regular", "per_page": 100}
+        )
+        games = resp.json().get("data", [])
+        return {g['id']: g for g in games}
+    except Exception:
+        return {}
 
 
 def load_latest_model():
@@ -57,6 +74,7 @@ def generate_predictions(con, target_date: str) -> list:
             pp.game_id,
             pp.player_id AS pitcher_id,
             pp.line, pp.over_odds, pp.under_odds, pp.book,
+            pp.recorded_at,
             pl.full_name  AS pitcher_name,
             pl.team_name  AS pitcher_team
         FROM player_props pp
@@ -76,7 +94,7 @@ def generate_predictions(con, target_date: str) -> list:
         GROUP BY pa.pitcher_id
     """).df().set_index('pitcher_id')['pitcher_hand'].to_dict()
 
-    # Game info — today's games may not be in DB yet, so use LEFT JOIN fallback
+    # Game info — try DB first, fall back to API
     gid_list = ','.join(str(g) for g in props['game_id'].unique().tolist())
     try:
         games_map = con.execute(f"""
@@ -85,6 +103,18 @@ def generate_predictions(con, target_date: str) -> list:
         """).df().set_index('game_id').to_dict('index')
     except Exception:
         games_map = {}
+
+    # Fill missing games from API
+    missing_ids = [g for g in props['game_id'].unique() if g not in games_map]
+    if missing_ids:
+        api_games = fetch_games_from_api(target_date)
+        for gid, g in api_games.items():
+            if gid not in games_map:
+                games_map[gid] = {
+                    'home_team_name': g.get('home_team_name', '—'),
+                    'away_team_name': g.get('away_team_name', '—'),
+                    'venue':          g.get('venue', '—'),
+                }
 
     model, features = load_latest_model()
     results_df  = get_pitcher_game_results(con)
@@ -107,6 +137,17 @@ def generate_predictions(con, target_date: str) -> list:
         away_team = g.get('away_team_name', '—')
         venue     = g.get('venue', '—')
         matchup   = f"{away_team} @ {home_team}" if home_team != '—' else f"Game {game_id}"
+
+        # Line freshness
+        recorded_at = str(row.get('recorded_at', ''))
+        if recorded_at and 'T' in recorded_at:
+            try:
+                ts = pd.Timestamp(recorded_at)
+                line_updated = ts.strftime('%-I:%M %p').lstrip('0') if hasattr(ts, 'strftime') else recorded_at
+            except Exception:
+                line_updated = recorded_at[:16]
+        else:
+            line_updated = '—'
 
         # Feature vector
         hist = results_df[results_df['pitcher_id'] == pitcher_id]
@@ -150,6 +191,7 @@ def generate_predictions(con, target_date: str) -> list:
             'over_odds':    int(row['over_odds']) if pd.notna(row['over_odds']) else None,
             'under_odds':   int(row['under_odds']) if pd.notna(row['under_odds']) else None,
             'book':         row['book'],
+            'line_updated': line_updated,
             'flagged':      abs(edge) >= 0.75 if edge else False,
         })
 

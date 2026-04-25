@@ -91,48 +91,44 @@ def ingest_props_for_date(target_date: str, debug: bool = False):
         for p in props:
             prop_types_seen.add(p.get('prop_type', 'unknown'))
 
-        # Filter to K props only
+        # Filter to K props — BDL uses 'pitcher_strikeouts' for starters
+        # 'strikeouts' appears for batters — we only want pitcher props
         k_props = [p for p in props
-                   if (p.get('prop_type') or '').lower() in K_PROP_TYPES
-                   or any(k in (p.get('prop_type') or '').lower()
-                          for k in ['strikeout', 'pitcher_k'])]
+                   if p.get('prop_type') == 'pitcher_strikeouts']
 
         if debug and not k_props:
             print(f"   ℹ️  Game {game_id}: {len(props)} props, "
                   f"none are K props. Types seen: "
                   f"{set(p.get('prop_type') for p in props)}")
 
-        # Pivot over/under into one row per (player, vendor, line)
-        # Key: (player_id, vendor, line_value)
-        pivoted = {}
+        if debug and k_props:
+            # Print first K prop raw to verify market structure
+            import json
+            print(f"   🔍 Sample K prop: {json.dumps(k_props[0], indent=2)}")
+
+        # Insert K props — market.type is 'over_under' with both odds on one record
+        # No pivot needed, just map fields directly
         for prop in k_props:
             player_id  = prop.get('player_id')
             vendor     = prop.get('vendor', 'unknown')
             line_value = prop.get('line_value')
             market     = prop.get('market', {})
             mkt_type   = (market.get('type') or '').lower()
-            mkt_odds   = market.get('odds')
 
-            key = (player_id, vendor, line_value)
-            if key not in pivoted:
-                pivoted[key] = {
-                    'game_id':    game_id,
-                    'player_id':  player_id,
-                    'vendor':     vendor,
-                    'prop_type':  prop.get('prop_type'),
-                    'line_value': line_value,
-                    'over_odds':  None,
-                    'under_odds': None,
-                }
-
-            if mkt_type == 'over':
-                pivoted[key]['over_odds'] = mkt_odds
+            # Handle over_under (K props) vs milestone (other props)
+            if mkt_type == 'over_under':
+                over_odds  = market.get('over_odds')
+                under_odds = market.get('under_odds')
+            elif mkt_type == 'over':
+                over_odds  = market.get('odds')
+                under_odds = None
             elif mkt_type == 'under':
-                pivoted[key]['under_odds'] = mkt_odds
+                over_odds  = None
+                under_odds = market.get('odds')
+            else:
+                over_odds  = None
+                under_odds = None
 
-        # Insert pivoted rows
-        for key, row in pivoted.items():
-            player_id, vendor, line_value = key
             prop_id = f"{game_id}_{player_id}_{vendor}"
 
             try:
@@ -141,16 +137,17 @@ def ingest_props_for_date(target_date: str, debug: bool = False):
                         prop_id, game_id, player_id, book,
                         market_type, line, over_odds, under_odds,
                         recorded_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, [
                     prop_id,
                     game_id,
                     player_id,
                     vendor,
-                    row['prop_type'],
+                    prop.get('prop_type'),
                     float(line_value) if line_value else None,
-                    row['over_odds'],
-                    row['under_odds'],
+                    over_odds,
+                    under_odds,
+                    prop.get('updated_at') or 'current_timestamp',
                 ])
                 total_inserted += 1
             except Exception as e:
