@@ -2,6 +2,28 @@
   "season": 2026,
   "pitchers": [
     {
+      "pitcher_id": 239,
+      "pitcher_name": "Sean Manaea",
+      "pitcher_team": "New York Mets",
+      "pitch_count": 58,
+      "avg_velo": 89.9,
+      "avg_spin": 2021.948,
+      "avg_ivb": 11.121,
+      "whiff_rate": 0.69,
+      "velo_vs_avg": -5.003
+    },
+    {
+      "pitcher_id": 2712,
+      "pitcher_name": "Max Scherzer",
+      "pitcher_team": "Toronto Blue Jays",
+      "pitch_count": 68,
+      "avg_velo": 92.903,
+      "avg_spin": 2310.088,
+      "avg_ivb": 15.853,
+      "whiff_rate": 0.618,
+      "velo_vs_avg": -2.0
+    },
+    {
       "pitcher_id": 1017,
       "pitcher_name": "Jacob deGrom",
       "pitcher_team": "Texas Rangers",
@@ -10,7 +32,7 @@
       "avg_spin": 2473.78,
       "avg_ivb": 15.923,
       "whiff_rate": 0.615,
-      "velo_vs_avg": 2.385
+      "velo_vs_avg": 2.455
     },
     {
       "pitcher_id": 178,
@@ -21,7 +43,7 @@
       "avg_spin": 2315.529,
       "avg_ivb": 16.506,
       "whiff_rate": 0.6,
-      "velo_vs_avg": 1.5
+      "velo_vs_avg": 1.57
     },
     {
       "pitcher_id": 2183925,
@@ -32,7 +54,7 @@
       "avg_spin": 2446.0,
       "avg_ivb": 17.362,
       "whiff_rate": 0.585,
-      "velo_vs_avg": 2.311
+      "velo_vs_avg": 2.381
     },
     {
       "pitcher_id": 51,
@@ -43,29 +65,29 @@
       "avg_spin": 2455.573,
       "avg_ivb": 17.333,
       "whiff_rate": 0.573,
-      "velo_vs_avg": 1.859
+      "velo_vs_avg": 1.929
     },
     {
       "pitcher_id": 114,
       "pitcher_name": "Freddy Peralta",
       "pitcher_team": "New York Mets",
-      "pitch_count": 58,
-      "avg_velo": 93.507,
-      "avg_spin": 2383.5,
-      "avg_ivb": 16.379,
-      "whiff_rate": 0.534,
-      "velo_vs_avg": -1.466
+      "pitch_count": 116,
+      "avg_velo": 93.988,
+      "avg_spin": 2385.991,
+      "avg_ivb": 16.603,
+      "whiff_rate": 0.569,
+      "velo_vs_avg": -0.915
     },
     {
-      "pitcher_id": 878,
-      "pitcher_name": "Taj Bradley",
-      "pitcher_team": "Minnesota Twins",
-      "pitch_count": 51,
-      "avg_velo": 95.916,
-      "avg_spin": 2222.275,
-      "avg_ivb": 18.235,
-      "whiff_rate": 0.529,
-      "velo_vs_avg": 0.942
+      "pitcher_id": 3198,
+      "pitcher_name": "Brandon Woodruff",
+      "pitcher_team": "Milwaukee Brewers",
+      "pitch_count": 84,
+      "avg_velo": 92.817,
+      "avg_spin": 2400.536,
+      "avg_ivb": 17.75,
+      "whiff_rate": 0.548,
+      "velo_vs_avg": -2.086
     },
     {
       "pitcher_id": 4100,
@@ -76,7 +98,29 @@
       "avg_spin": 2346.48,
       "avg_ivb": 18.06,
       "whiff_rate": 0.5,
-      "velo_vs_avg": -1.775
+      "velo_vs_avg": -1.705
+    },
+    {
+      "pitcher_id": 533,
+      "pitcher_name": "Andrew Abbott",
+      "pitcher_team": "Cincinnati Reds",
+      "pitch_count": 74,
+      "avg_velo": 92.192,
+      "avg_spin": 2334.176,
+      "avg_ivb": 15.849,
+      "whiff_rate": 0.486,
+      "velo_vs_avg": -2.711
+    },
+    {
+      "pitcher_id": 878,
+      "pitcher_name": "Taj Bradley",
+      "pitcher_team": "Minnesota Twins",
+      "pitch_count": 91,
+      "avg_velo": 96.182,
+      "avg_spin": 2252.769,
+      "avg_ivb": 18.879,
+      "whiff_rate": 0.484,
+      "velo_vs_avg": 1.28
     },
     {
       "pitcher_id": 3015008,
@@ -87,7 +131,18 @@
       "avg_spin": 2377.282,
       "avg_ivb": 18.051,
       "whiff_rate": 0.462,
-      "velo_vs_avg": 3.53
+      "velo_vs_avg": 3.601
+    },
+    {
+      "pitcher_id": 4668116,
+      "pitcher_name": "Andrew Painter",
+      "pitcher_team": "Philadelphia Phillies",
+      "pitch_count": 69,
+      "avg_velo": 96.539,
+      "avg_spin": 2234.739,
+      "avg_ivb": 14.768,
+      "whiff_rate": 0.406,
+      "velo_vs_avg": 1.636
     }
   ]
 }

@@ -114,6 +114,13 @@
     },
     {
       "venue": "Citi Field",
+      "season": 2026,
+      "total_pa": 227,
+      "venue_k_rate": 0.2247,
+      "park_k_factor": 1.0
+    },
+    {
+      "venue": "Citi Field",
       "season": 2025,
       "total_pa": 6080,
       "venue_k_rate": 0.2215,
