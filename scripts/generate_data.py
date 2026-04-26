@@ -342,19 +342,82 @@ def generate_accuracy(con) -> dict:
         total   = int(daily_df['total_bets'].sum())
         correct = int(daily_df['correct_bets'].sum())
 
+        # Deduplicated counts (one per pitcher per game, not per book)
+        dedup = con.execute("""
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN correct THEN 1 ELSE 0 END) as correct
+            FROM (
+                SELECT DISTINCT game_id, player_id, correct
+                FROM model_predictions WHERE correct IS NOT NULL
+            )
+        """).fetchone()
+        # -- Threshold analysis --
+        threshold_sql = """
+            SELECT
+                CASE WHEN predicted_value > line THEN 'OVER' ELSE 'UNDER' END as direction,
+                CASE
+                    WHEN ABS(predicted_value - line) >= 1.50 THEN '>=1.50'
+                    WHEN ABS(predicted_value - line) >= 1.25 THEN '1.25-1.50'
+                    WHEN ABS(predicted_value - line) >= 1.00 THEN '1.00-1.25'
+                    WHEN ABS(predicted_value - line) >= 0.75 THEN '0.75-1.00'
+                    WHEN ABS(predicted_value - line) >= 0.50 THEN '0.50-0.75'
+                    ELSE '<0.50'
+                END as edge_bucket,
+                COUNT(*) as bets,
+                ROUND(AVG(CASE WHEN correct THEN 1.0 ELSE 0.0 END), 4) as accuracy,
+                ROUND(AVG(ABS(predicted_value - line)), 3) as avg_edge
+            FROM (
+                SELECT DISTINCT game_id, player_id,
+                       predicted_value, line, correct
+                FROM model_predictions WHERE correct IS NOT NULL
+            )
+            GROUP BY direction, edge_bucket
+            ORDER BY direction, edge_bucket DESC
+        """
+        threshold_df = con.execute(threshold_sql).df()
+
+        # Compute recommended thresholds
+        # Find lowest edge bucket per direction where accuracy >= 54% (above breakeven w/ -110 juice)
+        BREAKEVEN = 0.524
+        recommendations = {}
+        for direction in ['OVER', 'UNDER']:
+            dir_df = threshold_df[threshold_df['direction'] == direction].copy()
+            # Only consider buckets with >= 5 bets
+            dir_df = dir_df[dir_df['bets'] >= 5]
+            profitable = dir_df[dir_df['accuracy'] >= BREAKEVEN]
+            if not profitable.empty:
+                # Find the bucket with best accuracy among profitable ones
+                best = profitable.loc[profitable['accuracy'].idxmax()]
+                recommendations[direction] = {
+                    'best_bucket':  best['edge_bucket'],
+                    'best_accuracy': float(best['accuracy']),
+                    'best_bets':    int(best['bets']),
+                }
+            else:
+                recommendations[direction] = None
+
+        dedup_total   = int(dedup[0])
+        dedup_correct = int(dedup[1])
+
         return {
             'summary': {
-                'total_bets':    total,
-                'correct_bets':  correct,
-                'accuracy':      round(correct / total, 4) if total > 0 else None,
-                'avg_edge':      round(float(daily_df['avg_edge'].mean()), 3),
-                'avg_actual':    round(float(daily_df['avg_actual'].mean()), 2),
-                'avg_predicted': round(float(daily_df['avg_predicted'].mean()), 2),
-                'avg_line':      round(float(daily_df['avg_line'].mean()), 2),
+                'total_bets':     total,
+                'correct_bets':   correct,
+                'accuracy':       round(correct / total, 4) if total > 0 else None,
+                'dedup_total':    dedup_total,
+                'dedup_correct':  dedup_correct,
+                'dedup_accuracy': round(dedup_correct / dedup_total, 4) if dedup_total > 0 else None,
+                'avg_edge':       round(float(daily_df['avg_edge'].mean()), 3),
+                'avg_actual':     round(float(daily_df['avg_actual'].mean()), 2),
+                'avg_predicted':  round(float(daily_df['avg_predicted'].mean()), 2),
+                'avg_line':       round(float(daily_df['avg_line'].mean()), 2),
             },
-            'daily':   daily_df.fillna(0).to_dict('records'),
-            'bets':    bets_df.where(bets_df.notna(), None).to_dict('records'),
-            'by_book': by_book_df.fillna(0).to_dict('records'),
+            'daily':        daily_df.fillna(0).to_dict('records'),
+            'bets':         bets_df.where(bets_df.notna(), None).to_dict('records'),
+            'by_book':      by_book_df.fillna(0).to_dict('records'),
+            'thresholds':   threshold_df.fillna(0).to_dict('records'),
+            'recommendations': recommendations,
         }
 
     except Exception as e:

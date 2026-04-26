@@ -3,6 +3,9 @@
     "total_bets": 168,
     "correct_bets": 84,
     "accuracy": 0.5,
+    "dedup_total": 50,
+    "dedup_correct": 27,
+    "dedup_accuracy": 0.54,
     "avg_edge": -0.367,
     "avg_actual": 4.53,
     "avg_predicted": 4.68,
@@ -7534,12 +7537,12 @@
   ],
   "by_book": [
     {
-      "book": "betrivers",
-      "total_bets": 160,
-      "correct_bets": 80.0,
+      "book": "draftkings",
+      "total_bets": 168,
+      "correct_bets": 84.0,
       "accuracy": 0.5,
-      "avg_edge": -0.356,
-      "avg_prediction_error": 0.057
+      "avg_edge": -0.357,
+      "avg_prediction_error": 0.084
     },
     {
       "book": "fanduel",
@@ -7550,12 +7553,12 @@
       "avg_prediction_error": 0.084
     },
     {
-      "book": "draftkings",
-      "total_bets": 168,
-      "correct_bets": 84.0,
+      "book": "betrivers",
+      "total_bets": 160,
+      "correct_bets": 80.0,
       "accuracy": 0.5,
-      "avg_edge": -0.357,
-      "avg_prediction_error": 0.084
+      "avg_edge": -0.356,
+      "avg_prediction_error": 0.057
     },
     {
       "book": "betmgm",
@@ -7573,5 +7576,92 @@
       "avg_edge": -0.361,
       "avg_prediction_error": 0.257
     }
-  ]
+  ],
+  "thresholds": [
+    {
+      "direction": "OVER",
+      "edge_bucket": ">=1.50",
+      "bets": 3,
+      "accuracy": 1.0,
+      "avg_edge": 1.91
+    },
+    {
+      "direction": "OVER",
+      "edge_bucket": "<0.50",
+      "bets": 14,
+      "accuracy": 0.2857,
+      "avg_edge": 0.219
+    },
+    {
+      "direction": "OVER",
+      "edge_bucket": "1.00-1.25",
+      "bets": 5,
+      "accuracy": 0.2,
+      "avg_edge": 1.16
+    },
+    {
+      "direction": "OVER",
+      "edge_bucket": "0.75-1.00",
+      "bets": 3,
+      "accuracy": 0.6667,
+      "avg_edge": 0.88
+    },
+    {
+      "direction": "OVER",
+      "edge_bucket": "0.50-0.75",
+      "bets": 4,
+      "accuracy": 0.75,
+      "avg_edge": 0.585
+    },
+    {
+      "direction": "UNDER",
+      "edge_bucket": ">=1.50",
+      "bets": 10,
+      "accuracy": 0.6,
+      "avg_edge": 2.328
+    },
+    {
+      "direction": "UNDER",
+      "edge_bucket": "<0.50",
+      "bets": 12,
+      "accuracy": 0.6667,
+      "avg_edge": 0.333
+    },
+    {
+      "direction": "UNDER",
+      "edge_bucket": "1.25-1.50",
+      "bets": 6,
+      "accuracy": 0.6667,
+      "avg_edge": 1.383
+    },
+    {
+      "direction": "UNDER",
+      "edge_bucket": "1.00-1.25",
+      "bets": 2,
+      "accuracy": 1.0,
+      "avg_edge": 1.11
+    },
+    {
+      "direction": "UNDER",
+      "edge_bucket": "0.75-1.00",
+      "bets": 5,
+      "accuracy": 1.0,
+      "avg_edge": 0.888
+    },
+    {
+      "direction": "UNDER",
+      "edge_bucket": "0.50-0.75",
+      "bets": 5,
+      "accuracy": 0.4,
+      "avg_edge": 0.596
+    }
+  ],
+  "recommendations": {
+    "OVER": null,
+    "UNDER": {
+      "best_bucket": "0.75-1.00",
+      "best_accuracy": 1.0,
+      "best_bets": 5
+    }
+  }
 }

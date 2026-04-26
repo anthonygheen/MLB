@@ -186,11 +186,75 @@ async function renderTab(id) {
 let predFilter = 'ALL';
 let bookFilter = 'ALL';
 let predData = null;
+let accDataForPreds = null;
 
 async function renderPredictions() {
-  predData = await load('data/predictions.json');
+  [predData, accDataForPreds] = await Promise.all([
+    load('data/predictions.json'),
+    load('data/accuracy.json'),
+  ]);
   drawPredictions();
 }
+
+function thresholdCard(accData) {
+  if (!accData || !accData.thresholds || !accData.thresholds.length) {
+    return `<div class="card" style="margin-bottom:1.5rem;border-color:var(--gold);opacity:.5">
+      <div class="card-title" style="color:var(--gold)">📐 Threshold Guidance</div>
+      <div style="font-size:.75rem;color:var(--muted)">Builds after 5+ bets per edge bucket. Run <code>log_results.py</code> daily.</div>
+    </div>`;
+  }
+
+  const buckets = accData.thresholds;
+  const recs    = accData.recommendations || {};
+  const BREAKEVEN = 0.524;
+
+  const overRows = buckets
+    .filter(r => r.direction === 'OVER')
+    .map(r => {
+      const acc = r.accuracy || 0;
+      const color = acc >= BREAKEVEN ? 'var(--green)' : acc < 0.45 ? 'var(--red)' : 'var(--text-dim)';
+      const flag  = acc >= BREAKEVEN && r.bets >= 5 ? ' ✓' : r.bets < 5 ? ' *' : '';
+      return `<div class="bar-row">
+        <div class="bar-label" style="width:90px">${esc(r.edge_bucket)}</div>
+        <div style="font-family:var(--fm);font-size:.7rem;color:var(--dim);width:40px">${r.bets}x</div>
+        <div class="bar-track"><div class="bar-fill ${acc>=BREAKEVEN?'g':'r'}" style="width:${Math.min(100,(acc*100)).toFixed(0)}%"></div></div>
+        <div class="bar-val" style="color:${color}">${fmtP(acc)}${flag}</div>
+      </div>`;
+    }).join('');
+
+  const underRows = buckets
+    .filter(r => r.direction === 'UNDER')
+    .map(r => {
+      const acc = r.accuracy || 0;
+      const color = acc >= BREAKEVEN ? 'var(--green)' : acc < 0.45 ? 'var(--red)' : 'var(--text-dim)';
+      const flag  = acc >= BREAKEVEN && r.bets >= 5 ? ' ✓' : r.bets < 5 ? ' *' : '';
+      return `<div class="bar-row">
+        <div class="bar-label" style="width:90px">${esc(r.edge_bucket)}</div>
+        <div style="font-family:var(--fm);font-size:.7rem;color:var(--dim);width:40px">${r.bets}x</div>
+        <div class="bar-track"><div class="bar-fill ${acc>=BREAKEVEN?'g':'r'}" style="width:${Math.min(100,(acc*100)).toFixed(0)}%"></div></div>
+        <div class="bar-val" style="color:${color}">${fmtP(acc)}${flag}</div>
+      </div>`;
+    }).join('');
+
+  const recOver  = recs.OVER  ? `Best bucket: <strong style="color:var(--green)">${recs.OVER.best_bucket}</strong> at ${fmtP(recs.OVER.best_accuracy)} (${recs.OVER.best_bets} bets)` : 'No profitable bucket yet';
+  const recUnder = recs.UNDER ? `Best bucket: <strong style="color:var(--green)">${recs.UNDER.best_bucket}</strong> at ${fmtP(recs.UNDER.best_accuracy)} (${recs.UNDER.best_bets} bets)` : 'No profitable bucket yet';
+
+  return `<div class="card" style="margin-bottom:1.5rem;border-color:var(--gold)">
+    <div class="card-title" style="color:var(--gold)">📐 Threshold Guidance <span style="font-size:.62rem;color:var(--muted);font-family:var(--fm)">· ✓ = profitable · * = &lt;5 bets</span></div>
+    <div class="two-col" style="gap:1.5rem">
+      <div>
+        <div style="font-size:.65rem;font-weight:600;letter-spacing:.1em;color:var(--green);margin-bottom:.6rem">OVER EDGES</div>
+        ${overRows || '<div style="color:var(--muted);font-size:.75rem">No data yet</div>'}
+        <div style="font-size:.68rem;color:var(--dim);margin-top:.6rem">${recOver}</div>
+      </div>
+      <div>
+        <div style="font-size:.65rem;font-weight:600;letter-spacing:.1em;color:var(--red);margin-bottom:.6rem">UNDER EDGES</div>
+        ${underRows || '<div style="color:var(--muted);font-size:.75rem">No data yet</div>'}
+        <div style="font-size:.68rem;color:var(--dim);margin-top:.6rem">${recUnder}</div>
+      </div>
+    </div>
+    <div style="font-size:.62rem;color:var(--muted);margin-top:.75rem">Based on ${accData.summary?.dedup_total||0} unique pitcher-games · refreshes as data accumulates</div>
+  </div>`;
 
 function drawPredictions() {
   const el = document.getElementById('predictions');
@@ -235,6 +299,8 @@ function drawPredictions() {
       <div class="stat"><div class="stat-label">Unders</div><div class="stat-val r">${unders}</div></div>
       <div class="stat"><div class="stat-label">Date</div><div class="stat-val" style="font-size:.9rem;color:var(--dim)">${predData.date||'—'}</div></div>
     </div>
+
+    ${thresholdCard(accDataForPreds)}
 
     <div style="margin-bottom:.5rem;font-size:.6rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">Sportsbook</div>
     <div class="filter-row" style="margin-bottom:1rem">
@@ -403,9 +469,10 @@ function drawAccuracy() {
 
   const summaryHtml = `
     <div class="stats-row">
-      <div class="stat"><div class="stat-label">Total Bets</div><div class="stat-val a">${s.total_bets}</div></div>
-      <div class="stat"><div class="stat-label">Correct</div><div class="stat-val g">${s.correct_bets}</div></div>
-      <div class="stat"><div class="stat-label">OU Accuracy</div><div class="stat-val gold">${fmtP(s.accuracy)}</div></div>
+      <div class="stat"><div class="stat-label">Unique Games</div><div class="stat-val a">${s.dedup_total||s.total_bets}</div></div>
+      <div class="stat"><div class="stat-label">Correct</div><div class="stat-val g">${s.dedup_correct||s.correct_bets}</div></div>
+      <div class="stat"><div class="stat-label">OU Accuracy</div><div class="stat-val gold">${fmtP(s.dedup_accuracy||s.accuracy)}</div></div>
+      <div class="stat"><div class="stat-label">Total Lines</div><div class="stat-val" style="color:var(--dim)">${s.total_bets}</div></div>
       <div class="stat"><div class="stat-label">Avg Edge</div><div class="stat-val">${fmt2(s.avg_edge)} Ks</div></div>
       <div class="stat"><div class="stat-label">Avg Line</div><div class="stat-val" style="color:var(--dim)">${fmt1(s.avg_line)}</div></div>
       <div class="stat"><div class="stat-label">Avg Predicted</div><div class="stat-val" style="color:var(--accent)">${fmt1(s.avg_predicted)}</div></div>
