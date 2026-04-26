@@ -1,6 +1,6 @@
 {
   "date": "2026-04-26",
-  "generated_at": "2026-04-26 12:26:57.237762",
+  "generated_at": "2026-04-26 13:39:14.004685",
   "predictions": [
     {
       "pitcher_id": 854,
@@ -17,7 +17,17 @@
       "under_odds": -435,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.0863,
+      "our_prob_under": 0.9137,
+      "fair_odds_over": 1059,
+      "fair_odds_under": -1059,
+      "market_prob_over": 0.2564,
+      "market_prob_under": 0.8131,
+      "prob_edge_over": -0.1701,
+      "prob_edge_under": 0.1006,
+      "ev_over": -0.6634,
+      "ev_under": 0.1237
     },
     {
       "pitcher_id": 2899770,
@@ -34,7 +44,17 @@
       "under_odds": -345,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.1113,
+      "our_prob_under": 0.8887,
+      "fair_odds_over": 798,
+      "fair_odds_under": -798,
+      "market_prob_over": 0.2941,
+      "market_prob_under": 0.7753,
+      "prob_edge_over": -0.1828,
+      "prob_edge_under": 0.1134,
+      "ev_over": -0.6216,
+      "ev_under": 0.1463
     },
     {
       "pitcher_id": 10,
@@ -51,7 +71,17 @@
       "under_odds": 130,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.8864,
+      "our_prob_under": 0.1136,
+      "fair_odds_over": -780,
+      "fair_odds_under": 780,
+      "market_prob_over": 0.6364,
+      "market_prob_under": 0.4348,
+      "prob_edge_over": 0.25,
+      "prob_edge_under": -0.3212,
+      "ev_over": 0.3929,
+      "ev_under": -0.7387
     },
     {
       "pitcher_id": 356,
@@ -68,7 +98,17 @@
       "under_odds": -670,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.13,
+      "our_prob_under": 0.87,
+      "fair_odds_over": 669,
+      "fair_odds_under": -669,
+      "market_prob_over": 0.2,
+      "market_prob_under": 0.8701,
+      "prob_edge_over": -0.07,
+      "prob_edge_under": -0.0001,
+      "ev_over": -0.35,
+      "ev_under": -0.0001
     },
     {
       "pitcher_id": 602,
@@ -85,7 +125,17 @@
       "under_odds": -230,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.0993,
+      "our_prob_under": 0.9007,
+      "fair_odds_over": 907,
+      "fair_odds_under": -907,
+      "market_prob_over": 0.3774,
+      "market_prob_under": 0.697,
+      "prob_edge_over": -0.2781,
+      "prob_edge_under": 0.2037,
+      "ev_over": -0.7369,
+      "ev_under": 0.2923
     },
     {
       "pitcher_id": 928,
@@ -102,7 +152,17 @@
       "under_odds": -385,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.176,
+      "our_prob_under": 0.824,
+      "fair_odds_over": 468,
+      "fair_odds_under": -468,
+      "market_prob_over": 0.2778,
+      "market_prob_under": 0.7938,
+      "prob_edge_over": -0.1018,
+      "prob_edge_under": 0.0302,
+      "ev_over": -0.3664,
+      "ev_under": 0.038
     },
     {
       "pitcher_id": 3363426,
@@ -119,7 +179,17 @@
       "under_odds": 300,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7908,
+      "our_prob_under": 0.2092,
+      "fair_odds_over": -378,
+      "fair_odds_under": 378,
+      "market_prob_over": 0.8198,
+      "market_prob_under": 0.25,
+      "prob_edge_over": -0.029,
+      "prob_edge_under": -0.0408,
+      "ev_over": -0.0354,
+      "ev_under": -0.1632
     },
     {
       "pitcher_id": 2899770,
@@ -136,7 +206,17 @@
       "under_odds": -140,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.1986,
+      "our_prob_under": 0.8014,
+      "fair_odds_over": 404,
+      "fair_odds_under": -404,
+      "market_prob_over": 0.4785,
+      "market_prob_under": 0.5833,
+      "prob_edge_over": -0.2799,
+      "prob_edge_under": 0.2181,
+      "ev_over": -0.5849,
+      "ev_under": 0.3738
     },
     {
       "pitcher_id": 2899770,
@@ -153,7 +233,17 @@
       "under_odds": -125,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.1986,
+      "our_prob_under": 0.8014,
+      "fair_odds_over": 404,
+      "fair_odds_under": -404,
+      "market_prob_over": 0.5146,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": -0.316,
+      "prob_edge_under": 0.2458,
+      "ev_over": -0.614,
+      "ev_under": 0.4425
     },
     {
       "pitcher_id": 713,
@@ -170,7 +260,17 @@
       "under_odds": -500,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.1803,
+      "our_prob_under": 0.8197,
+      "fair_odds_over": 455,
+      "fair_odds_under": -455,
+      "market_prob_over": 0.2381,
+      "market_prob_under": 0.8333,
+      "prob_edge_over": -0.0578,
+      "prob_edge_under": -0.0136,
+      "ev_over": -0.2427,
+      "ev_under": -0.0164
     },
     {
       "pitcher_id": 163,
@@ -187,7 +287,17 @@
       "under_odds": -360,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.1703,
+      "our_prob_under": 0.8297,
+      "fair_odds_over": 487,
+      "fair_odds_under": -487,
+      "market_prob_over": 0.2857,
+      "market_prob_under": 0.7826,
+      "prob_edge_over": -0.1154,
+      "prob_edge_under": 0.0471,
+      "ev_over": -0.4039,
+      "ev_under": 0.0602
     },
     {
       "pitcher_id": 911,
@@ -204,7 +314,17 @@
       "under_odds": 210,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7996,
+      "our_prob_under": 0.2004,
+      "fair_odds_over": -399,
+      "fair_odds_under": 399,
+      "market_prob_over": 0.7468,
+      "market_prob_under": 0.3226,
+      "prob_edge_over": 0.0528,
+      "prob_edge_under": -0.1222,
+      "ev_over": 0.0707,
+      "ev_under": -0.3788
     },
     {
       "pitcher_id": 10,
@@ -221,7 +341,17 @@
       "under_odds": -165,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7536,
+      "our_prob_under": 0.2464,
+      "fair_odds_over": -306,
+      "fair_odds_under": 306,
+      "market_prob_over": 0.4484,
+      "market_prob_under": 0.6226,
+      "prob_edge_over": 0.3052,
+      "prob_edge_under": -0.3762,
+      "ev_over": 0.6805,
+      "ev_under": -0.6043
     },
     {
       "pitcher_id": 10,
@@ -238,7 +368,17 @@
       "under_odds": -174,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7536,
+      "our_prob_under": 0.2464,
+      "fair_odds_over": -306,
+      "fair_odds_under": 306,
+      "market_prob_over": 0.4237,
+      "market_prob_under": 0.635,
+      "prob_edge_over": 0.3299,
+      "prob_edge_under": -0.3886,
+      "ev_over": 0.7785,
+      "ev_under": -0.612
     },
     {
       "pitcher_id": 10,
@@ -255,7 +395,17 @@
       "under_odds": -170,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7536,
+      "our_prob_under": 0.2464,
+      "fair_odds_over": -306,
+      "fair_odds_under": 306,
+      "market_prob_over": 0.4348,
+      "market_prob_under": 0.6296,
+      "prob_edge_over": 0.3188,
+      "prob_edge_under": -0.3832,
+      "ev_over": 0.7333,
+      "ev_under": -0.6087
     },
     {
       "pitcher_id": 10,
@@ -272,7 +422,17 @@
       "under_odds": -182,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7536,
+      "our_prob_under": 0.2464,
+      "fair_odds_over": -306,
+      "fair_odds_under": 306,
+      "market_prob_over": 0.4237,
+      "market_prob_under": 0.6454,
+      "prob_edge_over": 0.3299,
+      "prob_edge_under": -0.399,
+      "ev_over": 0.7785,
+      "ev_under": -0.6182
     },
     {
       "pitcher_id": 736,
@@ -289,7 +449,17 @@
       "under_odds": -150,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2394,
+      "our_prob_under": 0.7606,
+      "fair_odds_over": 318,
+      "fair_odds_under": -318,
+      "market_prob_over": 0.4762,
+      "market_prob_under": 0.6,
+      "prob_edge_over": -0.2368,
+      "prob_edge_under": 0.1606,
+      "ev_over": -0.4973,
+      "ev_under": 0.2677
     },
     {
       "pitcher_id": 11,
@@ -306,7 +476,17 @@
       "under_odds": 104,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7182,
+      "our_prob_under": 0.2818,
+      "fair_odds_over": -255,
+      "fair_odds_under": 255,
+      "market_prob_over": 0.569,
+      "market_prob_under": 0.4902,
+      "prob_edge_over": 0.1492,
+      "prob_edge_under": -0.2084,
+      "ev_over": 0.2623,
+      "ev_under": -0.4251
     },
     {
       "pitcher_id": 11,
@@ -323,7 +503,17 @@
       "under_odds": -110,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7182,
+      "our_prob_under": 0.2818,
+      "fair_odds_over": -255,
+      "fair_odds_under": 255,
+      "market_prob_over": 0.5455,
+      "market_prob_under": 0.5238,
+      "prob_edge_over": 0.1727,
+      "prob_edge_under": -0.242,
+      "ev_over": 0.3167,
+      "ev_under": -0.462
     },
     {
       "pitcher_id": 11,
@@ -340,7 +530,17 @@
       "under_odds": -106,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7182,
+      "our_prob_under": 0.2818,
+      "fair_odds_over": -255,
+      "fair_odds_under": 255,
+      "market_prob_over": 0.5556,
+      "market_prob_under": 0.5146,
+      "prob_edge_over": 0.1626,
+      "prob_edge_under": -0.2328,
+      "ev_over": 0.2928,
+      "ev_under": -0.4524
     },
     {
       "pitcher_id": 354,
@@ -357,7 +557,17 @@
       "under_odds": 155,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7167,
+      "our_prob_under": 0.2833,
+      "fair_odds_over": -253,
+      "fair_odds_under": 253,
+      "market_prob_over": 0.6774,
+      "market_prob_under": 0.3922,
+      "prob_edge_over": 0.0393,
+      "prob_edge_under": -0.1089,
+      "ev_over": 0.058,
+      "ev_under": -0.2776
     },
     {
       "pitcher_id": 602,
@@ -374,7 +584,17 @@
       "under_odds": 105,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2098,
+      "our_prob_under": 0.7902,
+      "fair_odds_over": 377,
+      "fair_odds_under": -377,
+      "market_prob_over": 0.5833,
+      "market_prob_under": 0.4878,
+      "prob_edge_over": -0.3735,
+      "prob_edge_under": 0.3024,
+      "ev_over": -0.6403,
+      "ev_under": 0.6199
     },
     {
       "pitcher_id": 602,
@@ -391,7 +611,17 @@
       "under_odds": -107,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2098,
+      "our_prob_under": 0.7902,
+      "fair_odds_over": 377,
+      "fair_odds_under": -377,
+      "market_prob_over": 0.5455,
+      "market_prob_under": 0.5169,
+      "prob_edge_over": -0.3357,
+      "prob_edge_under": 0.2733,
+      "ev_over": -0.6154,
+      "ev_under": 0.5287
     },
     {
       "pitcher_id": 602,
@@ -408,7 +638,17 @@
       "under_odds": -110,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2098,
+      "our_prob_under": 0.7902,
+      "fair_odds_over": 377,
+      "fair_odds_under": -377,
+      "market_prob_over": 0.5455,
+      "market_prob_under": 0.5238,
+      "prob_edge_over": -0.3357,
+      "prob_edge_under": 0.2664,
+      "ev_over": -0.6154,
+      "ev_under": 0.5086
     },
     {
       "pitcher_id": 602,
@@ -425,7 +665,17 @@
       "under_odds": -106,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2098,
+      "our_prob_under": 0.7902,
+      "fair_odds_over": 377,
+      "fair_odds_under": -377,
+      "market_prob_over": 0.5556,
+      "market_prob_under": 0.5146,
+      "prob_edge_over": -0.3458,
+      "prob_edge_under": 0.2756,
+      "ev_over": -0.6224,
+      "ev_under": 0.5357
     },
     {
       "pitcher_id": 621,
@@ -442,7 +692,17 @@
       "under_odds": -480,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2507,
+      "our_prob_under": 0.7493,
+      "fair_odds_over": 299,
+      "fair_odds_under": -299,
+      "market_prob_over": 0.2439,
+      "market_prob_under": 0.8276,
+      "prob_edge_over": 0.0068,
+      "prob_edge_under": -0.0783,
+      "ev_over": 0.0279,
+      "ev_under": -0.0946
     },
     {
       "pitcher_id": 287,
@@ -459,7 +719,17 @@
       "under_odds": 110,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2668,
+      "our_prob_under": 0.7332,
+      "fair_odds_over": 275,
+      "fair_odds_under": -275,
+      "market_prob_over": 0.5935,
+      "market_prob_under": 0.4762,
+      "prob_edge_over": -0.3267,
+      "prob_edge_under": 0.257,
+      "ev_over": -0.5505,
+      "ev_under": 0.5397
     },
     {
       "pitcher_id": 3847,
@@ -476,7 +746,17 @@
       "under_odds": 370,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.7089,
+      "our_prob_under": 0.2911,
+      "fair_odds_over": -244,
+      "fair_odds_under": 244,
+      "market_prob_over": 0.8551,
+      "market_prob_under": 0.2128,
+      "prob_edge_over": -0.1462,
+      "prob_edge_under": 0.0783,
+      "ev_over": -0.1709,
+      "ev_under": 0.3682
     },
     {
       "pitcher_id": 291,
@@ -493,7 +773,17 @@
       "under_odds": -122,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6808,
+      "our_prob_under": 0.3192,
+      "fair_odds_over": -213,
+      "fair_odds_under": 213,
+      "market_prob_over": 0.5192,
+      "market_prob_under": 0.5495,
+      "prob_edge_over": 0.1616,
+      "prob_edge_under": -0.2303,
+      "ev_over": 0.3112,
+      "ev_under": -0.4192
     },
     {
       "pitcher_id": 291,
@@ -510,7 +800,17 @@
       "under_odds": -125,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6808,
+      "our_prob_under": 0.3192,
+      "fair_odds_over": -213,
+      "fair_odds_under": 213,
+      "market_prob_over": 0.5122,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": 0.1686,
+      "prob_edge_under": -0.2364,
+      "ev_over": 0.3292,
+      "ev_under": -0.4254
     },
     {
       "pitcher_id": 291,
@@ -527,7 +827,17 @@
       "under_odds": -122,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6808,
+      "our_prob_under": 0.3192,
+      "fair_odds_over": -213,
+      "fair_odds_under": 213,
+      "market_prob_over": 0.5122,
+      "market_prob_under": 0.5495,
+      "prob_edge_over": 0.1686,
+      "prob_edge_under": -0.2303,
+      "ev_over": 0.3292,
+      "ev_under": -0.4192
     },
     {
       "pitcher_id": 291,
@@ -544,7 +854,17 @@
       "under_odds": -114,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6808,
+      "our_prob_under": 0.3192,
+      "fair_odds_over": -213,
+      "fair_odds_under": 213,
+      "market_prob_over": 0.5327,
+      "market_prob_under": 0.5327,
+      "prob_edge_over": 0.1481,
+      "prob_edge_under": -0.2135,
+      "ev_over": 0.278,
+      "ev_under": -0.4008
     },
     {
       "pitcher_id": 275,
@@ -561,7 +881,17 @@
       "under_odds": 220,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6867,
+      "our_prob_under": 0.3133,
+      "fair_odds_over": -219,
+      "fair_odds_under": 219,
+      "market_prob_over": 0.759,
+      "market_prob_under": 0.3125,
+      "prob_edge_over": -0.0723,
+      "prob_edge_under": 0.0008,
+      "ev_over": -0.0953,
+      "ev_under": 0.0026
     },
     {
       "pitcher_id": 409,
@@ -578,7 +908,17 @@
       "under_odds": -420,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2938,
+      "our_prob_under": 0.7062,
+      "fair_odds_over": 240,
+      "fair_odds_under": -240,
+      "market_prob_over": 0.2597,
+      "market_prob_under": 0.8077,
+      "prob_edge_over": 0.0341,
+      "prob_edge_under": -0.1015,
+      "ev_over": 0.1311,
+      "ev_under": -0.1257
     },
     {
       "pitcher_id": 854,
@@ -595,7 +935,17 @@
       "under_odds": -105,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2965,
+      "our_prob_under": 0.7035,
+      "fair_odds_over": 237,
+      "fair_odds_under": -237,
+      "market_prob_over": 0.5652,
+      "market_prob_under": 0.5122,
+      "prob_edge_over": -0.2687,
+      "prob_edge_under": 0.1913,
+      "ev_over": -0.4754,
+      "ev_under": 0.3735
     },
     {
       "pitcher_id": 854,
@@ -612,7 +962,17 @@
       "under_odds": 101,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2965,
+      "our_prob_under": 0.7035,
+      "fair_odds_over": 237,
+      "fair_odds_under": -237,
+      "market_prob_over": 0.5614,
+      "market_prob_under": 0.4975,
+      "prob_edge_over": -0.2649,
+      "prob_edge_under": 0.206,
+      "ev_over": -0.4719,
+      "ev_under": 0.414
     },
     {
       "pitcher_id": 854,
@@ -629,7 +989,17 @@
       "under_odds": 108,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.2965,
+      "our_prob_under": 0.7035,
+      "fair_odds_over": 237,
+      "fair_odds_under": -237,
+      "market_prob_over": 0.5902,
+      "market_prob_under": 0.4808,
+      "prob_edge_over": -0.2937,
+      "prob_edge_under": 0.2227,
+      "ev_over": -0.4976,
+      "ev_under": 0.4633
     },
     {
       "pitcher_id": 928,
@@ -646,7 +1016,17 @@
       "under_odds": -150,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3064,
+      "our_prob_under": 0.6936,
+      "fair_odds_over": 226,
+      "fair_odds_under": -226,
+      "market_prob_over": 0.4762,
+      "market_prob_under": 0.6,
+      "prob_edge_over": -0.1698,
+      "prob_edge_under": 0.0936,
+      "ev_over": -0.3566,
+      "ev_under": 0.156
     },
     {
       "pitcher_id": 928,
@@ -663,7 +1043,17 @@
       "under_odds": -159,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3064,
+      "our_prob_under": 0.6936,
+      "fair_odds_over": 226,
+      "fair_odds_under": -226,
+      "market_prob_over": 0.4444,
+      "market_prob_under": 0.6139,
+      "prob_edge_over": -0.138,
+      "prob_edge_under": 0.0797,
+      "ev_over": -0.3106,
+      "ev_under": 0.1298
     },
     {
       "pitcher_id": 928,
@@ -680,7 +1070,17 @@
       "under_odds": -154,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3064,
+      "our_prob_under": 0.6936,
+      "fair_odds_over": 226,
+      "fair_odds_under": -226,
+      "market_prob_over": 0.463,
+      "market_prob_under": 0.6063,
+      "prob_edge_over": -0.1566,
+      "prob_edge_under": 0.0873,
+      "ev_over": -0.3382,
+      "ev_under": 0.144
     },
     {
       "pitcher_id": 405,
@@ -697,7 +1097,17 @@
       "under_odds": -160,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.288,
+      "our_prob_under": 0.712,
+      "fair_odds_over": 247,
+      "fair_odds_under": -247,
+      "market_prob_over": 0.4545,
+      "market_prob_under": 0.6154,
+      "prob_edge_over": -0.1665,
+      "prob_edge_under": 0.0966,
+      "ev_over": -0.3664,
+      "ev_under": 0.157
     },
     {
       "pitcher_id": 1490,
@@ -714,7 +1124,17 @@
       "under_odds": -155,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3264,
+      "our_prob_under": 0.6736,
+      "fair_odds_over": 206,
+      "fair_odds_under": -206,
+      "market_prob_over": 0.4651,
+      "market_prob_under": 0.6078,
+      "prob_edge_over": -0.1387,
+      "prob_edge_under": 0.0658,
+      "ev_over": -0.2982,
+      "ev_under": 0.1082
     },
     {
       "pitcher_id": 713,
@@ -731,7 +1151,17 @@
       "under_odds": -152,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3121,
+      "our_prob_under": 0.6879,
+      "fair_odds_over": 220,
+      "fair_odds_under": -220,
+      "market_prob_over": 0.4673,
+      "market_prob_under": 0.6032,
+      "prob_edge_over": -0.1552,
+      "prob_edge_under": 0.0847,
+      "ev_over": -0.3321,
+      "ev_under": 0.1405
     },
     {
       "pitcher_id": 5668,
@@ -748,7 +1178,17 @@
       "under_odds": 115,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6411,
+      "our_prob_under": 0.3589,
+      "fair_odds_over": -179,
+      "fair_odds_under": 179,
+      "market_prob_over": 0.6078,
+      "market_prob_under": 0.4651,
+      "prob_edge_over": 0.0333,
+      "prob_edge_under": -0.1062,
+      "ev_over": 0.0547,
+      "ev_under": -0.2284
     },
     {
       "pitcher_id": 5668,
@@ -765,7 +1205,17 @@
       "under_odds": 109,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6411,
+      "our_prob_under": 0.3589,
+      "fair_odds_over": -179,
+      "fair_odds_under": 179,
+      "market_prob_over": 0.5833,
+      "market_prob_under": 0.4785,
+      "prob_edge_over": 0.0578,
+      "prob_edge_under": -0.1196,
+      "ev_over": 0.099,
+      "ev_under": -0.2499
     },
     {
       "pitcher_id": 5668,
@@ -782,7 +1232,17 @@
       "under_odds": 104,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6411,
+      "our_prob_under": 0.3589,
+      "fair_odds_over": -179,
+      "fair_odds_under": 179,
+      "market_prob_over": 0.5798,
+      "market_prob_under": 0.4902,
+      "prob_edge_over": 0.0613,
+      "prob_edge_under": -0.1313,
+      "ev_over": 0.1057,
+      "ev_under": -0.2678
     },
     {
       "pitcher_id": 3847,
@@ -799,7 +1259,17 @@
       "under_odds": -155,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3064,
+      "our_prob_under": 0.6936,
+      "fair_odds_over": 226,
+      "fair_odds_under": -226,
+      "market_prob_over": 0.4651,
+      "market_prob_under": 0.6078,
+      "prob_edge_over": -0.1587,
+      "prob_edge_under": 0.0858,
+      "ev_over": -0.3412,
+      "ev_under": 0.1411
     },
     {
       "pitcher_id": 3847,
@@ -816,7 +1286,17 @@
       "under_odds": -172,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3064,
+      "our_prob_under": 0.6936,
+      "fair_odds_over": 226,
+      "fair_odds_under": -226,
+      "market_prob_over": 0.4274,
+      "market_prob_under": 0.6324,
+      "prob_edge_over": -0.121,
+      "prob_edge_under": 0.0612,
+      "ev_over": -0.283,
+      "ev_under": 0.0969
     },
     {
       "pitcher_id": 3847,
@@ -833,7 +1313,17 @@
       "under_odds": -178,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3064,
+      "our_prob_under": 0.6936,
+      "fair_odds_over": 226,
+      "fair_odds_under": -226,
+      "market_prob_over": 0.431,
+      "market_prob_under": 0.6403,
+      "prob_edge_over": -0.1246,
+      "prob_edge_under": 0.0533,
+      "ev_over": -0.2892,
+      "ev_under": 0.0833
     },
     {
       "pitcher_id": 163,
@@ -850,7 +1340,17 @@
       "under_odds": -175,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3133,
+      "our_prob_under": 0.6867,
+      "fair_odds_over": 219,
+      "fair_odds_under": -219,
+      "market_prob_over": 0.4348,
+      "market_prob_under": 0.6364,
+      "prob_edge_over": -0.1215,
+      "prob_edge_under": 0.0503,
+      "ev_over": -0.2794,
+      "ev_under": 0.0791
     },
     {
       "pitcher_id": 163,
@@ -867,7 +1367,17 @@
       "under_odds": -169,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3133,
+      "our_prob_under": 0.6867,
+      "fair_odds_over": 219,
+      "fair_odds_under": -219,
+      "market_prob_over": 0.431,
+      "market_prob_under": 0.6283,
+      "prob_edge_over": -0.1177,
+      "prob_edge_under": 0.0584,
+      "ev_over": -0.2731,
+      "ev_under": 0.093
     },
     {
       "pitcher_id": 163,
@@ -884,7 +1394,17 @@
       "under_odds": -150,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3133,
+      "our_prob_under": 0.6867,
+      "fair_odds_over": 219,
+      "fair_odds_under": -219,
+      "market_prob_over": 0.4651,
+      "market_prob_under": 0.6,
+      "prob_edge_over": -0.1518,
+      "prob_edge_under": 0.0867,
+      "ev_over": -0.3264,
+      "ev_under": 0.1445
     },
     {
       "pitcher_id": 163,
@@ -901,7 +1421,17 @@
       "under_odds": -148,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3133,
+      "our_prob_under": 0.6867,
+      "fair_odds_over": 219,
+      "fair_odds_under": -219,
+      "market_prob_over": 0.4717,
+      "market_prob_under": 0.5968,
+      "prob_edge_over": -0.1584,
+      "prob_edge_under": 0.0899,
+      "ev_over": -0.3358,
+      "ev_under": 0.1507
     },
     {
       "pitcher_id": 373,
@@ -918,7 +1448,17 @@
       "under_odds": -182,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3359,
+      "our_prob_under": 0.6641,
+      "fair_odds_over": 198,
+      "fair_odds_under": -198,
+      "market_prob_over": 0.4255,
+      "market_prob_under": 0.6454,
+      "prob_edge_over": -0.0896,
+      "prob_edge_under": 0.0187,
+      "ev_over": -0.2106,
+      "ev_under": 0.029
     },
     {
       "pitcher_id": 373,
@@ -935,7 +1475,17 @@
       "under_odds": -150,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3359,
+      "our_prob_under": 0.6641,
+      "fair_odds_over": 198,
+      "fair_odds_under": -198,
+      "market_prob_over": 0.4762,
+      "market_prob_under": 0.6,
+      "prob_edge_over": -0.1403,
+      "prob_edge_under": 0.0641,
+      "ev_over": -0.2946,
+      "ev_under": 0.1068
     },
     {
       "pitcher_id": 911,
@@ -952,7 +1502,17 @@
       "under_odds": -105,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6185,
+      "our_prob_under": 0.3815,
+      "fair_odds_over": -162,
+      "fair_odds_under": 162,
+      "market_prob_over": 0.5556,
+      "market_prob_under": 0.5122,
+      "prob_edge_over": 0.0629,
+      "prob_edge_under": -0.1307,
+      "ev_over": 0.1133,
+      "ev_under": -0.2552
     },
     {
       "pitcher_id": 911,
@@ -969,7 +1529,17 @@
       "under_odds": -118,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6185,
+      "our_prob_under": 0.3815,
+      "fair_odds_over": -162,
+      "fair_odds_under": 162,
+      "market_prob_over": 0.5192,
+      "market_prob_under": 0.5413,
+      "prob_edge_over": 0.0993,
+      "prob_edge_under": -0.1598,
+      "ev_over": 0.1912,
+      "ev_under": -0.2952
     },
     {
       "pitcher_id": 911,
@@ -986,7 +1556,17 @@
       "under_odds": -125,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6185,
+      "our_prob_under": 0.3815,
+      "fair_odds_over": -162,
+      "fair_odds_under": 162,
+      "market_prob_over": 0.5122,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": 0.1063,
+      "prob_edge_under": -0.1741,
+      "ev_over": 0.2075,
+      "ev_under": -0.3133
     },
     {
       "pitcher_id": 373,
@@ -1003,7 +1583,17 @@
       "under_odds": -178,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3359,
+      "our_prob_under": 0.6641,
+      "fair_odds_over": 198,
+      "fair_odds_under": -198,
+      "market_prob_over": 0.431,
+      "market_prob_under": 0.6403,
+      "prob_edge_over": -0.0951,
+      "prob_edge_under": 0.0238,
+      "ev_over": -0.2207,
+      "ev_under": 0.0372
     },
     {
       "pitcher_id": 911,
@@ -1020,7 +1610,17 @@
       "under_odds": -118,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.6185,
+      "our_prob_under": 0.3815,
+      "fair_odds_over": -162,
+      "fair_odds_under": 162,
+      "market_prob_over": 0.5283,
+      "market_prob_under": 0.5413,
+      "prob_edge_over": 0.0902,
+      "prob_edge_under": -0.1598,
+      "ev_over": 0.1707,
+      "ev_under": -0.2952
     },
     {
       "pitcher_id": 1035,
@@ -1037,7 +1637,17 @@
       "under_odds": -137,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3386,
+      "our_prob_under": 0.6614,
+      "fair_odds_over": 195,
+      "fair_odds_under": -195,
+      "market_prob_over": 0.4902,
+      "market_prob_under": 0.5781,
+      "prob_edge_over": -0.1516,
+      "prob_edge_under": 0.0833,
+      "ev_over": -0.3093,
+      "ev_under": 0.1442
     },
     {
       "pitcher_id": 1035,
@@ -1054,7 +1664,17 @@
       "under_odds": -125,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3386,
+      "our_prob_under": 0.6614,
+      "fair_odds_over": 195,
+      "fair_odds_under": -195,
+      "market_prob_over": 0.5122,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": -0.1736,
+      "prob_edge_under": 0.1058,
+      "ev_over": -0.3389,
+      "ev_under": 0.1905
     },
     {
       "pitcher_id": 1035,
@@ -1071,7 +1691,17 @@
       "under_odds": -132,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3386,
+      "our_prob_under": 0.6614,
+      "fair_odds_over": 195,
+      "fair_odds_under": -195,
+      "market_prob_over": 0.4902,
+      "market_prob_under": 0.569,
+      "prob_edge_over": -0.1516,
+      "prob_edge_under": 0.0924,
+      "ev_over": -0.3093,
+      "ev_under": 0.1625
     },
     {
       "pitcher_id": 1035,
@@ -1088,7 +1718,17 @@
       "under_odds": -128,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": true
+      "flagged": true,
+      "our_prob_over": 0.3386,
+      "our_prob_under": 0.6614,
+      "fair_odds_over": 195,
+      "fair_odds_under": -195,
+      "market_prob_over": 0.5098,
+      "market_prob_under": 0.5614,
+      "prob_edge_over": -0.1712,
+      "prob_edge_under": 0.1,
+      "ev_over": -0.3358,
+      "ev_under": 0.1781
     },
     {
       "pitcher_id": 621,
@@ -1105,7 +1745,17 @@
       "under_odds": 125,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.6089,
+      "our_prob_under": 0.3911,
+      "fair_odds_over": -156,
+      "fair_odds_under": 156,
+      "market_prob_over": 0.6226,
+      "market_prob_under": 0.4444,
+      "prob_edge_over": -0.0137,
+      "prob_edge_under": -0.0533,
+      "ev_over": -0.0221,
+      "ev_under": -0.12
     },
     {
       "pitcher_id": 621,
@@ -1122,7 +1772,17 @@
       "under_odds": 125,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.6089,
+      "our_prob_under": 0.3911,
+      "fair_odds_over": -156,
+      "fair_odds_under": 156,
+      "market_prob_over": 0.6154,
+      "market_prob_under": 0.4444,
+      "prob_edge_over": -0.0065,
+      "prob_edge_under": -0.0533,
+      "ev_over": -0.0105,
+      "ev_under": -0.12
     },
     {
       "pitcher_id": 736,
@@ -1139,7 +1799,17 @@
       "under_odds": 114,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.3741,
+      "our_prob_under": 0.6259,
+      "fair_odds_over": 167,
+      "fair_odds_under": -167,
+      "market_prob_over": 0.5918,
+      "market_prob_under": 0.4673,
+      "prob_edge_over": -0.2177,
+      "prob_edge_under": 0.1586,
+      "ev_over": -0.3679,
+      "ev_under": 0.3394
     },
     {
       "pitcher_id": 736,
@@ -1156,7 +1826,17 @@
       "under_odds": 104,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.3741,
+      "our_prob_under": 0.6259,
+      "fair_odds_over": 167,
+      "fair_odds_under": -167,
+      "market_prob_over": 0.5798,
+      "market_prob_under": 0.4902,
+      "prob_edge_over": -0.2057,
+      "prob_edge_under": 0.1357,
+      "ev_over": -0.3548,
+      "ev_under": 0.2768
     },
     {
       "pitcher_id": 3142,
@@ -1173,7 +1853,17 @@
       "under_odds": -162,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5788,
+      "our_prob_under": 0.4212,
+      "fair_odds_over": -137,
+      "fair_odds_under": 137,
+      "market_prob_over": 0.4545,
+      "market_prob_under": 0.6183,
+      "prob_edge_over": 0.1243,
+      "prob_edge_under": -0.1971,
+      "ev_over": 0.2734,
+      "ev_under": -0.3188
     },
     {
       "pitcher_id": 3142,
@@ -1190,7 +1880,17 @@
       "under_odds": -176,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5788,
+      "our_prob_under": 0.4212,
+      "fair_odds_over": -137,
+      "fair_odds_under": 137,
+      "market_prob_over": 0.4219,
+      "market_prob_under": 0.6377,
+      "prob_edge_over": 0.1569,
+      "prob_edge_under": -0.2165,
+      "ev_over": 0.3718,
+      "ev_under": -0.3395
     },
     {
       "pitcher_id": 3142,
@@ -1207,7 +1907,17 @@
       "under_odds": -165,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5788,
+      "our_prob_under": 0.4212,
+      "fair_odds_over": -137,
+      "fair_odds_under": 137,
+      "market_prob_over": 0.4444,
+      "market_prob_under": 0.6226,
+      "prob_edge_over": 0.1344,
+      "prob_edge_under": -0.2014,
+      "ev_over": 0.3023,
+      "ev_under": -0.3235
     },
     {
       "pitcher_id": 3142,
@@ -1224,7 +1934,17 @@
       "under_odds": -168,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5788,
+      "our_prob_under": 0.4212,
+      "fair_odds_over": -137,
+      "fair_odds_under": 137,
+      "market_prob_over": 0.4425,
+      "market_prob_under": 0.6269,
+      "prob_edge_over": 0.1363,
+      "prob_edge_under": -0.2057,
+      "ev_over": 0.3081,
+      "ev_under": -0.3281
     },
     {
       "pitcher_id": 356,
@@ -1241,7 +1961,17 @@
       "under_odds": 100,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.3784,
+      "our_prob_under": 0.6216,
+      "fair_odds_over": 164,
+      "fair_odds_under": -164,
+      "market_prob_over": 0.5745,
+      "market_prob_under": 0.5,
+      "prob_edge_over": -0.1961,
+      "prob_edge_under": 0.1216,
+      "ev_over": -0.3413,
+      "ev_under": 0.2432
     },
     {
       "pitcher_id": 356,
@@ -1258,7 +1988,17 @@
       "under_odds": -114,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.3784,
+      "our_prob_under": 0.6216,
+      "fair_odds_over": 164,
+      "fair_odds_under": -164,
+      "market_prob_over": 0.5283,
+      "market_prob_under": 0.5327,
+      "prob_edge_over": -0.1499,
+      "prob_edge_under": 0.0889,
+      "ev_over": -0.2837,
+      "ev_under": 0.1669
     },
     {
       "pitcher_id": 356,
@@ -1275,7 +2015,17 @@
       "under_odds": -120,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.3784,
+      "our_prob_under": 0.6216,
+      "fair_odds_over": 164,
+      "fair_odds_under": -164,
+      "market_prob_over": 0.5238,
+      "market_prob_under": 0.5455,
+      "prob_edge_over": -0.1454,
+      "prob_edge_under": 0.0761,
+      "ev_over": -0.2776,
+      "ev_under": 0.1396
     },
     {
       "pitcher_id": 356,
@@ -1292,7 +2042,17 @@
       "under_odds": -118,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.3784,
+      "our_prob_under": 0.6216,
+      "fair_odds_over": 164,
+      "fair_odds_under": -164,
+      "market_prob_over": 0.5238,
+      "market_prob_under": 0.5413,
+      "prob_edge_over": -0.1454,
+      "prob_edge_under": 0.0803,
+      "ev_over": -0.2776,
+      "ev_under": 0.1484
     },
     {
       "pitcher_id": 83,
@@ -1309,7 +2069,17 @@
       "under_odds": -127,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5522,
+      "our_prob_under": 0.4478,
+      "fair_odds_over": -123,
+      "fair_odds_under": 123,
+      "market_prob_over": 0.5146,
+      "market_prob_under": 0.5595,
+      "prob_edge_over": 0.0376,
+      "prob_edge_under": -0.1117,
+      "ev_over": 0.0731,
+      "ev_under": -0.1996
     },
     {
       "pitcher_id": 83,
@@ -1326,7 +2096,17 @@
       "under_odds": -118,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5522,
+      "our_prob_under": 0.4478,
+      "fair_odds_over": -123,
+      "fair_odds_under": 123,
+      "market_prob_over": 0.5192,
+      "market_prob_under": 0.5413,
+      "prob_edge_over": 0.033,
+      "prob_edge_under": -0.0935,
+      "ev_over": 0.0635,
+      "ev_under": -0.1727
     },
     {
       "pitcher_id": 83,
@@ -1343,7 +2123,17 @@
       "under_odds": -125,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5522,
+      "our_prob_under": 0.4478,
+      "fair_odds_over": -123,
+      "fair_odds_under": 123,
+      "market_prob_over": 0.5122,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": 0.04,
+      "prob_edge_under": -0.1078,
+      "ev_over": 0.0781,
+      "ev_under": -0.194
     },
     {
       "pitcher_id": 83,
@@ -1360,7 +2150,17 @@
       "under_odds": -118,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5522,
+      "our_prob_under": 0.4478,
+      "fair_odds_over": -123,
+      "fair_odds_under": 123,
+      "market_prob_over": 0.5283,
+      "market_prob_under": 0.5413,
+      "prob_edge_over": 0.0239,
+      "prob_edge_under": -0.0935,
+      "ev_over": 0.0452,
+      "ev_under": -0.1727
     },
     {
       "pitcher_id": 11,
@@ -1377,7 +2177,17 @@
       "under_odds": -250,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5388,
+      "our_prob_under": 0.4612,
+      "fair_odds_over": -117,
+      "fair_odds_under": 117,
+      "market_prob_over": 0.3636,
+      "market_prob_under": 0.7143,
+      "prob_edge_over": 0.1752,
+      "prob_edge_under": -0.2531,
+      "ev_over": 0.4817,
+      "ev_under": -0.3543
     },
     {
       "pitcher_id": 736,
@@ -1394,7 +2204,17 @@
       "under_odds": 215,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5346,
+      "our_prob_under": 0.4654,
+      "fair_odds_over": -115,
+      "fair_odds_under": 115,
+      "market_prob_over": 0.759,
+      "market_prob_under": 0.3175,
+      "prob_edge_over": -0.2244,
+      "prob_edge_under": 0.1479,
+      "ev_over": -0.2957,
+      "ev_under": 0.466
     },
     {
       "pitcher_id": 11,
@@ -1411,7 +2231,17 @@
       "under_odds": -190,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5388,
+      "our_prob_under": 0.4612,
+      "fair_odds_over": -117,
+      "fair_odds_under": 117,
+      "market_prob_over": 0.4167,
+      "market_prob_under": 0.6552,
+      "prob_edge_over": 0.1221,
+      "prob_edge_under": -0.194,
+      "ev_over": 0.2931,
+      "ev_under": -0.2961
     },
     {
       "pitcher_id": 354,
@@ -1428,7 +2258,17 @@
       "under_odds": -128,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5369,
+      "our_prob_under": 0.4631,
+      "fair_odds_over": -116,
+      "fair_odds_under": 116,
+      "market_prob_over": 0.4975,
+      "market_prob_under": 0.5614,
+      "prob_edge_over": 0.0394,
+      "prob_edge_under": -0.0983,
+      "ev_over": 0.0792,
+      "ev_under": -0.1751
     },
     {
       "pitcher_id": 354,
@@ -1445,7 +2285,17 @@
       "under_odds": -132,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5369,
+      "our_prob_under": 0.4631,
+      "fair_odds_over": -116,
+      "fair_odds_under": 116,
+      "market_prob_over": 0.5,
+      "market_prob_under": 0.569,
+      "prob_edge_over": 0.0369,
+      "prob_edge_under": -0.1059,
+      "ev_over": 0.0738,
+      "ev_under": -0.1861
     },
     {
       "pitcher_id": 621,
@@ -1462,7 +2312,17 @@
       "under_odds": -178,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4147,
+      "our_prob_under": 0.5853,
+      "fair_odds_over": 141,
+      "fair_odds_under": -141,
+      "market_prob_over": 0.431,
+      "market_prob_under": 0.6403,
+      "prob_edge_over": -0.0163,
+      "prob_edge_under": -0.055,
+      "ev_over": -0.0379,
+      "ev_under": -0.0859
     },
     {
       "pitcher_id": 342,
@@ -1479,7 +2339,17 @@
       "under_odds": -118,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5116,
+      "our_prob_under": 0.4884,
+      "fair_odds_over": -105,
+      "fair_odds_under": 105,
+      "market_prob_over": 0.5305,
+      "market_prob_under": 0.5413,
+      "prob_edge_over": -0.0189,
+      "prob_edge_under": -0.0529,
+      "ev_over": -0.0357,
+      "ev_under": -0.0977
     },
     {
       "pitcher_id": 342,
@@ -1496,7 +2366,17 @@
       "under_odds": -125,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5116,
+      "our_prob_under": 0.4884,
+      "fair_odds_over": -105,
+      "fair_odds_under": 105,
+      "market_prob_over": 0.5122,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": -0.0006,
+      "prob_edge_under": -0.0672,
+      "ev_over": -0.0012,
+      "ev_under": -0.1209
     },
     {
       "pitcher_id": 342,
@@ -1513,7 +2393,17 @@
       "under_odds": -124,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5116,
+      "our_prob_under": 0.4884,
+      "fair_odds_over": -105,
+      "fair_odds_under": 105,
+      "market_prob_over": 0.5074,
+      "market_prob_under": 0.5536,
+      "prob_edge_over": 0.0042,
+      "prob_edge_under": -0.0652,
+      "ev_over": 0.0083,
+      "ev_under": -0.1177
     },
     {
       "pitcher_id": 342,
@@ -1530,7 +2420,17 @@
       "under_odds": -125,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5116,
+      "our_prob_under": 0.4884,
+      "fair_odds_over": -105,
+      "fair_odds_under": 105,
+      "market_prob_over": 0.5122,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": -0.0006,
+      "prob_edge_under": -0.0672,
+      "ev_over": -0.0012,
+      "ev_under": -0.1209
     },
     {
       "pitcher_id": 342,
@@ -1547,7 +2447,17 @@
       "under_odds": -125,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5116,
+      "our_prob_under": 0.4884,
+      "fair_odds_over": -105,
+      "fair_odds_under": 105,
+      "market_prob_over": 0.5146,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": -0.003,
+      "prob_edge_under": -0.0672,
+      "ev_over": -0.0058,
+      "ev_under": -0.1209
     },
     {
       "pitcher_id": 373,
@@ -1564,7 +2474,17 @@
       "under_odds": 118,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.51,
+      "our_prob_under": 0.49,
+      "fair_odds_over": -104,
+      "fair_odds_under": 104,
+      "market_prob_over": 0.6,
+      "market_prob_under": 0.4587,
+      "prob_edge_over": -0.09,
+      "prob_edge_under": 0.0313,
+      "ev_over": -0.15,
+      "ev_under": 0.0682
     },
     {
       "pitcher_id": 373,
@@ -1581,7 +2501,17 @@
       "under_odds": 125,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.51,
+      "our_prob_under": 0.49,
+      "fair_odds_over": -104,
+      "fair_odds_under": 104,
+      "market_prob_over": 0.6226,
+      "market_prob_under": 0.4444,
+      "prob_edge_over": -0.1126,
+      "prob_edge_under": 0.0456,
+      "ev_over": -0.1809,
+      "ev_under": 0.1025
     },
     {
       "pitcher_id": 527,
@@ -1598,7 +2528,17 @@
       "under_odds": -125,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5043,
+      "our_prob_under": 0.4957,
+      "fair_odds_over": -102,
+      "fair_odds_under": 102,
+      "market_prob_over": 0.5146,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": -0.0103,
+      "prob_edge_under": -0.0599,
+      "ev_over": -0.0199,
+      "ev_under": -0.1077
     },
     {
       "pitcher_id": 527,
@@ -1615,7 +2555,17 @@
       "under_odds": -120,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5043,
+      "our_prob_under": 0.4957,
+      "fair_odds_over": -102,
+      "fair_odds_under": 102,
+      "market_prob_over": 0.5238,
+      "market_prob_under": 0.5455,
+      "prob_edge_over": -0.0195,
+      "prob_edge_under": -0.0498,
+      "ev_over": -0.0372,
+      "ev_under": -0.0912
     },
     {
       "pitcher_id": 527,
@@ -1632,7 +2582,17 @@
       "under_odds": -129,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5043,
+      "our_prob_under": 0.4957,
+      "fair_odds_over": -102,
+      "fair_odds_under": 102,
+      "market_prob_over": 0.4975,
+      "market_prob_under": 0.5633,
+      "prob_edge_over": 0.0068,
+      "prob_edge_under": -0.0676,
+      "ev_over": 0.0136,
+      "ev_under": -0.12
     },
     {
       "pitcher_id": 527,
@@ -1649,7 +2609,17 @@
       "under_odds": -140,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5043,
+      "our_prob_under": 0.4957,
+      "fair_odds_over": -102,
+      "fair_odds_under": 102,
+      "market_prob_over": 0.4878,
+      "market_prob_under": 0.5833,
+      "prob_edge_over": 0.0165,
+      "prob_edge_under": -0.0876,
+      "ev_over": 0.0338,
+      "ev_under": -0.1502
     },
     {
       "pitcher_id": 527,
@@ -1666,7 +2636,17 @@
       "under_odds": -122,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.5043,
+      "our_prob_under": 0.4957,
+      "fair_odds_over": -102,
+      "fair_odds_under": 102,
+      "market_prob_over": 0.5192,
+      "market_prob_under": 0.5495,
+      "prob_edge_over": -0.0149,
+      "prob_edge_under": -0.0538,
+      "ev_over": -0.0288,
+      "ev_under": -0.098
     },
     {
       "pitcher_id": 5668,
@@ -1683,7 +2663,17 @@
       "under_odds": -235,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4494,
+      "our_prob_under": 0.5506,
+      "fair_odds_over": 123,
+      "fair_odds_under": -123,
+      "market_prob_over": 0.3704,
+      "market_prob_under": 0.7015,
+      "prob_edge_over": 0.079,
+      "prob_edge_under": -0.1509,
+      "ev_over": 0.2134,
+      "ev_under": -0.2151
     },
     {
       "pitcher_id": 713,
@@ -1700,7 +2690,17 @@
       "under_odds": 120,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4844,
+      "our_prob_under": 0.5156,
+      "fair_odds_over": 106,
+      "fair_odds_under": -106,
+      "market_prob_over": 0.6154,
+      "market_prob_under": 0.4545,
+      "prob_edge_over": -0.131,
+      "prob_edge_under": 0.0611,
+      "ev_over": -0.2129,
+      "ev_under": 0.1343
     },
     {
       "pitcher_id": 713,
@@ -1717,7 +2717,17 @@
       "under_odds": 114,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4844,
+      "our_prob_under": 0.5156,
+      "fair_odds_over": 106,
+      "fair_odds_under": -106,
+      "market_prob_over": 0.5918,
+      "market_prob_under": 0.4673,
+      "prob_edge_over": -0.1074,
+      "prob_edge_under": 0.0483,
+      "ev_over": -0.1815,
+      "ev_under": 0.1034
     },
     {
       "pitcher_id": 713,
@@ -1734,7 +2744,17 @@
       "under_odds": 120,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4844,
+      "our_prob_under": 0.5156,
+      "fair_odds_over": 106,
+      "fair_odds_under": -106,
+      "market_prob_over": 0.6154,
+      "market_prob_under": 0.4545,
+      "prob_edge_over": -0.131,
+      "prob_edge_under": 0.0611,
+      "ev_over": -0.2129,
+      "ev_under": 0.1343
     },
     {
       "pitcher_id": 1490,
@@ -1751,7 +2771,17 @@
       "under_odds": 115,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4846,
+      "our_prob_under": 0.5154,
+      "fair_odds_over": 106,
+      "fair_odds_under": -106,
+      "market_prob_over": 0.6032,
+      "market_prob_under": 0.4651,
+      "prob_edge_over": -0.1186,
+      "prob_edge_under": 0.0503,
+      "ev_over": -0.1966,
+      "ev_under": 0.1081
     },
     {
       "pitcher_id": 1490,
@@ -1768,7 +2798,17 @@
       "under_odds": 124,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4846,
+      "our_prob_under": 0.5154,
+      "fair_odds_over": 106,
+      "fair_odds_under": -106,
+      "market_prob_over": 0.6139,
+      "market_prob_under": 0.4464,
+      "prob_edge_over": -0.1293,
+      "prob_edge_under": 0.069,
+      "ev_over": -0.2106,
+      "ev_under": 0.1545
     },
     {
       "pitcher_id": 1490,
@@ -1785,7 +2825,17 @@
       "under_odds": 116,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4846,
+      "our_prob_under": 0.5154,
+      "fair_odds_over": 106,
+      "fair_odds_under": -106,
+      "market_prob_over": 0.6063,
+      "market_prob_under": 0.463,
+      "prob_edge_over": -0.1217,
+      "prob_edge_under": 0.0524,
+      "ev_over": -0.2007,
+      "ev_under": 0.1133
     },
     {
       "pitcher_id": 405,
@@ -1802,7 +2852,17 @@
       "under_odds": 130,
       "book": "betrivers",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4785,
+      "our_prob_under": 0.5215,
+      "fair_odds_over": 109,
+      "fair_odds_under": -109,
+      "market_prob_over": 0.639,
+      "market_prob_under": 0.4348,
+      "prob_edge_over": -0.1605,
+      "prob_edge_under": 0.0867,
+      "ev_over": -0.2512,
+      "ev_under": 0.1994
     },
     {
       "pitcher_id": 405,
@@ -1819,7 +2879,17 @@
       "under_odds": 115,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4785,
+      "our_prob_under": 0.5215,
+      "fair_odds_over": 109,
+      "fair_odds_under": -109,
+      "market_prob_over": 0.6078,
+      "market_prob_under": 0.4651,
+      "prob_edge_over": -0.1293,
+      "prob_edge_under": 0.0564,
+      "ev_over": -0.2128,
+      "ev_under": 0.1212
     },
     {
       "pitcher_id": 3363426,
@@ -1836,7 +2906,17 @@
       "under_odds": -125,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4598,
+      "our_prob_under": 0.5402,
+      "fair_odds_over": 117,
+      "fair_odds_under": -117,
+      "market_prob_over": 0.5122,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": -0.0524,
+      "prob_edge_under": -0.0154,
+      "ev_over": -0.1023,
+      "ev_under": -0.0276
     },
     {
       "pitcher_id": 405,
@@ -1853,7 +2933,17 @@
       "under_odds": 130,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4785,
+      "our_prob_under": 0.5215,
+      "fair_odds_over": 109,
+      "fair_odds_under": -109,
+      "market_prob_over": 0.6241,
+      "market_prob_under": 0.4348,
+      "prob_edge_over": -0.1456,
+      "prob_edge_under": 0.0867,
+      "ev_over": -0.2332,
+      "ev_under": 0.1994
     },
     {
       "pitcher_id": 3363426,
@@ -1870,7 +2960,17 @@
       "under_odds": -120,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4598,
+      "our_prob_under": 0.5402,
+      "fair_odds_over": 117,
+      "fair_odds_under": -117,
+      "market_prob_over": 0.5146,
+      "market_prob_under": 0.5455,
+      "prob_edge_over": -0.0548,
+      "prob_edge_under": -0.0053,
+      "ev_over": -0.1064,
+      "ev_under": -0.0096
     },
     {
       "pitcher_id": 3363426,
@@ -1887,7 +2987,17 @@
       "under_odds": -140,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4598,
+      "our_prob_under": 0.5402,
+      "fair_odds_over": 117,
+      "fair_odds_under": -117,
+      "market_prob_over": 0.4878,
+      "market_prob_under": 0.5833,
+      "prob_edge_over": -0.028,
+      "prob_edge_under": -0.0431,
+      "ev_over": -0.0574,
+      "ev_under": -0.0739
     },
     {
       "pitcher_id": 3363426,
@@ -1904,7 +3014,17 @@
       "under_odds": -130,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4598,
+      "our_prob_under": 0.5402,
+      "fair_odds_over": 117,
+      "fair_odds_under": -117,
+      "market_prob_over": 0.505,
+      "market_prob_under": 0.5652,
+      "prob_edge_over": -0.0452,
+      "prob_edge_under": -0.025,
+      "ev_over": -0.0894,
+      "ev_under": -0.0443
     },
     {
       "pitcher_id": 275,
@@ -1921,7 +3041,17 @@
       "under_odds": -125,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4722,
+      "our_prob_under": 0.5278,
+      "fair_odds_over": 112,
+      "fair_odds_under": -112,
+      "market_prob_over": 0.5122,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": -0.04,
+      "prob_edge_under": -0.0278,
+      "ev_over": -0.0781,
+      "ev_under": -0.05
     },
     {
       "pitcher_id": 275,
@@ -1938,7 +3068,17 @@
       "under_odds": -121,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4722,
+      "our_prob_under": 0.5278,
+      "fair_odds_over": 112,
+      "fair_odds_under": -112,
+      "market_prob_over": 0.5146,
+      "market_prob_under": 0.5475,
+      "prob_edge_over": -0.0424,
+      "prob_edge_under": -0.0197,
+      "ev_over": -0.0823,
+      "ev_under": -0.036
     },
     {
       "pitcher_id": 275,
@@ -1955,7 +3095,17 @@
       "under_odds": -125,
       "book": "fanatics",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4722,
+      "our_prob_under": 0.5278,
+      "fair_odds_over": 112,
+      "fair_odds_under": -112,
+      "market_prob_over": 0.5122,
+      "market_prob_under": 0.5556,
+      "prob_edge_over": -0.04,
+      "prob_edge_under": -0.0278,
+      "ev_over": -0.0781,
+      "ev_under": -0.05
     },
     {
       "pitcher_id": 275,
@@ -1972,7 +3122,17 @@
       "under_odds": -118,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4722,
+      "our_prob_under": 0.5278,
+      "fair_odds_over": 112,
+      "fair_odds_under": -112,
+      "market_prob_over": 0.5283,
+      "market_prob_under": 0.5413,
+      "prob_edge_over": -0.0561,
+      "prob_edge_under": -0.0135,
+      "ev_over": -0.1062,
+      "ev_under": -0.0249
     },
     {
       "pitcher_id": 409,
@@ -1989,7 +3149,17 @@
       "under_odds": -140,
       "book": "betmgm",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4642,
+      "our_prob_under": 0.5358,
+      "fair_odds_over": 115,
+      "fair_odds_under": -115,
+      "market_prob_over": 0.4878,
+      "market_prob_under": 0.5833,
+      "prob_edge_over": -0.0236,
+      "prob_edge_under": -0.0475,
+      "ev_over": -0.0484,
+      "ev_under": -0.0815
     },
     {
       "pitcher_id": 409,
@@ -2006,7 +3176,17 @@
       "under_odds": -168,
       "book": "draftkings",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4642,
+      "our_prob_under": 0.5358,
+      "fair_odds_over": 115,
+      "fair_odds_under": -115,
+      "market_prob_over": 0.4329,
+      "market_prob_under": 0.6269,
+      "prob_edge_over": 0.0313,
+      "prob_edge_under": -0.0911,
+      "ev_over": 0.0723,
+      "ev_under": -0.1453
     },
     {
       "pitcher_id": 409,
@@ -2023,7 +3203,17 @@
       "under_odds": -162,
       "book": "fanduel",
       "line_updated": "\u2014",
-      "flagged": false
+      "flagged": false,
+      "our_prob_over": 0.4642,
+      "our_prob_under": 0.5358,
+      "fair_odds_over": 115,
+      "fair_odds_under": -115,
+      "market_prob_over": 0.4505,
+      "market_prob_under": 0.6183,
+      "prob_edge_over": 0.0137,
+      "prob_edge_under": -0.0825,
+      "ev_over": 0.0305,
+      "ev_under": -0.1335
     },
     {
       "pitcher_id": 8416,

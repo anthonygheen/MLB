@@ -331,10 +331,59 @@ function predCard(p) {
   const venue = p.venue && p.venue !== '—'
     ? `<div style="font-size:.62rem;color:var(--muted);margin-bottom:.6rem">📍 ${esc(p.venue)}</div>` : '';
   const updated = p.line_updated && p.line_updated !== '—'
-    ? `<div style="font-size:.6rem;color:var(--muted);margin-top:.6rem">Line updated ${esc(p.line_updated)}</div>` : '';
+    ? `<div style="font-size:.6rem;color:var(--muted);margin-top:.5rem">Line updated ${esc(p.line_updated)}</div>` : '';
 
   const overOdds  = p.over_odds  != null ? fmtO(p.over_odds)  : '—';
   const underOdds = p.under_odds != null ? fmtO(p.under_odds) : '—';
+
+  // Fair odds from model
+  const fairOver  = p.fair_odds_over  != null ? fmtO(p.fair_odds_over)  : '—';
+  const fairUnder = p.fair_odds_under != null ? fmtO(p.fair_odds_under) : '—';
+
+  // EV display
+  const evOver  = p.ev_over  != null ? (p.ev_over  > 0 ? '+' : '') + (p.ev_over  * 100).toFixed(1) : null;
+  const evUnder = p.ev_under != null ? (p.ev_under > 0 ? '+' : '') + (p.ev_under * 100).toFixed(1) : null;
+
+  // Prob edge display
+  const probEdgeOver  = p.prob_edge_over  != null ? (p.prob_edge_over  > 0 ? '+' : '') + (p.prob_edge_over  * 100).toFixed(1) + '%' : '—';
+  const probEdgeUnder = p.prob_edge_under != null ? (p.prob_edge_under > 0 ? '+' : '') + (p.prob_edge_under * 100).toFixed(1) + '%' : '—';
+
+  // Pricing table rows
+  const hasPricing = p.our_prob_over != null;
+  const pricingBlock = hasPricing ? `
+    <div style="background:var(--bg2);border-radius:5px;padding:.6rem .75rem;margin-bottom:.6rem">
+      <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:.3rem .75rem;align-items:center">
+        <div></div>
+        <div style="font-size:.58rem;font-weight:600;letter-spacing:.1em;color:var(--muted);text-align:center">OVER</div>
+        <div style="font-size:.58rem;font-weight:600;letter-spacing:.1em;color:var(--muted);text-align:center">UNDER</div>
+        <div></div>
+
+        <div style="font-size:.6rem;color:var(--muted)">Market</div>
+        <div style="font-family:var(--fm);font-size:.78rem;color:var(--text);text-align:center">${overOdds}</div>
+        <div style="font-family:var(--fm);font-size:.78rem;color:var(--text);text-align:center">${underOdds}</div>
+        <div style="font-size:.58rem;color:var(--muted)">posted</div>
+
+        <div style="font-size:.6rem;color:var(--muted)">Fair</div>
+        <div style="font-family:var(--fm);font-size:.78rem;color:var(--accent);text-align:center">${fairOver}</div>
+        <div style="font-family:var(--fm);font-size:.78rem;color:var(--accent);text-align:center">${fairUnder}</div>
+        <div style="font-size:.58rem;color:var(--muted)">model</div>
+
+        <div style="font-size:.6rem;color:var(--muted)">Prob</div>
+        <div style="font-family:var(--fm);font-size:.78rem;color:var(--text);text-align:center">${fmtP(p.our_prob_over)}</div>
+        <div style="font-family:var(--fm);font-size:.78rem;color:var(--text);text-align:center">${fmtP(p.our_prob_under)}</div>
+        <div style="font-size:.58rem;color:var(--muted)">our est</div>
+
+        <div style="font-size:.6rem;color:var(--muted)">Edge</div>
+        <div style="font-family:var(--fm);font-size:.78rem;color:${(p.prob_edge_over||0)>0?'var(--green)':'var(--red)'};text-align:center">${probEdgeOver}</div>
+        <div style="font-family:var(--fm);font-size:.78rem;color:${(p.prob_edge_under||0)>0?'var(--green)':'var(--red)'};text-align:center">${probEdgeUnder}</div>
+        <div style="font-size:.58rem;color:var(--muted)">prob</div>
+
+        <div style="font-size:.6rem;color:var(--muted)">EV</div>
+        <div style="font-family:var(--fm);font-size:.78rem;color:${evOver&&evOver[0]==='+' ?'var(--green)':'var(--red)'};text-align:center">${evOver ? '$'+evOver : '—'}</div>
+        <div style="font-family:var(--fm);font-size:.78rem;color:${evUnder&&evUnder[0]==='+' ?'var(--green)':'var(--red)'};text-align:center">${evUnder ? '$'+evUnder : '—'}</div>
+        <div style="font-size:.58rem;color:var(--muted)">per $100</div>
+      </div>
+    </div>` : '';
 
   const bet = p.flagged
     ? `<div class="bet ${p.direction.toLowerCase()}">
@@ -354,18 +403,9 @@ function predCard(p) {
       <div class="pnums">
         <div><div class="pnum-label">Line</div><div class="pnum-val line">${fmt1(p.line)}</div></div>
         <div><div class="pnum-label">Model</div><div class="pnum-val pred">${fmt1(p.predicted_ks)}</div></div>
-        <div><div class="pnum-label">Edge</div><div class="pnum-val ${ep}">${edgeStr}</div></div>
+        <div><div class="pnum-label">K Edge</div><div class="pnum-val ${ep}">${edgeStr}</div></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.6rem">
-        <div style="text-align:center;background:var(--green-dim);border-radius:4px;padding:.3rem">
-          <div style="font-size:.55rem;color:var(--muted);margin-bottom:.1rem">OVER</div>
-          <div style="font-family:var(--fm);font-size:.82rem;color:var(--green)">${overOdds}</div>
-        </div>
-        <div style="text-align:center;background:var(--red-dim);border-radius:4px;padding:.3rem">
-          <div style="font-size:.55rem;color:var(--muted);margin-bottom:.1rem">UNDER</div>
-          <div style="font-family:var(--fm);font-size:.82rem;color:var(--red)">${underOdds}</div>
-        </div>
-      </div>
+      ${pricingBlock}
       ${bet}
       ${updated}
     </div>`;

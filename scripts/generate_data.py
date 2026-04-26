@@ -25,6 +25,7 @@ import duckdb
 import numpy as np
 import pandas as pd
 from datetime import date, timedelta
+from scipy.stats import poisson
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -41,6 +42,93 @@ API_KEY    = os.getenv("BDL_API_KEY")
 BASE_URL   = "https://api.balldontlie.io/mlb/v1"
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models", "saved")
 OUT_DIR    = os.path.join(os.path.dirname(__file__), "..", "docs", "data")
+
+
+# ------------------------------------------------------------------
+# Pricing helpers
+# ------------------------------------------------------------------
+
+def implied_probs(predicted_ks: float, line: float) -> tuple[float, float]:
+    """
+    Convert model K projection + line into over/under win probabilities
+    using a Poisson distribution centered on predicted_ks.
+    """
+    mu = max(predicted_ks, 0.1)
+    prob_over  = 1 - poisson.cdf(int(line), mu=mu)
+    prob_under = poisson.cdf(int(line), mu=mu)
+    return round(prob_over, 4), round(prob_under, 4)
+
+
+def prob_to_american(prob: float) -> int:
+    """Convert win probability to American odds."""
+    prob = max(0.01, min(0.99, prob))
+    if prob >= 0.5:
+        return round(-(prob / (1 - prob)) * 100)
+    else:
+        return round(((1 - prob) / prob) * 100)
+
+
+def american_to_prob(odds: int) -> float:
+    """Convert American odds to implied probability."""
+    if odds is None:
+        return None
+    if odds < 0:
+        return abs(odds) / (abs(odds) + 100)
+    else:
+        return 100 / (odds + 100)
+
+
+def expected_value(our_prob: float, market_odds: int) -> float:
+    """
+    EV per $1 wagered.
+    Positive = profitable, negative = losing bet at this price.
+    """
+    if market_odds is None or our_prob is None:
+        return None
+    if market_odds < 0:
+        payout = 100 / abs(market_odds)
+    else:
+        payout = market_odds / 100
+    ev = (our_prob * payout) - ((1 - our_prob) * 1.0)
+    return round(ev, 4)
+
+
+def compute_pricing(predicted_ks: float, line: float,
+                    over_odds: int, under_odds: int) -> dict:
+    """
+    Full pricing block for one pitcher-line combination.
+    Returns fair odds, market implied probs, our implied probs, and EV.
+    """
+    if predicted_ks is None or line is None:
+        return {}
+
+    prob_over, prob_under = implied_probs(predicted_ks, line)
+
+    fair_over  = prob_to_american(prob_over)
+    fair_under = prob_to_american(prob_under)
+
+    market_prob_over  = american_to_prob(over_odds)
+    market_prob_under = american_to_prob(under_odds)
+
+    ev_over  = expected_value(prob_over,  over_odds)
+    ev_under = expected_value(prob_under, under_odds)
+
+    # Edge in probability terms
+    prob_edge_over  = round(prob_over  - market_prob_over,  4) if market_prob_over  else None
+    prob_edge_under = round(prob_under - market_prob_under, 4) if market_prob_under else None
+
+    return {
+        'our_prob_over':      prob_over,
+        'our_prob_under':     prob_under,
+        'fair_odds_over':     fair_over,
+        'fair_odds_under':    fair_under,
+        'market_prob_over':   round(market_prob_over,  4) if market_prob_over  else None,
+        'market_prob_under':  round(market_prob_under, 4) if market_prob_under else None,
+        'prob_edge_over':     prob_edge_over,
+        'prob_edge_under':    prob_edge_under,
+        'ev_over':            ev_over,
+        'ev_under':           ev_under,
+    }
 
 
 def fetch_games_from_api(target_date: str) -> dict:
@@ -177,22 +265,29 @@ def generate_predictions(con, target_date: str) -> list:
             predicted_ks = float(np.clip(model.predict(X)[0], 0, 20))
             edge = round(predicted_ks - float(row['line']), 2) if pd.notna(row['line']) else None
 
+        over_odds_val  = int(row['over_odds'])  if pd.notna(row['over_odds'])  else None
+        under_odds_val = int(row['under_odds']) if pd.notna(row['under_odds']) else None
+
+        pricing = compute_pricing(predicted_ks, float(row['line']) if pd.notna(row['line']) else None,
+                                  over_odds_val, under_odds_val)
+
         results.append({
-            'pitcher_id':   pitcher_id,
-            'pitcher_name': pitcher_name,
-            'pitcher_team': pitcher_team,
-            'pitcher_hand': hands.get(pitcher_id, '?'),
-            'matchup':      matchup,
-            'venue':        venue,
-            'line':         float(row['line']) if pd.notna(row['line']) else None,
-            'predicted_ks': round(predicted_ks, 1) if predicted_ks is not None else None,
-            'edge':         edge,
-            'direction':    ('OVER' if edge > 0 else 'UNDER') if edge else None,
-            'over_odds':    int(row['over_odds']) if pd.notna(row['over_odds']) else None,
-            'under_odds':   int(row['under_odds']) if pd.notna(row['under_odds']) else None,
-            'book':         row['book'],
-            'line_updated': line_updated,
-            'flagged':      abs(edge) >= 0.75 if edge else False,
+            'pitcher_id':         pitcher_id,
+            'pitcher_name':       pitcher_name,
+            'pitcher_team':       pitcher_team,
+            'pitcher_hand':       hands.get(pitcher_id, '?'),
+            'matchup':            matchup,
+            'venue':              venue,
+            'line':               float(row['line']) if pd.notna(row['line']) else None,
+            'predicted_ks':       round(predicted_ks, 1) if predicted_ks is not None else None,
+            'edge':               edge,
+            'direction':          ('OVER' if edge > 0 else 'UNDER') if edge else None,
+            'over_odds':          over_odds_val,
+            'under_odds':         under_odds_val,
+            'book':               row['book'],
+            'line_updated':       line_updated,
+            'flagged':            abs(edge) >= 0.75 if edge else False,
+            **pricing,
         })
 
     return sorted(results, key=lambda x: abs(x['edge'] or 0), reverse=True)
