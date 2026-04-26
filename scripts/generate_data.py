@@ -268,7 +268,7 @@ def generate_accuracy(con) -> dict:
         # -- Daily rollup --
         daily_sql = """
             SELECT
-                mp.predicted_at::DATE          AS pred_date,
+                CAST(mp.predicted_at::DATE AS VARCHAR) AS pred_date,
                 COUNT(*)                        AS total_bets,
                 SUM(CASE WHEN mp.correct THEN 1 ELSE 0 END) AS correct_bets,
                 ROUND(AVG(CASE WHEN mp.correct THEN 1.0 ELSE 0.0 END), 4) AS accuracy,
@@ -287,18 +287,18 @@ def generate_accuracy(con) -> dict:
         # -- Bet-level detail --
         bets_sql = """
             SELECT
-                mp.predicted_at::DATE           AS game_date,
+                CAST(mp.predicted_at::DATE AS VARCHAR) AS game_date,
                 mp.player_id                    AS pitcher_id,
                 COALESCE(pl.full_name, 'ID ' || CAST(mp.player_id AS VARCHAR)) AS pitcher_name,
                 COALESCE(pl.team_name, '—')     AS pitcher_team,
-                pp.book,
+                COALESCE(pp.book, '—')          AS book,
                 ROUND(mp.line, 1)               AS line,
                 ROUND(mp.predicted_value, 1)    AS predicted,
                 ROUND(mp.result, 1)             AS actual,
                 ROUND(mp.edge, 2)               AS edge,
-                mp.correct,
-                pp.over_odds,
-                pp.under_odds,
+                CAST(mp.correct AS INTEGER)     AS correct,
+                CAST(pp.over_odds AS INTEGER)   AS over_odds,
+                CAST(pp.under_odds AS INTEGER)  AS under_odds,
                 CASE WHEN mp.predicted_value > mp.line THEN 'OVER' ELSE 'UNDER' END AS direction
             FROM model_predictions mp
             LEFT JOIN players pl ON mp.player_id = pl.player_id
@@ -311,6 +311,10 @@ def generate_accuracy(con) -> dict:
             LIMIT 500
         """
         bets_df = con.execute(bets_sql).df()
+        # Convert correct back to bool-like for JS (0/1 instead of NA)
+        bets_df['correct'] = bets_df['correct'].fillna(-1).astype(int)
+        bets_df['over_odds']  = bets_df['over_odds'].where(bets_df['over_odds'].notna(), None)
+        bets_df['under_odds'] = bets_df['under_odds'].where(bets_df['under_odds'].notna(), None)
 
         # -- By book breakdown --
         by_book_sql = """
@@ -340,16 +344,16 @@ def generate_accuracy(con) -> dict:
 
         return {
             'summary': {
-                'total_bets':   total,
-                'correct_bets': correct,
-                'accuracy':     round(correct / total, 4) if total > 0 else None,
-                'avg_edge':     round(float(daily_df['avg_edge'].mean()), 3),
-                'avg_actual':   round(float(daily_df['avg_actual'].mean()), 2),
-                'avg_predicted':round(float(daily_df['avg_predicted'].mean()), 2),
-                'avg_line':     round(float(daily_df['avg_line'].mean()), 2),
+                'total_bets':    total,
+                'correct_bets':  correct,
+                'accuracy':      round(correct / total, 4) if total > 0 else None,
+                'avg_edge':      round(float(daily_df['avg_edge'].mean()), 3),
+                'avg_actual':    round(float(daily_df['avg_actual'].mean()), 2),
+                'avg_predicted': round(float(daily_df['avg_predicted'].mean()), 2),
+                'avg_line':      round(float(daily_df['avg_line'].mean()), 2),
             },
             'daily':   daily_df.fillna(0).to_dict('records'),
-            'bets':    bets_df.fillna('').to_dict('records'),
+            'bets':    bets_df.where(bets_df.notna(), None).to_dict('records'),
             'by_book': by_book_df.fillna(0).to_dict('records'),
         }
 

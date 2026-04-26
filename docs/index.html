@@ -445,8 +445,8 @@ function drawAccuracy() {
 
   } else if (accView === 'bets') {
     const rows = (accData.bets || []).map(r => {
-      const correctColor = r.correct === true ? 'var(--green)' : r.correct === false ? 'var(--red)' : 'inherit';
-      const correctStr   = r.correct === true ? '✓' : r.correct === false ? '✗' : '—';
+      const correctColor = r.correct === 1 ? 'var(--green)' : r.correct === 0 ? 'var(--red)' : 'inherit';
+      const correctStr   = r.correct === 1 ? '✓' : r.correct === 0 ? '✗' : '—';
       const odds = r.direction === 'OVER'
         ? (r.over_odds  != null ? fmtO(r.over_odds)  : '—')
         : (r.under_odds != null ? fmtO(r.under_odds) : '—');
