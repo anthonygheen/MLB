@@ -380,43 +380,123 @@ function drawStuff() {
 function setStuffSort(k) { stuffSort = k; drawStuff(); }
 
 // ── Accuracy ───────────────────────────────────────────────────
+let accView = 'daily';
+
 async function renderAccuracy() {
   const data = await load('data/accuracy.json');
   const el = document.getElementById('accuracy');
-  if (!data || !(data.records||[]).length) {
+  if (!data || !data.summary.total_bets) {
     el.innerHTML = empty('Accuracy Builds Over Time',
-      (data?.summary?.message || 'Track predictions against results to see accuracy here.') +
-      '<br><br>Results log to the <code>model_predictions</code> table automatically.');
+      (data?.summary?.message || 'Run <code>log_results.py</code> after games finish to populate.'));
     return;
   }
-  const s = data.summary;
-  el.innerHTML = `
+  accData = data;
+  drawAccuracy();
+}
+
+let accData = null;
+
+function drawAccuracy() {
+  const el = document.getElementById('accuracy');
+  if (!accData) return;
+  const s = accData.summary;
+
+  const summaryHtml = `
     <div class="stats-row">
       <div class="stat"><div class="stat-label">Total Bets</div><div class="stat-val a">${s.total_bets}</div></div>
       <div class="stat"><div class="stat-label">Correct</div><div class="stat-val g">${s.correct_bets}</div></div>
       <div class="stat"><div class="stat-label">OU Accuracy</div><div class="stat-val gold">${fmtP(s.accuracy)}</div></div>
       <div class="stat"><div class="stat-label">Avg Edge</div><div class="stat-val">${fmt2(s.avg_edge)} Ks</div></div>
-      <div class="stat"><div class="stat-label">Breakeven</div><div class="stat-val" style="color:var(--dim)">52.4%</div></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Daily Accuracy Log</div>
+      <div class="stat"><div class="stat-label">Avg Line</div><div class="stat-val" style="color:var(--dim)">${fmt1(s.avg_line)}</div></div>
+      <div class="stat"><div class="stat-label">Avg Predicted</div><div class="stat-val" style="color:var(--accent)">${fmt1(s.avg_predicted)}</div></div>
+      <div class="stat"><div class="stat-label">Avg Actual</div><div class="stat-val" style="color:var(--green)">${fmt1(s.avg_actual)}</div></div>
+      <div class="stat"><div class="stat-label">Breakeven</div><div class="stat-val" style="color:var(--muted)">52.4%</div></div>
+    </div>`;
+
+  const viewBtns = `
+    <div class="filter-row" style="margin-bottom:1.5rem">
+      <button class="fbtn ${accView==='daily'?'active':''}" onclick="setAccView('daily')">Daily Rollup</button>
+      <button class="fbtn ${accView==='bets'?'active':''}" onclick="setAccView('bets')">Bet Detail</button>
+      <button class="fbtn ${accView==='by_book'?'active':''}" onclick="setAccView('by_book')">By Book</button>
+    </div>`;
+
+  let content = '';
+
+  if (accView === 'daily') {
+    const rows = (accData.daily || []).map(r => `<tr>
+      <td>${r.pred_date}</td>
+      <td class="r">${r.total_bets}</td>
+      <td class="r">${r.correct_bets}</td>
+      <td class="r" style="color:${(r.accuracy||0)>.524?'var(--green)':(r.accuracy||0)<.45?'var(--red)':'inherit'}">${fmtP(r.accuracy)}</td>
+      <td class="r" style="color:var(--dim)">${fmt1(r.avg_line)}</td>
+      <td class="r" style="color:var(--accent)">${fmt1(r.avg_predicted)}</td>
+      <td class="r" style="color:var(--green)">${fmt1(r.avg_actual)}</td>
+      <td class="r">${fmt2(r.avg_edge)}</td>
+    </tr>`).join('');
+    content = `<div class="card"><div class="card-title">Daily Rollup</div>
       <div class="tw"><table>
         <thead><tr>
-          <th>Date</th><th class="r">Bets</th>
-          <th class="r">Correct</th><th class="r">Accuracy</th><th class="r">Avg Edge</th>
+          <th>Date</th><th class="r">Bets</th><th class="r">Correct</th>
+          <th class="r">Accuracy</th><th class="r">Avg Line</th>
+          <th class="r">Avg Pred</th><th class="r">Avg Actual</th><th class="r">Avg Edge</th>
         </tr></thead>
-        <tbody>
-          ${data.records.map(r=>`<tr>
-            <td>${r.pred_date}</td>
-            <td class="r">${r.total_bets}</td>
-            <td class="r">${r.correct_bets}</td>
-            <td class="r" style="color:${(r.accuracy||0)>.524?'var(--green)':(r.accuracy||0)<.45?'var(--red)':'inherit'}">${fmtP(r.accuracy)}</td>
-            <td class="r">${fmt2(r.avg_edge)}</td>
-          </tr>`).join('')}
-        </tbody>
-      </table></div>
-    </div>`;
+        <tbody>${rows}</tbody>
+      </table></div></div>`;
+
+  } else if (accView === 'bets') {
+    const rows = (accData.bets || []).map(r => {
+      const correctColor = r.correct === true ? 'var(--green)' : r.correct === false ? 'var(--red)' : 'inherit';
+      const correctStr   = r.correct === true ? '✓' : r.correct === false ? '✗' : '—';
+      const odds = r.direction === 'OVER'
+        ? (r.over_odds  != null ? fmtO(r.over_odds)  : '—')
+        : (r.under_odds != null ? fmtO(r.under_odds) : '—');
+      return `<tr>
+        <td>${r.game_date}</td>
+        <td class="name">${esc(r.pitcher_name)}</td>
+        <td style="font-size:.68rem;color:var(--dim)">${esc(r.pitcher_team||'')}</td>
+        <td style="font-size:.68rem;color:var(--dim)">${esc(r.book||'')}</td>
+        <td class="r" style="color:var(--dim)">${fmt1(r.line)}</td>
+        <td class="r" style="color:var(--accent)">${fmt1(r.predicted)}</td>
+        <td class="r" style="color:var(--green)">${fmt1(r.actual)}</td>
+        <td class="r" style="color:${(r.edge||0)>0?'var(--green)':'var(--red)'}">${r.edge!=null?(r.edge>0?'+':'')+fmt2(r.edge):'—'}</td>
+        <td class="r" style="color:${r.direction==='OVER'?'var(--green)':'var(--red)'}">${r.direction||'—'}</td>
+        <td class="r" style="font-family:var(--fm);font-size:.72rem">${odds}</td>
+        <td class="r" style="color:${correctColor};font-weight:700">${correctStr}</td>
+      </tr>`;
+    }).join('');
+    content = `<div class="card"><div class="card-title">Bet Detail (last 500)</div>
+      <div class="tw"><table>
+        <thead><tr>
+          <th>Date</th><th>Pitcher</th><th>Team</th><th>Book</th>
+          <th class="r">Line</th><th class="r">Pred</th><th class="r">Actual</th>
+          <th class="r">Edge</th><th class="r">Dir</th><th class="r">Odds</th><th class="r">✓</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div></div>`;
+
+  } else if (accView === 'by_book') {
+    const rows = (accData.by_book || []).map(r => `<tr>
+      <td class="name">${esc(r.book)}</td>
+      <td class="r">${r.total_bets}</td>
+      <td class="r">${r.correct_bets}</td>
+      <td class="r" style="color:${(r.accuracy||0)>.524?'var(--green)':(r.accuracy||0)<.45?'var(--red)':'inherit'};font-weight:600">${fmtP(r.accuracy)}</td>
+      <td class="r">${fmt2(r.avg_edge)}</td>
+      <td class="r" style="color:var(--dim)">${fmt2(r.avg_prediction_error)}</td>
+    </tr>`).join('');
+    content = `<div class="card"><div class="card-title">Accuracy by Sportsbook</div>
+      <div class="tw"><table>
+        <thead><tr>
+          <th>Book</th><th class="r">Bets</th><th class="r">Correct</th>
+          <th class="r">Accuracy</th><th class="r">Avg Edge</th><th class="r">Avg Error</th>
+        </tr></thead>
+        <tbody>${rows || '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Need ≥5 bets per book</td></tr>'}</tbody>
+      </table></div></div>`;
+  }
+
+  el.innerHTML = summaryHtml + viewBtns + content;
 }
+
+function setAccView(v) { accView = v; drawAccuracy(); }
 
 // ── Park Factors ───────────────────────────────────────────────
 async function renderParks() {

@@ -1,19 +1,10 @@
 {
-  "records": [
-    {
-      "pred_date": "2026-04-24 00:00:00",
-      "model_name": "k_prop_gbm",
-      "market_type": "pitcher_strikeouts",
-      "total_bets": 70,
-      "correct_bets": 37.0,
-      "avg_edge": -0.4276,
-      "accuracy": 0.5286
-    }
-  ],
   "summary": {
-    "total_bets": 70,
-    "correct_bets": 37,
-    "accuracy": 0.5286,
-    "avg_edge": -0.428
-  }
+    "total_bets": 0,
+    "accuracy": null,
+    "message": "No tracked predictions yet \u2014 run log_results.py after games finish"
+  },
+  "daily": [],
+  "bets": [],
+  "by_book": []
 }

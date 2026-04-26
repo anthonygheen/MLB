@@ -242,48 +242,121 @@ def generate_stuff_grades(con) -> list:
 
 
 def generate_accuracy(con) -> dict:
-    """Historical edge accuracy from model_predictions table."""
-    sql = """
-        SELECT
-            predicted_at::DATE as pred_date,
-            model_name,
-            market_type,
-            COUNT(*) as total_bets,
-            SUM(CASE WHEN correct THEN 1 ELSE 0 END) as correct_bets,
-            AVG(edge) as avg_edge,
-            AVG(CASE WHEN correct THEN 1.0 ELSE 0.0 END) as accuracy
-        FROM model_predictions
-        WHERE correct IS NOT NULL
-        GROUP BY pred_date, model_name, market_type
-        ORDER BY pred_date DESC
-        LIMIT 90
     """
-    try:
-        df = con.execute(sql).df()
-        if df.empty:
-            return {'records': [], 'summary': {
-                'total_bets': 0, 'accuracy': None,
-                'message': 'No tracked predictions yet — accuracy builds over time'
-            }}
+    Historical edge accuracy from model_predictions table.
+    Returns three views:
+      - summary: overall stats
+      - daily: rollup by date
+      - bets: individual bet-level detail with pitcher name, line, predicted, actual
+      - by_book: accuracy breakdown per sportsbook
+    """
+    empty_response = {
+        'summary': {'total_bets': 0, 'accuracy': None,
+                    'message': 'No tracked predictions yet — run log_results.py after games finish'},
+        'daily': [], 'bets': [], 'by_book': []
+    }
 
-        total   = int(df['total_bets'].sum())
-        correct = int(df['correct_bets'].sum())
-        accuracy = round(correct / total, 4) if total > 0 else None
+    try:
+        # Check if table has any data
+        count = con.execute("SELECT COUNT(*) FROM model_predictions WHERE correct IS NOT NULL").fetchone()[0]
+        if count == 0:
+            return empty_response
+    except Exception:
+        return empty_response
+
+    try:
+        # -- Daily rollup --
+        daily_sql = """
+            SELECT
+                mp.predicted_at::DATE          AS pred_date,
+                COUNT(*)                        AS total_bets,
+                SUM(CASE WHEN mp.correct THEN 1 ELSE 0 END) AS correct_bets,
+                ROUND(AVG(CASE WHEN mp.correct THEN 1.0 ELSE 0.0 END), 4) AS accuracy,
+                ROUND(AVG(mp.edge), 3)          AS avg_edge,
+                ROUND(AVG(mp.predicted_value), 2) AS avg_predicted,
+                ROUND(AVG(mp.line), 2)          AS avg_line,
+                ROUND(AVG(mp.result), 2)        AS avg_actual
+            FROM model_predictions mp
+            WHERE mp.correct IS NOT NULL
+            GROUP BY pred_date
+            ORDER BY pred_date DESC
+            LIMIT 90
+        """
+        daily_df = con.execute(daily_sql).df()
+
+        # -- Bet-level detail --
+        bets_sql = """
+            SELECT
+                mp.predicted_at::DATE           AS game_date,
+                mp.player_id                    AS pitcher_id,
+                COALESCE(pl.full_name, 'ID ' || CAST(mp.player_id AS VARCHAR)) AS pitcher_name,
+                COALESCE(pl.team_name, '—')     AS pitcher_team,
+                pp.book,
+                ROUND(mp.line, 1)               AS line,
+                ROUND(mp.predicted_value, 1)    AS predicted,
+                ROUND(mp.result, 1)             AS actual,
+                ROUND(mp.edge, 2)               AS edge,
+                mp.correct,
+                pp.over_odds,
+                pp.under_odds,
+                CASE WHEN mp.predicted_value > mp.line THEN 'OVER' ELSE 'UNDER' END AS direction
+            FROM model_predictions mp
+            LEFT JOIN players pl ON mp.player_id = pl.player_id
+            LEFT JOIN player_props pp
+                ON mp.player_id = pp.player_id
+                AND mp.game_id  = pp.game_id
+                AND pp.market_type = 'pitcher_strikeouts'
+            WHERE mp.correct IS NOT NULL
+            ORDER BY mp.predicted_at DESC, ABS(mp.edge) DESC
+            LIMIT 500
+        """
+        bets_df = con.execute(bets_sql).df()
+
+        # -- By book breakdown --
+        by_book_sql = """
+            SELECT
+                pp.book,
+                COUNT(*)                        AS total_bets,
+                SUM(CASE WHEN mp.correct THEN 1 ELSE 0 END) AS correct_bets,
+                ROUND(AVG(CASE WHEN mp.correct THEN 1.0 ELSE 0.0 END), 4) AS accuracy,
+                ROUND(AVG(mp.edge), 3)          AS avg_edge,
+                ROUND(AVG(mp.predicted_value - mp.result), 3) AS avg_prediction_error
+            FROM model_predictions mp
+            JOIN player_props pp
+                ON mp.player_id = pp.player_id
+                AND mp.game_id  = pp.game_id
+                AND pp.market_type = 'pitcher_strikeouts'
+            WHERE mp.correct IS NOT NULL
+              AND pp.book IS NOT NULL
+            GROUP BY pp.book
+            HAVING COUNT(*) >= 5
+            ORDER BY accuracy DESC
+        """
+        by_book_df = con.execute(by_book_sql).df()
+
+        # -- Overall summary --
+        total   = int(daily_df['total_bets'].sum())
+        correct = int(daily_df['correct_bets'].sum())
 
         return {
-            'records': df.round(4).fillna(0).to_dict('records'),
             'summary': {
-                'total_bets': total,
+                'total_bets':   total,
                 'correct_bets': correct,
-                'accuracy': accuracy,
-                'avg_edge': round(float(df['avg_edge'].mean()), 3),
-            }
+                'accuracy':     round(correct / total, 4) if total > 0 else None,
+                'avg_edge':     round(float(daily_df['avg_edge'].mean()), 3),
+                'avg_actual':   round(float(daily_df['avg_actual'].mean()), 2),
+                'avg_predicted':round(float(daily_df['avg_predicted'].mean()), 2),
+                'avg_line':     round(float(daily_df['avg_line'].mean()), 2),
+            },
+            'daily':   daily_df.fillna(0).to_dict('records'),
+            'bets':    bets_df.fillna('').to_dict('records'),
+            'by_book': by_book_df.fillna(0).to_dict('records'),
         }
-    except Exception:
-        return {'records': [], 'summary': {
-            'total_bets': 0, 'accuracy': None,
-            'message': 'No tracked predictions yet'
-        }}
+
+    except Exception as e:
+        print(f"   ⚠️  Accuracy generation error: {e}")
+        return empty_response
+
 
 
 def generate_park_factors(con) -> list:
