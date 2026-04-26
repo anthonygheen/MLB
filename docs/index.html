@@ -196,16 +196,16 @@ async function renderPredictions() {
   drawPredictions();
 }
 
-function thresholdCard(accData) {
-  if (!accData || !accData.thresholds || !accData.thresholds.length) {
+function thresholdCard(accInfo) {
+  if (!accInfo || !accInfo.thresholds || !accInfo.thresholds.length) {
     return `<div class="card" style="margin-bottom:1.5rem;border-color:var(--gold);opacity:.5">
       <div class="card-title" style="color:var(--gold)">📐 Threshold Guidance</div>
       <div style="font-size:.75rem;color:var(--muted)">Builds after 5+ bets per edge bucket. Run <code>log_results.py</code> daily.</div>
     </div>`;
   }
 
-  const buckets = accData.thresholds;
-  const recs    = accData.recommendations || {};
+  const buckets = accInfo.thresholds;
+  const recs    = accInfo.recommendations || {};
   const BREAKEVEN = 0.524;
 
   const overRows = buckets
@@ -253,8 +253,9 @@ function thresholdCard(accData) {
         <div style="font-size:.68rem;color:var(--dim);margin-top:.6rem">${recUnder}</div>
       </div>
     </div>
-    <div style="font-size:.62rem;color:var(--muted);margin-top:.75rem">Based on ${accData.summary?.dedup_total||0} unique pitcher-games · refreshes as data accumulates</div>
+    <div style="font-size:.62rem;color:var(--muted);margin-top:.75rem">Based on ${accInfo.summary?.dedup_total||0} unique pitcher-games · refreshes as data accumulates</div>
   </div>`;
+}
 
 function drawPredictions() {
   const el = document.getElementById('predictions');
@@ -456,16 +457,16 @@ async function renderAccuracy() {
       (data?.summary?.message || 'Run <code>log_results.py</code> after games finish to populate.'));
     return;
   }
-  accData = data;
+  accTabData = data;
   drawAccuracy();
 }
 
-let accData = null;
+let accTabData = null;
 
 function drawAccuracy() {
   const el = document.getElementById('accuracy');
-  if (!accData) return;
-  const s = accData.summary;
+  if (!accTabData) return;
+  const s = accTabData.summary;
 
   const summaryHtml = `
     <div class="stats-row">
@@ -490,7 +491,7 @@ function drawAccuracy() {
   let content = '';
 
   if (accView === 'daily') {
-    const rows = (accData.daily || []).map(r => `<tr>
+    const rows = (accTabData.daily || []).map(r => `<tr>
       <td>${r.pred_date}</td>
       <td class="r">${r.total_bets}</td>
       <td class="r">${r.correct_bets}</td>
@@ -511,7 +512,7 @@ function drawAccuracy() {
       </table></div></div>`;
 
   } else if (accView === 'bets') {
-    const rows = (accData.bets || []).map(r => {
+    const rows = (accTabData.bets || []).map(r => {
       const correctColor = r.correct === 1 ? 'var(--green)' : r.correct === 0 ? 'var(--red)' : 'inherit';
       const correctStr   = r.correct === 1 ? '✓' : r.correct === 0 ? '✗' : '—';
       const odds = r.direction === 'OVER'
@@ -542,7 +543,7 @@ function drawAccuracy() {
       </table></div></div>`;
 
   } else if (accView === 'by_book') {
-    const rows = (accData.by_book || []).map(r => `<tr>
+    const rows = (accTabData.by_book || []).map(r => `<tr>
       <td class="name">${esc(r.book)}</td>
       <td class="r">${r.total_bets}</td>
       <td class="r">${r.correct_bets}</td>
