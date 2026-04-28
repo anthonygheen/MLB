@@ -10,7 +10,7 @@
       "avg_spin": 2300.589,
       "avg_ivb": 14.75,
       "whiff_rate": 0.732,
-      "velo_vs_avg": 0.003
+      "velo_vs_avg": -0.019
     },
     {
       "pitcher_id": 239,
@@ -21,7 +21,7 @@
       "avg_spin": 2021.948,
       "avg_ivb": 11.121,
       "whiff_rate": 0.69,
-      "velo_vs_avg": -4.892
+      "velo_vs_avg": -4.914
     },
     {
       "pitcher_id": 56,
@@ -32,7 +32,7 @@
       "avg_spin": 2615.566,
       "avg_ivb": 16.792,
       "whiff_rate": 0.642,
-      "velo_vs_avg": 1.72
+      "velo_vs_avg": 1.698
     },
     {
       "pitcher_id": 1680889,
@@ -43,18 +43,18 @@
       "avg_spin": 2610.661,
       "avg_ivb": 15.732,
       "whiff_rate": 0.625,
-      "velo_vs_avg": 5.689
+      "velo_vs_avg": 5.667
     },
     {
-      "pitcher_id": 1070,
-      "pitcher_name": "Bryan Hudson",
+      "pitcher_id": 1645455,
+      "pitcher_name": "Grant Taylor",
       "pitcher_team": "Chicago White Sox",
-      "pitch_count": 53,
-      "avg_velo": 91.86,
-      "avg_spin": 2201.623,
-      "avg_ivb": 13.377,
-      "whiff_rate": 0.623,
-      "velo_vs_avg": -2.931
+      "pitch_count": 50,
+      "avg_velo": 98.816,
+      "avg_spin": 2417.58,
+      "avg_ivb": 16.22,
+      "whiff_rate": 0.62,
+      "velo_vs_avg": 4.002
     },
     {
       "pitcher_id": 2712,
@@ -65,7 +65,7 @@
       "avg_spin": 2310.088,
       "avg_ivb": 15.853,
       "whiff_rate": 0.618,
-      "velo_vs_avg": -1.889
+      "velo_vs_avg": -1.911
     },
     {
       "pitcher_id": 1017,
@@ -76,7 +76,7 @@
       "avg_spin": 2473.78,
       "avg_ivb": 15.923,
       "whiff_rate": 0.615,
-      "velo_vs_avg": 2.567
+      "velo_vs_avg": 2.544
     },
     {
       "pitcher_id": 178,
@@ -87,7 +87,18 @@
       "avg_spin": 2315.529,
       "avg_ivb": 16.506,
       "whiff_rate": 0.6,
-      "velo_vs_avg": 1.681
+      "velo_vs_avg": 1.659
+    },
+    {
+      "pitcher_id": 1070,
+      "pitcher_name": "Bryan Hudson",
+      "pitcher_team": "Chicago White Sox",
+      "pitch_count": 57,
+      "avg_velo": 91.74,
+      "avg_spin": 2192.281,
+      "avg_ivb": 13.351,
+      "whiff_rate": 0.596,
+      "velo_vs_avg": -3.073
     },
     {
       "pitcher_id": 903,
@@ -98,7 +109,7 @@
       "avg_spin": 2316.574,
       "avg_ivb": 15.907,
       "whiff_rate": 0.593,
-      "velo_vs_avg": 1.073
+      "velo_vs_avg": 1.051
     },
     {
       "pitcher_id": 2183925,
@@ -109,7 +120,7 @@
       "avg_spin": 2446.0,
       "avg_ivb": 17.362,
       "whiff_rate": 0.585,
-      "velo_vs_avg": 2.492
+      "velo_vs_avg": 2.47
     },
     {
       "pitcher_id": 51,
@@ -120,7 +131,7 @@
       "avg_spin": 2455.573,
       "avg_ivb": 17.333,
       "whiff_rate": 0.573,
-      "velo_vs_avg": 2.04
+      "velo_vs_avg": 2.018
     },
     {
       "pitcher_id": 114,
@@ -131,7 +142,7 @@
       "avg_spin": 2385.991,
       "avg_ivb": 16.603,
       "whiff_rate": 0.569,
-      "velo_vs_avg": -0.804
+      "velo_vs_avg": -0.826
     },
     {
       "pitcher_id": 736,
@@ -142,7 +153,7 @@
       "avg_spin": 2284.13,
       "avg_ivb": 9.234,
       "whiff_rate": 0.558,
-      "velo_vs_avg": 0.417
+      "velo_vs_avg": 0.395
     },
     {
       "pitcher_id": 3198,
@@ -153,7 +164,7 @@
       "avg_spin": 2400.536,
       "avg_ivb": 17.75,
       "whiff_rate": 0.548,
-      "velo_vs_avg": -1.975
+      "velo_vs_avg": -1.997
     },
     {
       "pitcher_id": 10,
@@ -164,7 +175,7 @@
       "avg_spin": 2340.159,
       "avg_ivb": 14.175,
       "whiff_rate": 0.54,
-      "velo_vs_avg": 2.297
+      "velo_vs_avg": 2.275
     },
     {
       "pitcher_id": 293,
@@ -175,7 +186,7 @@
       "avg_spin": 2272.646,
       "avg_ivb": 11.754,
       "whiff_rate": 0.538,
-      "velo_vs_avg": -0.138
+      "velo_vs_avg": -0.16
     },
     {
       "pitcher_id": 555,
@@ -186,7 +197,7 @@
       "avg_spin": 2361.453,
       "avg_ivb": 16.868,
       "whiff_rate": 0.528,
-      "velo_vs_avg": 0.865
+      "velo_vs_avg": 0.843
     },
     {
       "pitcher_id": 5874,
@@ -197,7 +208,7 @@
       "avg_spin": 2599.193,
       "avg_ivb": 16.14,
       "whiff_rate": 0.526,
-      "velo_vs_avg": 3.101
+      "velo_vs_avg": 3.079
     },
     {
       "pitcher_id": 741,
@@ -208,7 +219,7 @@
       "avg_spin": 2201.8,
       "avg_ivb": 16.1,
       "whiff_rate": 0.52,
-      "velo_vs_avg": -1.01
+      "velo_vs_avg": -1.032
     },
     {
       "pitcher_id": 5668,
@@ -219,7 +230,7 @@
       "avg_spin": 2392.596,
       "avg_ivb": 15.07,
       "whiff_rate": 0.509,
-      "velo_vs_avg": -1.872
+      "velo_vs_avg": -1.895
     },
     {
       "pitcher_id": 4100,
@@ -230,7 +241,18 @@
       "avg_spin": 2346.48,
       "avg_ivb": 18.06,
       "whiff_rate": 0.5,
-      "velo_vs_avg": -1.594
+      "velo_vs_avg": -1.616
+    },
+    {
+      "pitcher_id": 369,
+      "pitcher_name": "Luis Castillo",
+      "pitcher_team": "Seattle Mariners",
+      "pitch_count": 67,
+      "avg_velo": 94.178,
+      "avg_spin": 2270.97,
+      "avg_ivb": 13.06,
+      "whiff_rate": 0.493,
+      "velo_vs_avg": -0.636
     },
     {
       "pitcher_id": 533,
@@ -241,7 +263,7 @@
       "avg_spin": 2334.176,
       "avg_ivb": 15.849,
       "whiff_rate": 0.486,
-      "velo_vs_avg": -2.6
+      "velo_vs_avg": -2.622
     },
     {
       "pitcher_id": 878,
@@ -252,7 +274,7 @@
       "avg_spin": 2252.769,
       "avg_ivb": 18.879,
       "whiff_rate": 0.484,
-      "velo_vs_avg": 1.391
+      "velo_vs_avg": 1.369
     },
     {
       "pitcher_id": 5460,
@@ -263,7 +285,7 @@
       "avg_spin": 2402.014,
       "avg_ivb": 18.472,
       "whiff_rate": 0.472,
-      "velo_vs_avg": -0.118
+      "velo_vs_avg": -0.14
     },
     {
       "pitcher_id": 3015008,
@@ -274,7 +296,7 @@
       "avg_spin": 2377.282,
       "avg_ivb": 18.051,
       "whiff_rate": 0.462,
-      "velo_vs_avg": 3.712
+      "velo_vs_avg": 3.69
     },
     {
       "pitcher_id": 1516,
@@ -285,7 +307,7 @@
       "avg_spin": 2178.052,
       "avg_ivb": 12.69,
       "whiff_rate": 0.431,
-      "velo_vs_avg": 0.241
+      "velo_vs_avg": 0.219
     },
     {
       "pitcher_id": 15738,
@@ -296,7 +318,7 @@
       "avg_spin": 2151.113,
       "avg_ivb": 15.371,
       "whiff_rate": 0.419,
-      "velo_vs_avg": 2.347
+      "velo_vs_avg": 2.325
     },
     {
       "pitcher_id": 4668116,
@@ -307,7 +329,7 @@
       "avg_spin": 2234.739,
       "avg_ivb": 14.768,
       "whiff_rate": 0.406,
-      "velo_vs_avg": 1.747
+      "velo_vs_avg": 1.725
     },
     {
       "pitcher_id": 894,
@@ -318,7 +340,7 @@
       "avg_spin": 2298.982,
       "avg_ivb": 17.456,
       "whiff_rate": 0.404,
-      "velo_vs_avg": -1.969
+      "velo_vs_avg": -1.991
     },
     {
       "pitcher_id": 782,
@@ -329,7 +351,7 @@
       "avg_spin": 2356.509,
       "avg_ivb": 18.182,
       "whiff_rate": 0.4,
-      "velo_vs_avg": -2.961
+      "velo_vs_avg": -2.983
     },
     {
       "pitcher_id": 24,
@@ -340,7 +362,7 @@
       "avg_spin": 2316.855,
       "avg_ivb": 15.145,
       "whiff_rate": 0.387,
-      "velo_vs_avg": -1.116
+      "velo_vs_avg": -1.138
     }
   ]
 }
