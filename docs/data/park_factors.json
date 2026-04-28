@@ -211,17 +211,17 @@
       "park_k_factor": 0.9638
     },
     {
-      "venue": "Fenway Park",
-      "season": 2025,
-      "total_pa": 6193,
-      "venue_k_rate": 0.2109,
-      "park_k_factor": 0.9516
-    },
-    {
       "venue": "Tropicana Field",
       "season": 2026,
       "total_pa": 284,
       "venue_k_rate": 0.2007,
+      "park_k_factor": 0.9516
+    },
+    {
+      "venue": "Fenway Park",
+      "season": 2025,
+      "total_pa": 6193,
+      "venue_k_rate": 0.2109,
       "park_k_factor": 0.9516
     },
     {
