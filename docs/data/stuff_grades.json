@@ -101,17 +101,6 @@
       "velo_vs_avg": 1.685
     },
     {
-      "pitcher_id": 1070,
-      "pitcher_name": "Bryan Hudson",
-      "pitcher_team": "Chicago White Sox",
-      "pitch_count": 57,
-      "avg_velo": 91.74,
-      "avg_spin": 2192.281,
-      "avg_ivb": 13.351,
-      "whiff_rate": 0.596,
-      "velo_vs_avg": -3.048
-    },
-    {
       "pitcher_id": 543,
       "pitcher_name": "Braxton Ashcraft",
       "pitcher_team": "Pittsburgh Pirates",
@@ -121,6 +110,17 @@
       "avg_ivb": 15.211,
       "whiff_rate": 0.596,
       "velo_vs_avg": 2.003
+    },
+    {
+      "pitcher_id": 1070,
+      "pitcher_name": "Bryan Hudson",
+      "pitcher_team": "Chicago White Sox",
+      "pitch_count": 57,
+      "avg_velo": 91.74,
+      "avg_spin": 2192.281,
+      "avg_ivb": 13.351,
+      "whiff_rate": 0.596,
+      "velo_vs_avg": -3.048
     },
     {
       "pitcher_id": 903,
@@ -211,17 +211,6 @@
       "velo_vs_avg": 2.3
     },
     {
-      "pitcher_id": 293,
-      "pitcher_name": "Andre Pallante",
-      "pitcher_team": "St. Louis Cardinals",
-      "pitch_count": 65,
-      "avg_velo": 94.654,
-      "avg_spin": 2272.646,
-      "avg_ivb": 11.754,
-      "whiff_rate": 0.538,
-      "velo_vs_avg": -0.135
-    },
-    {
       "pitcher_id": 51,
       "pitcher_name": "Jack Leiter",
       "pitcher_team": "Texas Rangers",
@@ -231,6 +220,17 @@
       "avg_ivb": 17.342,
       "whiff_rate": 0.538,
       "velo_vs_avg": 1.82
+    },
+    {
+      "pitcher_id": 293,
+      "pitcher_name": "Andre Pallante",
+      "pitcher_team": "St. Louis Cardinals",
+      "pitch_count": 65,
+      "avg_velo": 94.654,
+      "avg_spin": 2272.646,
+      "avg_ivb": 11.754,
+      "whiff_rate": 0.538,
+      "velo_vs_avg": -0.135
     },
     {
       "pitcher_id": 555,
