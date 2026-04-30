@@ -7577,20 +7577,20 @@
   ],
   "by_book": [
     {
-      "book": "fanduel",
-      "total_bets": 457,
-      "correct_bets": 246.0,
-      "accuracy": 0.5383,
-      "avg_edge": -0.333,
-      "avg_prediction_error": -0.43
-    },
-    {
       "book": "draftkings",
       "total_bets": 457,
       "correct_bets": 246.0,
       "accuracy": 0.5383,
       "avg_edge": -0.337,
       "avg_prediction_error": -0.443
+    },
+    {
+      "book": "fanduel",
+      "total_bets": 457,
+      "correct_bets": 246.0,
+      "accuracy": 0.5383,
+      "avg_edge": -0.333,
+      "avg_prediction_error": -0.43
     },
     {
       "book": "betrivers",

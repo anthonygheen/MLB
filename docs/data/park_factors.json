@@ -78,17 +78,17 @@
       "park_k_factor": 1.0468
     },
     {
-      "venue": "American Family Field",
-      "season": 2025,
-      "total_pa": 6073,
-      "venue_k_rate": 0.2318,
-      "park_k_factor": 1.0462
-    },
-    {
       "venue": "Great American Ball Park",
       "season": 2026,
       "total_pa": 489,
       "venue_k_rate": 0.2229,
+      "park_k_factor": 1.0462
+    },
+    {
+      "venue": "American Family Field",
+      "season": 2025,
+      "total_pa": 6073,
+      "venue_k_rate": 0.2318,
       "park_k_factor": 1.0462
     },
     {
