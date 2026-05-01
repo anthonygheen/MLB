@@ -68,17 +68,6 @@
       "velo_vs_avg": 5.785
     },
     {
-      "pitcher_id": 1645455,
-      "pitcher_name": "Grant Taylor",
-      "pitcher_team": "Chicago White Sox",
-      "pitch_count": 50,
-      "avg_velo": 98.816,
-      "avg_spin": 2417.58,
-      "avg_ivb": 16.22,
-      "whiff_rate": 0.62,
-      "velo_vs_avg": 4.121
-    },
-    {
       "pitcher_id": 3816,
       "pitcher_name": "Luis Severino",
       "pitcher_team": "Oakland Athletics",
@@ -88,6 +77,17 @@
       "avg_ivb": 15.82,
       "whiff_rate": 0.62,
       "velo_vs_avg": 2.165
+    },
+    {
+      "pitcher_id": 1645455,
+      "pitcher_name": "Grant Taylor",
+      "pitcher_team": "Chicago White Sox",
+      "pitch_count": 50,
+      "avg_velo": 98.816,
+      "avg_spin": 2417.58,
+      "avg_ivb": 16.22,
+      "whiff_rate": 0.62,
+      "velo_vs_avg": 4.121
     },
     {
       "pitcher_id": 393,

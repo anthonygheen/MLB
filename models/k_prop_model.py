@@ -26,6 +26,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.pipeline import Pipeline
 from sklearn.inspection import permutation_importance
+from scipy.optimize import minimize_scalar
+from scipy.special import gammaln
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -355,6 +357,31 @@ def print_feature_importance(model, features: list, top_n: int = 20):
 
 
 # ------------------------------------------------------------------
+# NegBinom calibration layer
+# ------------------------------------------------------------------
+
+def fit_negbinom_dispersion(mu_pred: np.ndarray, y_actual: np.ndarray) -> float:
+    """
+    Fit NegBinom dispersion parameter r given GBM predicted means and actual counts.
+
+    Uses MLE: find r that maximizes Σ log NegBinom(y_i | μ_i, r).
+    r controls tail width — larger r = tighter distribution (→ Poisson as r → ∞).
+    Saved with the model so predict_today.py can compute P(K > line) properly.
+    """
+    mu = np.asarray(mu_pred, dtype=float).clip(0.1, 20)
+    y  = np.asarray(y_actual, dtype=float)
+
+    def neg_log_likelihood(r):
+        p  = r / (r + mu)
+        ll = (gammaln(y + r) - gammaln(r) - gammaln(y + 1)
+              + r * np.log(p) + y * np.log(1 - p + 1e-10))
+        return -ll.sum()
+
+    result = minimize_scalar(neg_log_likelihood, bounds=(0.5, 100), method='bounded')
+    return float(result.x)
+
+
+# ------------------------------------------------------------------
 # Save / load
 # ------------------------------------------------------------------
 
@@ -425,11 +452,8 @@ def main():
         return
 
     # Hold out last season for final evaluation
-    #train_df = df[df['season'] < df['season'].max()]
-    #test_df  = df[df['season'] == df['season'].max()]
-
-    train_df = df[df['season'] < 2025]
-    test_df  = df[df['season'] == 2025]
+    train_df = df[df['season'] < df['season'].max()]
+    test_df  = df[df['season'] == df['season'].max()]
 
     X_train = train_df[features].values
     y_train = train_df[TARGET].values
@@ -451,6 +475,14 @@ def main():
     evaluate_model(gbm, X_test, y_test, "GBM (holdout last season)")
     print_feature_importance(gbm, features)
 
+    # Fit NegBinom dispersion on holdout predictions
+    print(f"\n📐 Fitting NegBinom dispersion on holdout season...")
+    holdout_preds = np.clip(gbm.predict(X_test), 0.1, 20)
+    negbinom_r = fit_negbinom_dispersion(holdout_preds, y_test.values)
+    print(f"   r = {negbinom_r:.4f}  "
+          f"(implied variance at mean {holdout_preds.mean():.1f} Ks: "
+          f"{holdout_preds.mean() + holdout_preds.mean()**2 / negbinom_r:.2f})")
+
     # Save
     metadata = {
         'train_seasons': sorted(train_df['season'].unique().tolist()),
@@ -459,6 +491,7 @@ def main():
         'cv_results':    cv_results,
         'tuned':         args.tune,
         'best_params':   best_params,
+        'negbinom_r':    negbinom_r,
     }
     save_model(gbm, features, 'k_prop_gbm', metadata)
 

@@ -25,7 +25,7 @@ import duckdb
 import numpy as np
 import pandas as pd
 from datetime import date, timedelta
-from scipy.stats import poisson
+from scipy.stats import nbinom
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -48,14 +48,17 @@ OUT_DIR    = os.path.join(os.path.dirname(__file__), "..", "docs", "data")
 # Pricing helpers
 # ------------------------------------------------------------------
 
-def implied_probs(predicted_ks: float, line: float) -> tuple[float, float]:
+def implied_probs(predicted_ks: float, line: float,
+                  negbinom_r: float = None) -> tuple[float, float]:
     """
-    Convert model K projection + line into over/under win probabilities
-    using a Poisson distribution centered on predicted_ks.
+    Convert model K projection + line into over/under win probabilities.
+    Uses NegBinom(mu, r) when r is available, falls back to NegBinom with r=40.
     """
     mu = max(predicted_ks, 0.1)
-    prob_over  = 1 - poisson.cdf(int(line), mu=mu)
-    prob_under = poisson.cdf(int(line), mu=mu)
+    r  = negbinom_r if negbinom_r else 40.0
+    p  = r / (r + mu)
+    prob_over  = float(1 - nbinom.cdf(int(line), r, p))
+    prob_under = float(nbinom.cdf(int(line), r, p))
     return round(prob_over, 4), round(prob_under, 4)
 
 
@@ -94,7 +97,8 @@ def expected_value(our_prob: float, market_odds: int) -> float:
 
 
 def compute_pricing(predicted_ks: float, line: float,
-                    over_odds: int, under_odds: int) -> dict:
+                    over_odds: int, under_odds: int,
+                    negbinom_r: float = None) -> dict:
     """
     Full pricing block for one pitcher-line combination.
     Returns fair odds, market implied probs, our implied probs, and EV.
@@ -102,7 +106,7 @@ def compute_pricing(predicted_ks: float, line: float,
     if predicted_ks is None or line is None:
         return {}
 
-    prob_over, prob_under = implied_probs(predicted_ks, line)
+    prob_over, prob_under = implied_probs(predicted_ks, line, negbinom_r)
 
     fair_over  = prob_to_american(prob_over)
     fair_under = prob_to_american(prob_under)
@@ -149,10 +153,11 @@ def load_latest_model():
     files = sorted([f for f in os.listdir(MODELS_DIR) if f.endswith('.pkl')
                     and 'negbinom' not in f])
     if not files:
-        return None, None
+        return None, None, None
     with open(os.path.join(MODELS_DIR, files[-1]), 'rb') as f:
         payload = pickle.load(f)
-    return payload['model'], payload['features']
+    r = payload.get('metadata', {}).get('negbinom_r')
+    return payload['model'], payload['features'], r
 
 
 def generate_predictions(con, target_date: str) -> list:
@@ -204,7 +209,7 @@ def generate_predictions(con, target_date: str) -> list:
                     'venue':          g.get('venue', '—'),
                 }
 
-    model, features = load_latest_model()
+    model, features, negbinom_r = load_latest_model()
     results_df  = get_pitcher_game_results(con)
     results_df  = add_rolling_features(results_df)
     stuff_raw   = get_pitch_stuff_grades(con)
@@ -268,8 +273,17 @@ def generate_predictions(con, target_date: str) -> list:
         over_odds_val  = int(row['over_odds'])  if pd.notna(row['over_odds'])  else None
         under_odds_val = int(row['under_odds']) if pd.notna(row['under_odds']) else None
 
-        pricing = compute_pricing(predicted_ks, float(row['line']) if pd.notna(row['line']) else None,
-                                  over_odds_val, under_odds_val)
+        line_val = float(row['line']) if pd.notna(row['line']) else None
+        pricing  = compute_pricing(predicted_ks, line_val, over_odds_val, under_odds_val,
+                                   negbinom_r=negbinom_r)
+
+        # Flag if either side has positive EV; fall back to raw edge if no odds
+        ev_over  = pricing.get('ev_over')
+        ev_under = pricing.get('ev_under')
+        if ev_over is not None and ev_under is not None:
+            flagged = max(ev_over, ev_under) > 0
+        else:
+            flagged = abs(edge) >= 0.75 if edge else False
 
         results.append({
             'pitcher_id':         pitcher_id,
@@ -278,15 +292,15 @@ def generate_predictions(con, target_date: str) -> list:
             'pitcher_hand':       hands.get(pitcher_id, '?'),
             'matchup':            matchup,
             'venue':              venue,
-            'line':               float(row['line']) if pd.notna(row['line']) else None,
-            'predicted_ks':       round(predicted_ks, 1) if predicted_ks is not None else None,
+            'line':               line_val,
+            'predicted_ks':       round(predicted_ks, 2) if predicted_ks is not None else None,
             'edge':               edge,
             'direction':          ('OVER' if edge > 0 else 'UNDER') if edge else None,
             'over_odds':          over_odds_val,
             'under_odds':         under_odds_val,
             'book':               row['book'],
             'line_updated':       line_updated,
-            'flagged':            abs(edge) >= 0.75 if edge else False,
+            'flagged':            flagged,
             **pricing,
         })
 
@@ -388,10 +402,11 @@ def generate_accuracy(con) -> dict:
                 COALESCE(pl.team_name, '—')     AS pitcher_team,
                 COALESCE(pp.book, '—')          AS book,
                 ROUND(mp.line, 1)               AS line,
-                ROUND(mp.predicted_value, 1)    AS predicted,
+                ROUND(mp.predicted_value, 2)    AS predicted,
                 ROUND(mp.result, 1)             AS actual,
                 ROUND(mp.edge, 2)               AS edge,
                 CAST(mp.correct AS INTEGER)     AS correct,
+                ROUND(mp.confidence, 3)         AS confidence,
                 CAST(pp.over_odds AS INTEGER)   AS over_odds,
                 CAST(pp.under_odds AS INTEGER)  AS under_odds,
                 CASE WHEN mp.predicted_value > mp.line THEN 'OVER' ELSE 'UNDER' END AS direction
@@ -432,6 +447,35 @@ def generate_accuracy(con) -> dict:
             ORDER BY accuracy DESC
         """
         by_book_df = con.execute(by_book_sql).df()
+
+        # -- Confidence tier breakdown (deduped) --
+        confidence_sql = """
+            WITH deduped AS (
+                SELECT DISTINCT ON (game_id, player_id)
+                    confidence, correct,
+                    CASE WHEN predicted_value > line THEN 'OVER' ELSE 'UNDER' END AS direction
+                FROM model_predictions
+                WHERE correct IS NOT NULL AND confidence IS NOT NULL
+                ORDER BY game_id, player_id, inserted_at
+            )
+            SELECT
+                CASE
+                    WHEN confidence >= 0.70 THEN '>=70%'
+                    WHEN confidence >= 0.65 THEN '65-70%'
+                    WHEN confidence >= 0.60 THEN '60-65%'
+                    WHEN confidence >= 0.55 THEN '55-60%'
+                    ELSE '<55%'
+                END AS confidence_tier,
+                direction,
+                COUNT(*) AS bets,
+                SUM(CAST(correct AS INTEGER)) AS correct_bets,
+                ROUND(AVG(CAST(correct AS DOUBLE)), 4) AS accuracy,
+                ROUND(AVG(confidence), 4) AS avg_confidence
+            FROM deduped
+            GROUP BY confidence_tier, direction
+            ORDER BY MIN(confidence) DESC, direction
+        """
+        confidence_df = con.execute(confidence_sql).df()
 
         # -- Overall summary --
         total   = int(daily_df['total_bets'].sum())
@@ -508,10 +552,11 @@ def generate_accuracy(con) -> dict:
                 'avg_predicted':  round(float(daily_df['avg_predicted'].mean()), 2),
                 'avg_line':       round(float(daily_df['avg_line'].mean()), 2),
             },
-            'daily':        daily_df.fillna(0).to_dict('records'),
-            'bets':         bets_df.where(bets_df.notna(), None).to_dict('records'),
-            'by_book':      by_book_df.fillna(0).to_dict('records'),
-            'thresholds':   threshold_df.fillna(0).to_dict('records'),
+            'daily':           daily_df.fillna(0).to_dict('records'),
+            'bets':            bets_df.where(bets_df.notna(), None).to_dict('records'),
+            'by_book':         by_book_df.fillna(0).to_dict('records'),
+            'thresholds':      threshold_df.fillna(0).to_dict('records'),
+            'by_confidence':   confidence_df.fillna(0).to_dict('records'),
             'recommendations': recommendations,
         }
 

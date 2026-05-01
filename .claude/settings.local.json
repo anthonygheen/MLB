@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\projects\\\\MLB\" -Recurse -Directory)",
+      "Bash(Select-Object -First 20)",
+      "PowerShell($env:PYTHONIOENCODING=\"utf-8\"; .venv\\\\Scripts\\\\python models\\\\k_prop_model.py 2>&1)",
+      "Bash(.venv/Scripts/python -c ' *)",
+      "PowerShell($env:PYTHONIOENCODING=\"utf-8\"; .venv\\\\Scripts\\\\python scripts\\\\log_results.py --backfill)"
+    ]
+  }
+}

@@ -21,6 +21,7 @@ import duckdb
 import numpy as np
 import pandas as pd
 from datetime import date, timedelta
+from scipy.stats import nbinom
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -40,10 +41,16 @@ def load_latest_model():
     files = sorted([f for f in os.listdir(MODELS_DIR) if f.endswith('.pkl')
                     and 'negbinom' not in f])
     if not files:
-        return None, None
+        return None, None, None
     with open(os.path.join(MODELS_DIR, files[-1]), 'rb') as f:
         payload = pickle.load(f)
-    return payload['model'], payload['features']
+    r = payload.get('metadata', {}).get('negbinom_r')
+    return payload['model'], payload['features'], r
+
+
+def compute_p_over(mu: float, r: float, line: float) -> float:
+    p = r / (r + mu)
+    return float(1 - nbinom.cdf(int(line), r, p))
 
 
 def get_actual_ks(con) -> pd.DataFrame:
@@ -118,16 +125,18 @@ def build_prediction(pitcher_id: int, venue: str,
                      parks: pd.DataFrame,
                      features: list,
                      model,
-                     game_date: str) -> float | None:
+                     game_date: str,
+                     negbinom_r: float = None,
+                     line: float = None) -> tuple[float | None, float | None]:
     """Build feature vector and generate model prediction for a pitcher."""
     hist = results_df[results_df['pitcher_id'] == pitcher_id]
     if hist.empty or model is None:
-        return None
+        return None, None
 
     # Use data up to the game date to avoid leakage
     hist = hist[hist['game_date'] < pd.Timestamp(game_date)].copy()
     if hist.empty:
-        return None
+        return None, None
 
     latest = hist.sort_values('game_date').iloc[-1].copy()
     current_season = pd.Timestamp(game_date).year
@@ -152,11 +161,16 @@ def build_prediction(pitcher_id: int, venue: str,
     feat_vec = {f: (0 if pd.isna(latest.get(f, 0)) else latest.get(f, 0))
                 for f in features}
     X = np.array([feat_vec[f] for f in features]).reshape(1, -1)
-    return float(np.clip(model.predict(X)[0], 0, 20))
+    predicted = float(np.clip(model.predict(X)[0], 0, 20))
+
+    p_over = (compute_p_over(predicted, negbinom_r, line)
+              if negbinom_r is not None and line is not None else None)
+
+    return predicted, p_over
 
 
 def log_results(target_date: str = None, backfill: bool = False):
-    model, features = load_latest_model()
+    model, features, negbinom_r = load_latest_model()
     con = duckdb.connect(DB_PATH)
 
     mode = "backfill" if backfill else (target_date or str(date.today() - timedelta(days=1)))
@@ -206,21 +220,28 @@ def log_results(target_date: str = None, backfill: bool = False):
         line         = float(row['line'])
         actual_ks    = float(row['actual_ks'])
 
-        # Get model prediction
-        predicted = build_prediction(
+        # Get model prediction and probability
+        predicted, p_over = build_prediction(
             pitcher_id, venue, results_df, stuff_pivot,
-            parks, features, model, game_date
+            parks, features, model, game_date,
+            negbinom_r=negbinom_r, line=line
         )
 
         if predicted is None:
             skipped += 1
             continue
 
-        edge      = round(predicted - line, 3)
-        direction = 'OVER' if predicted > line else 'UNDER'
+        edge        = round(predicted - line, 3)
+        direction   = 'OVER' if predicted > line else 'UNDER'
         actual_over = actual_ks > line
-        correct   = (direction == 'OVER' and actual_over) or \
-                    (direction == 'UNDER' and not actual_over)
+        correct     = (direction == 'OVER' and actual_over) or \
+                      (direction == 'UNDER' and not actual_over)
+
+        # confidence = P(the direction we bet is correct)
+        if p_over is not None:
+            confidence = p_over if direction == 'OVER' else (1 - p_over)
+        else:
+            confidence = None
 
         try:
             con.execute("""
@@ -232,7 +253,7 @@ def log_results(target_date: str = None, backfill: bool = False):
                     predicted_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, [
-                row['prop_id'],          # prediction_id = prop_id for traceability
+                row['prop_id'],
                 int(row['game_id']),
                 pitcher_id,
                 'k_prop_gbm',
@@ -240,7 +261,7 @@ def log_results(target_date: str = None, backfill: bool = False):
                 round(predicted, 2),
                 line,
                 edge,
-                None,                    # confidence — can add later
+                round(confidence, 4) if confidence is not None else None,
                 actual_ks,
                 correct,
                 game_date,

@@ -29,6 +29,7 @@ import duckdb
 import numpy as np
 import pandas as pd
 from datetime import date
+from scipy.stats import nbinom
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -68,55 +69,79 @@ def get_games_for_date(target_date: str) -> list:
     return data.get("data", [])
 
 
-def get_lineups_for_game(game_id: int) -> list:
-    data = api_get("lineups", {"game_id": game_id, "per_page": 100})
-    return data.get("data", [])
+def get_all_lineups(game_ids: list) -> list:
+    """
+    Fetch lineup data once for the slate.
+    The BDL lineups endpoint returns all probable pitchers and batting orders
+    league-wide regardless of game_id, so one call covers the full day.
+    We try each game_id until we get a non-empty response.
+    """
+    for gid in game_ids:
+        try:
+            entries = api_get("lineups", {"game_id": gid, "per_page": 100}).get("data", [])
+            if entries:
+                return entries
+        except Exception:
+            continue
+    return []
 
 
-def parse_lineups(lineups: list, game: dict) -> dict:
-    """Extract probable starters and batting orders from lineup response."""
-    home_team_id = game.get("home_team", {}).get("id")
-    away_team_id = game.get("away_team", {}).get("id")
-
-    home_starter = away_starter = None
-    home_order, away_order = [], []
-
-    for entry in lineups:
+def build_lineup_maps(lineup_entries: list) -> tuple[dict, dict]:
+    """
+    Build team_id → starter and team_id → batting_order maps from lineup data.
+    Returns (starters_map, orders_map).
+    """
+    starters: dict = {}
+    orders:   dict = {}
+    for entry in lineup_entries:
         team_id   = entry.get("team", {}).get("id")
         player    = entry.get("player", {})
         is_prob   = entry.get("is_probable_pitcher", False)
         bat_order = entry.get("batting_order")
-
+        if team_id is None:
+            continue
         if is_prob:
-            if team_id == home_team_id:
-                home_starter = player
-            elif team_id == away_team_id:
-                away_starter = player
-
+            starters[team_id] = player
         if bat_order is not None:
-            entry_tuple = (bat_order, player.get("id"), player)
-            if team_id == home_team_id:
-                home_order.append(entry_tuple)
-            elif team_id == away_team_id:
-                away_order.append(entry_tuple)
-
-    return {
-        "home_starter":       home_starter,
-        "away_starter":       away_starter,
-        "home_batting_order": sorted(home_order, key=lambda x: x[0]),
-        "away_batting_order": sorted(away_order, key=lambda x: x[0]),
-    }
+            orders.setdefault(team_id, []).append(
+                (bat_order, player.get("id"), player)
+            )
+    return starters, orders
 
 
 def load_latest_model():
-    files = sorted([f for f in os.listdir(MODELS_DIR) if f.endswith('.pkl')])
+    files = sorted([f for f in os.listdir(MODELS_DIR)
+                    if f.endswith('.pkl') and 'negbinom' not in f])
     if not files:
-        raise FileNotFoundError("No saved models found. Run: python models/k_prop_model.py --tune")
+        raise FileNotFoundError("No saved models found. Run: python models/k_prop_model.py")
     path = os.path.join(MODELS_DIR, files[-1])
     with open(path, 'rb') as f:
         payload = pickle.load(f)
-    print(f"✅ Model: {files[-1]}")
-    return payload['model'], payload['features']
+    r = payload.get('metadata', {}).get('negbinom_r')
+    if r:
+        print(f"✅ Model: {files[-1]}  (NegBinom r={r:.4f})")
+    else:
+        print(f"✅ Model: {files[-1]}  (no NegBinom r — retrain to enable probabilities)")
+    return payload['model'], payload['features'], r
+
+
+def compute_p_over(mu: float, r: float, line: float) -> float:
+    """P(K > line) using NegBinom(mu, r). Works for half and whole number lines."""
+    p = r / (r + mu)
+    return float(1 - nbinom.cdf(int(line), r, p))
+
+
+def implied_prob(american_odds: int) -> float:
+    """Convert American odds to implied probability (no vig removed)."""
+    if american_odds < 0:
+        return (-american_odds) / (-american_odds + 100)
+    return 100 / (american_odds + 100)
+
+
+def compute_ev(p_win: float, american_odds: int) -> float:
+    """Expected value per $100 risked."""
+    payout = 100 / (-american_odds) * 100 if american_odds < 0 else float(american_odds)
+    return round(p_win * payout - (1 - p_win) * 100, 2)
 
 
 def build_pitcher_features(con, pitcher_id: int, venue: str, features: list):
@@ -231,7 +256,7 @@ def get_props_for_date(con, target_date: str) -> dict:
             for _, row in df.groupby('pitcher_id').first().reset_index().iterrows()}
 
 
-def print_predictions(predictions: list, threshold: float):
+def print_predictions(predictions: list, min_ev: float):
     print("\n" + "=" * 75)
     print(f"⚾  PRE-GAME K PROP PREDICTIONS  —  {date.today().strftime('%B %d, %Y')}")
     print("=" * 75)
@@ -242,7 +267,8 @@ def print_predictions(predictions: list, threshold: float):
         return
 
     has_lines  = any(p.get('line') is not None for p in predictions)
-    edges_found = 0
+    has_probs  = any(p.get('p_over') is not None for p in predictions)
+    bets_found = 0
 
     for p in predictions:
         matchup  = f"{p['away_team']} @ {p['home_team']}"
@@ -260,45 +286,84 @@ def print_predictions(predictions: list, threshold: float):
             print(f"  {'─' * 55}")
             continue
 
-        print(f"  Projected Ks: {pred:.1f}")
+        print(f"  Projected Ks: {pred:.2f}")
 
         if has_lines and p.get('line') is not None:
-            line  = p['line']
-            edge  = pred - line
-            direction = 'OVER ↑' if edge > 0 else 'UNDER ↓'
-            odds  = p.get('over_odds') if edge > 0 else p.get('under_odds')
-            odds_str = f" ({odds:+d})" if odds else ""
+            line     = p['line']
+            book     = p.get('book', '?')
+            o_odds   = p.get('over_odds')
+            u_odds   = p.get('under_odds')
+            p_over   = p.get('p_over')
+            p_under  = 1 - p_over if p_over is not None else None
 
-            print(f"  Book line:    {line:.1f}  [{p.get('book','?')}]")
+            odds_str = ""
+            if o_odds and u_odds:
+                odds_str = f"  Over {o_odds:+d} / Under {u_odds:+d}"
+            print(f"  Book line:    {line:.1f}  [{book}]{odds_str}")
 
-            if abs(edge) >= threshold:
-                print(f"  Edge:         {edge:+.2f} Ks  →  🎯 BET {direction}{odds_str}")
-                edges_found += 1
+            if p_over is not None:
+                # Probability-based display
+                imp_over  = implied_prob(o_odds) if o_odds else None
+                imp_under = implied_prob(u_odds) if u_odds else None
+                ev_over   = compute_ev(p_over,  o_odds) if o_odds else None
+                ev_under  = compute_ev(p_under, u_odds) if u_odds else None
+
+                print(f"  P(Over):      {p_over:.1%}  |  P(Under): {p_under:.1%}")
+
+                if imp_over and imp_under:
+                    edge_over  = p_over  - imp_over
+                    edge_under = p_under - imp_under
+                    print(f"  Implied:      Over {imp_over:.1%} / Under {imp_under:.1%}  "
+                          f"(edge: Over {edge_over:+.1%} / Under {edge_under:+.1%})")
+                    print(f"  EV ($100):    Over {ev_over:+.2f} / Under {ev_under:+.2f}")
+
+                    # Flag best side if above min_ev threshold
+                    best_ev   = max(ev_over, ev_under)
+                    best_side = 'OVER ↑' if ev_over >= ev_under else 'UNDER ↓'
+                    best_odds = o_odds if ev_over >= ev_under else u_odds
+                    if best_ev >= min_ev:
+                        print(f"  {'─' * 55}")
+                        print(f"  🎯 BET {best_side}  {best_odds:+d}  (EV: +${best_ev:.2f} per $100)")
+                        bets_found += 1
+                    else:
+                        print(f"  → No edge  (best EV: ${best_ev:+.2f}, need ${min_ev:.0f})")
+                else:
+                    # Have probabilities but no odds — show P only
+                    direction = 'OVER ↑' if p_over > 0.524 else 'UNDER ↓'
+                    print(f"  → {direction}  (no odds in DB — run ingest_props.py)")
             else:
-                print(f"  Edge:         {edge:+.2f} Ks  →  — (below threshold)")
+                # No NegBinom r — fall back to raw edge display
+                edge      = pred - line
+                direction = 'OVER ↑' if edge > 0 else 'UNDER ↓'
+                odds      = o_odds if edge > 0 else u_odds
+                o_str     = f" ({odds:+d})" if odds else ""
+                print(f"  Edge:         {edge:+.2f} Ks  →  {direction}{o_str}")
         else:
             print(f"  Book line:    not available")
 
         print(f"  {'─' * 55}")
 
-    if has_lines:
-        print(f"\n  Total edges flagged (≥{threshold} Ks): {edges_found}\n")
+    if has_lines and has_probs:
+        print(f"\n  Bets flagged (EV ≥ ${min_ev:.0f} per $100): {bets_found}\n")
+    elif has_lines:
+        print(f"\n  ℹ️  Retrain model to enable probability/EV output\n")
     else:
         print(f"\n  ℹ️  Run ingestion/ingest_props.py to pull book lines\n")
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--date',      type=str,  default=None)
-    parser.add_argument('--threshold', type=float, default=0.75)
-    parser.add_argument('--db',        type=str,  default=None)
+    parser.add_argument('--date',   type=str,  default=None)
+    parser.add_argument('--min-ev', type=float, default=3.0,
+                        help='Minimum EV per $100 to flag a bet (default: 3.0)')
+    parser.add_argument('--db',     type=str,  default=None)
     args = parser.parse_args()
 
     target_date = args.date or str(date.today())
     db_path     = args.db or DB_PATH
 
     print(f"\n🔍 K Prop Predictions — {target_date}")
-    model, features = load_latest_model()
+    model, features, negbinom_r = load_latest_model()
     con = duckdb.connect(db_path, read_only=True)
 
     # Pull today's games from API
@@ -325,6 +390,13 @@ def main():
     else:
         print("   No prop lines in DB — run ingestion/ingest_props.py first")
 
+    # Fetch all lineups once — BDL returns league-wide data for any game_id
+    game_ids = [g['id'] for g in scheduled]
+    print("   Fetching lineups...")
+    lineup_entries         = get_all_lineups(game_ids)
+    starters_map, orders_map = build_lineup_maps(lineup_entries)
+    print(f"   {len(starters_map)} probable starters confirmed")
+
     predictions = []
 
     for game in scheduled:
@@ -335,26 +407,20 @@ def main():
 
         try:
             ts = pd.Timestamp(game.get('date', ''))
-            game_time = ts.strftime('%I:%M %p ET').lstrip('0')
+            # API returns UTC; convert to ET (UTC-4 during EDT)
+            ts_et     = ts - pd.Timedelta(hours=4)
+            game_time = ts_et.strftime('%I:%M %p ET').lstrip('0')
         except Exception:
             game_time = ''
 
-        try:
-            lineup_entries = get_lineups_for_game(game_id)
-        except Exception as e:
-            print(f"   ⚠️  Lineup fetch failed for {away_team} @ {home_team}: {e}")
-            continue
-
-        if not lineup_entries:
-            print(f"   ⏳ {away_team} @ {home_team} — lineups not posted yet")
-            continue
-
-        parsed = parse_lineups(lineup_entries, game)
+        home_team_id = game.get('home_team', {}).get('id')
+        away_team_id = game.get('away_team', {}).get('id')
 
         for side in ['home', 'away']:
-            starter   = parsed.get(f'{side}_starter')
-            opp_side  = 'away' if side == 'home' else 'home'
-            opp_order = parsed.get(f'{opp_side}_batting_order', [])
+            team_id  = home_team_id if side == 'home' else away_team_id
+            opp_id   = away_team_id if side == 'home' else home_team_id
+            starter  = starters_map.get(team_id)
+            opp_order = sorted(orders_map.get(opp_id, []), key=lambda x: x[0])
 
             if not starter:
                 continue
@@ -380,7 +446,10 @@ def main():
             X = feat_series[features].values.reshape(1, -1)
             predicted_ks = float(np.clip(model.predict(X)[0], 0, 20))
 
-            prop = props_map.get(pitcher_id, {})
+            prop   = props_map.get(pitcher_id, {})
+            line   = prop.get('line')
+            p_over = (compute_p_over(predicted_ks, negbinom_r, line)
+                      if negbinom_r and line is not None else None)
 
             predictions.append({
                 'game_id':       game_id,
@@ -393,14 +462,15 @@ def main():
                 'game_time':     game_time,
                 'predicted_ks':  predicted_ks,
                 'lineup_k_rate': lineup_k_rate,
-                'line':          prop.get('line'),
+                'line':          line,
+                'p_over':        p_over,
                 'over_odds':     prop.get('over_odds'),
                 'under_odds':    prop.get('under_odds'),
                 'book':          prop.get('book'),
             })
 
     con.close()
-    print_predictions(predictions, args.threshold)
+    print_predictions(predictions, args.min_ev)
 
 
 if __name__ == "__main__":
