@@ -381,93 +381,108 @@ def main():
 
     # Pull props if available
     props_map = get_props_for_date(con, target_date)
-    prop_count = con.execute(
-        f"SELECT COUNT(DISTINCT player_id) FROM player_props "
-        f"WHERE DATE_TRUNC('day', recorded_at) = '{target_date}'::DATE"
-    ).fetchone()[0]
-    if prop_count > 0:
-        print(f"   {prop_count} pitchers with prop lines in DB")
-    else:
+    if not props_map:
         print("   No prop lines in DB — run ingestion/ingest_props.py first")
+        con.close()
+        return
+    print(f"   {len(props_map)} pitchers with prop lines (today's confirmed starters)")
 
-    # Fetch all lineups once — BDL returns league-wide data for any game_id
+    # Index scheduled games by id for fast lookup
+    games_by_id = {g['id']: g for g in scheduled}
+
+    # Fetch batting order data — lineup API returns league-wide data for any game_id
     game_ids = [g['id'] for g in scheduled]
-    print("   Fetching lineups...")
-    lineup_entries         = get_all_lineups(game_ids)
-    starters_map, orders_map = build_lineup_maps(lineup_entries)
-    print(f"   {len(starters_map)} probable starters confirmed")
+    print("   Fetching batting order data...")
+    lineup_entries    = get_all_lineups(game_ids)
+    _, orders_map     = build_lineup_maps(lineup_entries)
+
+    # Pitcher name + team lookup from DB
+    pitcher_names = {}
+    pitcher_teams = {}
+    rows = con.execute("SELECT player_id, full_name, team_id FROM players").fetchall()
+    for pid, name, team_id in rows:
+        pitcher_names[int(pid)] = name
+        if team_id is not None:
+            pitcher_teams[int(pid)] = int(team_id)
 
     predictions = []
 
-    for game in scheduled:
-        game_id   = game['id']
-        home_team = game.get('home_team_name', '?')
-        away_team = game.get('away_team_name', '?')
-        venue     = game.get('venue', '')
+    # Props drive who gets predicted — books only post K props for confirmed starters
+    for pitcher_id, prop in props_map.items():
+        prop_game_id = prop.get('game_id')
+        game = games_by_id.get(int(prop_game_id)) if prop_game_id else None
 
-        try:
-            ts = pd.Timestamp(game.get('date', ''))
-            # API returns UTC; convert to ET (UTC-4 during EDT)
-            ts_et     = ts - pd.Timedelta(hours=4)
-            game_time = ts_et.strftime('%I:%M %p ET').lstrip('0')
-        except Exception:
-            game_time = ''
+        if game:
+            home_team    = game.get('home_team_name', '?')
+            away_team    = game.get('away_team_name', '?')
+            venue        = game.get('venue', '')
+            home_team_id = game.get('home_team', {}).get('id')
+            away_team_id = game.get('away_team', {}).get('id')
+            game_id      = game['id']
+            try:
+                ts        = pd.Timestamp(game.get('date', ''))
+                ts_et     = ts - pd.Timedelta(hours=4)
+                game_time = ts_et.strftime('%I:%M %p ET').lstrip('0')
+            except Exception:
+                game_time = ''
+        else:
+            # Game not in today's scheduled list (status mismatch or missing)
+            home_team = away_team = venue = game_time = ''
+            home_team_id = away_team_id = None
+            game_id = prop_game_id
 
-        home_team_id = game.get('home_team', {}).get('id')
-        away_team_id = game.get('away_team', {}).get('id')
+        pitcher_name = pitcher_names.get(pitcher_id, f'ID:{pitcher_id}')
 
-        for side in ['home', 'away']:
-            team_id  = home_team_id if side == 'home' else away_team_id
-            opp_id   = away_team_id if side == 'home' else home_team_id
-            starter  = starters_map.get(team_id)
-            opp_order = sorted(orders_map.get(opp_id, []), key=lambda x: x[0])
+        feat_series, pitcher_hand = build_pitcher_features(
+            con, pitcher_id, venue, features
+        )
 
-            if not starter:
-                continue
+        if feat_series is None:
+            print(f"   ⚠️  No history for {pitcher_name} — skipping")
+            continue
 
-            pitcher_id   = starter.get('id')
-            pitcher_name = starter.get('full_name', f'ID:{pitcher_id}')
+        # Determine opposing team's batting order
+        pitcher_team_id = pitcher_teams.get(pitcher_id)
+        if home_team_id is not None and away_team_id is not None and pitcher_team_id is not None:
+            opp_team_id = away_team_id if pitcher_team_id == home_team_id else home_team_id
+            opp_order   = sorted(orders_map.get(opp_team_id, []), key=lambda x: x[0])
+        elif home_team_id is not None and away_team_id is not None:
+            # Unknown pitcher team — use away order as fallback
+            opp_order = sorted(orders_map.get(away_team_id, []), key=lambda x: x[0])
+        else:
+            opp_order = []
 
-            feat_series, pitcher_hand = build_pitcher_features(
-                con, pitcher_id, venue, features
-            )
+        lineup_k_rate = compute_lineup_k_rate(con, opp_order, pitcher_hand)
 
-            if feat_series is None:
-                print(f"   ⚠️  No history for {pitcher_name} — skipping")
-                continue
+        if 'lineup_k_rate_weighted' in features:
+            feat_series['lineup_k_rate_weighted'] = lineup_k_rate
+        if 'lineup_k_rate_raw' in features:
+            feat_series['lineup_k_rate_raw'] = lineup_k_rate
 
-            lineup_k_rate = compute_lineup_k_rate(con, opp_order, pitcher_hand)
+        X = feat_series[features].values.reshape(1, -1)
+        predicted_ks = float(np.clip(model.predict(X)[0], 0, 20))
 
-            if 'lineup_k_rate_weighted' in features:
-                feat_series['lineup_k_rate_weighted'] = lineup_k_rate
-            if 'lineup_k_rate_raw' in features:
-                feat_series['lineup_k_rate_raw'] = lineup_k_rate
+        line   = prop.get('line')
+        p_over = (compute_p_over(predicted_ks, negbinom_r, line)
+                  if negbinom_r and line is not None else None)
 
-            X = feat_series[features].values.reshape(1, -1)
-            predicted_ks = float(np.clip(model.predict(X)[0], 0, 20))
-
-            prop   = props_map.get(pitcher_id, {})
-            line   = prop.get('line')
-            p_over = (compute_p_over(predicted_ks, negbinom_r, line)
-                      if negbinom_r and line is not None else None)
-
-            predictions.append({
-                'game_id':       game_id,
-                'pitcher_id':    pitcher_id,
-                'pitcher_name':  pitcher_name,
-                'pitcher_hand':  pitcher_hand,
-                'home_team':     home_team,
-                'away_team':     away_team,
-                'venue':         venue,
-                'game_time':     game_time,
-                'predicted_ks':  predicted_ks,
-                'lineup_k_rate': lineup_k_rate,
-                'line':          line,
-                'p_over':        p_over,
-                'over_odds':     prop.get('over_odds'),
-                'under_odds':    prop.get('under_odds'),
-                'book':          prop.get('book'),
-            })
+        predictions.append({
+            'game_id':       game_id,
+            'pitcher_id':    pitcher_id,
+            'pitcher_name':  pitcher_name,
+            'pitcher_hand':  pitcher_hand,
+            'home_team':     home_team,
+            'away_team':     away_team,
+            'venue':         venue,
+            'game_time':     game_time,
+            'predicted_ks':  predicted_ks,
+            'lineup_k_rate': lineup_k_rate,
+            'line':          line,
+            'p_over':        p_over,
+            'over_odds':     prop.get('over_odds'),
+            'under_odds':    prop.get('under_odds'),
+            'book':          prop.get('book'),
+        })
 
     con.close()
     print_predictions(predictions, args.min_ev)
