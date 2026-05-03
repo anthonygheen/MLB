@@ -5,11 +5,12 @@ Daily workflow runner. Run once per day after yesterday's games are final
 (typically morning ET).
 
 Steps:
-  1. ingest.py         — pull yesterday's completed games + plate appearances
-  2. ingest_props.py   — pull today's K prop lines from books
-  3. log_results.py    — score yesterday's props against actual Ks
-  4. predict_today.py  — generate today's predictions
-  5. generate_data.py  — write dashboard JSON
+  1. ingest.py           — pull yesterday's completed games + plate appearances
+  2. ingest_props.py     — pull today's K prop lines from sportsbooks
+  3. ingest_kalshi.py    — pull today's Kalshi threshold markets
+  4. log_results.py      — score yesterday's props against actual Ks
+  5. predict_today.py    — generate today's predictions
+  6. generate_data.py    — write dashboard JSON
 
 Usage:
     python run_daily.py
@@ -24,64 +25,65 @@ import sys
 from datetime import date, timedelta
 
 
-def run(cmd: list, label: str) -> bool:
+def run(cmd: list, label: str, abort_on_fail: bool = True) -> bool:
     print(f"\n{'='*60}")
     print(f"  {label}")
     print(f"{'='*60}")
     result = subprocess.run(cmd, env={**__import__('os').environ, 'PYTHONIOENCODING': 'utf-8'})
     if result.returncode != 0:
         print(f"\n  ERROR: {label} failed (exit {result.returncode})")
+        if abort_on_fail:
+            sys.exit(1)
         return False
     return True
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--date',         type=str,  default=None,
+    parser.add_argument('--date',        type=str,   default=None,
                         help='Target date YYYY-MM-DD (default: today)')
-    parser.add_argument('--min-ev',       type=float, default=3.0,
+    parser.add_argument('--min-ev',      type=float, default=3.0,
                         help='Minimum EV per $100 to flag a bet (default: 3.0)')
-    parser.add_argument('--skip-ingest',  action='store_true',
+    parser.add_argument('--skip-ingest', action='store_true',
                         help='Skip game ingestion (if already run separately)')
     args = parser.parse_args()
 
     today     = args.date or str(date.today())
     yesterday = str((date.fromisoformat(today) - timedelta(days=1)))
+    py        = sys.executable
 
     print(f"\nMLB Daily Workflow — {today}")
     print(f"  Scoring:    {yesterday}")
     print(f"  Predicting: {today}")
 
-    py = sys.executable
+    step = 1
+    total = 5 if args.skip_ingest else 6
 
     if not args.skip_ingest:
-        ok = run(
-            [py, 'ingestion/ingest.py', '--date', yesterday],
-            f"Step 1/5 — Ingest completed games ({yesterday})"
-        )
-        if not ok:
-            print("\nAborting — game ingestion failed.")
-            sys.exit(1)
+        run([py, 'ingestion/ingest.py', '--date', yesterday],
+            f"Step {step}/{total} — Ingest completed games ({yesterday})")
+        step += 1
 
-    steps = [
-        ([py, 'ingestion/ingest_props.py'],
-         f"Step {'2' if not args.skip_ingest else '1'}/{'5' if not args.skip_ingest else '4'} — Ingest today's prop lines ({today})"),
+    run([py, 'ingestion/ingest_props.py'],
+        f"Step {step}/{total} — Ingest today's sportsbook lines ({today})")
+    step += 1
 
-        ([py, 'scripts/log_results.py', '--date', yesterday],
-         f"Step {'3' if not args.skip_ingest else '2'}/{'5' if not args.skip_ingest else '4'} — Score yesterday's props ({yesterday})"),
+    # Kalshi failure is non-fatal — markets may not be posted yet
+    run([py, 'ingestion/ingest_kalshi.py', '--date', today],
+        f"Step {step}/{total} — Ingest today's Kalshi markets ({today})",
+        abort_on_fail=False)
+    step += 1
 
-        ([py, 'scripts/predict_today.py', '--date', today, '--min-ev', str(args.min_ev)],
-         f"Step {'4' if not args.skip_ingest else '3'}/{'5' if not args.skip_ingest else '4'} — Generate today's predictions ({today})"),
+    run([py, 'scripts/log_results.py', '--date', yesterday],
+        f"Step {step}/{total} — Score yesterday's props ({yesterday})")
+    step += 1
 
-        ([py, 'scripts/generate_data.py'],
-         f"Step {'5' if not args.skip_ingest else '4'}/{'5' if not args.skip_ingest else '4'} — Write dashboard data"),
-    ]
+    run([py, 'scripts/predict_today.py', '--date', today, '--min-ev', str(args.min_ev)],
+        f"Step {step}/{total} — Generate today's predictions ({today})")
+    step += 1
 
-    for cmd, label in steps:
-        ok = run(cmd, label)
-        if not ok:
-            print(f"\nAborting at: {label}")
-            sys.exit(1)
+    run([py, 'scripts/generate_data.py'],
+        f"Step {step}/{total} — Write dashboard data")
 
     print(f"\n{'='*60}")
     print(f"  Done. Promote docs/data/ to repo to update dashboard.")

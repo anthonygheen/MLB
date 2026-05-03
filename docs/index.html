@@ -136,6 +136,7 @@ tbody td.name{font-family:var(--fb);font-weight:500}
 
 <nav class="nav">
   <button class="tab active" onclick="showTab('predictions',this)">Predictions</button>
+  <button class="tab" onclick="showTab('sharp',this)">Sharp Markets</button>
   <button class="tab" onclick="showTab('stuff',this)">Stuff Grades</button>
   <button class="tab" onclick="showTab('accuracy',this)">Accuracy</button>
   <button class="tab" onclick="showTab('parks',this)">Park Factors</button>
@@ -143,6 +144,7 @@ tbody td.name{font-family:var(--fb);font-weight:500}
 
 <main class="main">
   <div id="predictions" class="panel active"><div class="loading">Loading predictions...</div></div>
+  <div id="sharp"       class="panel"><div class="loading">Loading sharp markets...</div></div>
   <div id="stuff"       class="panel"><div class="loading">Loading stuff grades...</div></div>
   <div id="accuracy"    class="panel"><div class="loading">Loading accuracy data...</div></div>
   <div id="parks"       class="panel"><div class="loading">Loading park factors...</div></div>
@@ -177,10 +179,14 @@ function showTab(id, btn) {
 
 async function renderTab(id) {
   if (id === 'predictions') await renderPredictions();
+  if (id === 'sharp')       await renderSharp();
   if (id === 'stuff')       await renderStuff();
   if (id === 'accuracy')    await renderAccuracy();
   if (id === 'parks')       await renderParks();
 }
+
+// ── Bankroll ───────────────────────────────────────────────────
+let bankroll = parseFloat(localStorage.getItem('footsBankroll') || '1000') || 1000;
 
 // ── Predictions ────────────────────────────────────────────────
 let predFilter = 'ALL';
@@ -287,10 +293,15 @@ function drawPredictions() {
 
   // Apply filters
   let preds = bookFilter === 'ALL' ? all : all.filter(p => p.book === bookFilter);
-  const filtered = predFilter === 'ALL'   ? preds
+  let filtered = predFilter === 'ALL'   ? preds
     : predFilter === 'EDGE'  ? preds.filter(p => p.flagged)
     : predFilter === 'OVER'  ? preds.filter(p => p.flagged && p.direction === 'OVER')
     : preds.filter(p => p.flagged && p.direction === 'UNDER');
+
+  // Sort EDGE view by kelly_pct descending; other views keep existing sort (abs edge)
+  if (predFilter === 'EDGE') {
+    filtered = [...filtered].sort((a, b) => (b.kelly_pct || 0) - (a.kelly_pct || 0));
+  }
 
   const edges  = preds.filter(p => p.flagged);
   const overs  = edges.filter(p => p.direction === 'OVER').length;
@@ -302,6 +313,34 @@ function drawPredictions() {
         : 'No predictions match this filter.')
     : `<div class="grid">${filtered.map(predCard).join('')}</div>`;
 
+  // Build Top Plays HTML
+  const topPlays = predData.top_plays || [];
+  const topPlaysHtml = topPlays.length > 0 ? `
+    <div style="margin-bottom:1.5rem">
+      <div style="font-size:.6rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem">Top Plays</div>
+      ${topPlays.map((p, i) => {
+        const rankColors = ['var(--gold)','var(--dim)','var(--dim)'];
+        const borderColors = ['var(--gold)','var(--border2)','var(--border2)'];
+        const dir = p.kelly_dir || p.direction || 'OVER';
+        const odds = dir === 'OVER' ? fmtO(p.over_odds) : fmtO(p.under_odds);
+        const evVal = dir === 'OVER' ? p.ev_over : p.ev_under;
+        const evStr = evVal != null ? (evVal >= 0 ? '+$' : '-$') + Math.abs(evVal * 100).toFixed(2) : '—';
+        const kPct = p.kelly_pct != null ? (+p.kelly_pct).toFixed(1) : '—';
+        const kDollars = p.kelly_pct != null ? (bankroll * p.kelly_pct / 100).toFixed(0) : '—';
+        return `<div style="display:flex;align-items:center;gap:1rem;padding:.6rem .85rem;border-radius:6px;border:1px solid ${borderColors[i]};border-left:3px solid ${rankColors[i]};background:var(--bg3);margin-bottom:.5rem;flex-wrap:wrap">
+          <span style="font-family:var(--fh);font-size:1.1rem;color:${rankColors[i]};min-width:28px">#${i+1}</span>
+          <span style="font-weight:600;font-size:.85rem">${esc(p.pitcher_name||'?')}<span style="font-size:.62rem;font-family:var(--fm);color:var(--dim);margin-left:.4rem">${p.pitcher_hand==='R'?'RHP':'LHP'}</span></span>
+          <span style="font-family:var(--fm);font-size:.78rem;color:${dir==='OVER'?'var(--green)':'var(--red)'};">${dir} ${(+p.line).toFixed(1)}</span>
+          <span style="font-family:var(--fm);font-size:.78rem;color:var(--dim)">${odds}</span>
+          <span style="font-family:var(--fm);font-size:.75rem;color:${evVal>=0?'var(--green)':'var(--red)'}">${evStr}/100</span>
+          <span style="margin-left:auto;display:flex;gap:.5rem;align-items:center">
+            <span style="font-family:var(--fm);font-size:.75rem;color:var(--gold)">${kPct}% bankroll</span>
+            <span style="font-family:var(--fm);font-size:.78rem;font-weight:600;color:var(--text)">$${kDollars}</span>
+          </span>
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
   el.innerHTML = `
     <div class="stats-row">
       <div class="stat"><div class="stat-label">Lines</div><div class="stat-val a">${preds.length}</div></div>
@@ -310,6 +349,15 @@ function drawPredictions() {
       <div class="stat"><div class="stat-label">+EV Unders</div><div class="stat-val r">${unders}</div></div>
       <div class="stat"><div class="stat-label">Date</div><div class="stat-val" style="font-size:.9rem;color:var(--dim)">${predData.date||'—'}</div></div>
     </div>
+
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem">
+      <span style="font-size:.6rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">Bankroll</span>
+      <span style="color:var(--dim);font-family:var(--fm)">$</span>
+      <input id="bankrollInput" type="number" min="100" step="100" value="${bankroll}"
+        style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--fm);font-size:.85rem;padding:.3rem .5rem;border-radius:4px;width:100px;outline:none"/>
+    </div>
+
+    ${topPlaysHtml}
 
     ${confidenceTierCard(accDataForPreds)}
 
@@ -327,6 +375,19 @@ function drawPredictions() {
       ).join('')}
     </div>
     ${cards}`;
+
+  // Wire bankroll input after HTML is in DOM
+  const brInput = document.getElementById('bankrollInput');
+  if (brInput) {
+    brInput.addEventListener('change', e => {
+      const val = parseFloat(e.target.value);
+      if (!isNaN(val) && val >= 100) {
+        bankroll = val;
+        localStorage.setItem('footsBankroll', val);
+        drawPredictions();
+      }
+    });
+  }
 }
 
 function setPredFilter(f) { predFilter = f; drawPredictions(); }
@@ -403,12 +464,20 @@ function predCard(p) {
       </div>
     </div>` : '';
 
+  // Kelly info for bet banner
+  const kellyPctStr = p.kelly_pct != null ? (+p.kelly_pct).toFixed(1) : null;
+  const kellyDollar = p.kelly_pct != null ? (bankroll * p.kelly_pct / 100).toFixed(0) : null;
+  const kellyTag = kellyPctStr != null
+    ? `<span style="font-family:var(--fm);font-size:.7rem;color:var(--gold)">${kellyPctStr}% · $${kellyDollar}</span>`
+    : '';
+
   // Bet banner
   const bet = p.flagged
     ? `<div class="bet ${bestDir.toLowerCase()}" style="gap:.5rem">
         <span><span class="dot ${bestDir==='OVER'?'dg':'dr'}"></span>${bestDir} ${fmt1(p.line)}</span>
         <span style="display:flex;align-items:center;gap:.6rem">
           ${bestEVStr ? `<span style="font-family:var(--fm);font-size:.72rem;font-weight:700">${bestEVStr}/100</span>` : ''}
+          ${kellyTag}
           <span class="bet-odds">${bestDir==='OVER'?overOdds:underOdds}${p.book?' · '+esc(p.book):''}</span>
         </span>
        </div>`
@@ -432,6 +501,114 @@ function predCard(p) {
       ${updated}
     </div>`;
 }
+
+// ── Sharp Markets ──────────────────────────────────────────────
+let sharpFilter = 'ALL';   // ALL | KALSHI | PROPHETX (extendable)
+let sharpData   = null;
+
+async function renderSharp() {
+  sharpData = await load('data/sharp_markets.json');
+  drawSharp();
+}
+
+function drawSharp() {
+  const el = document.getElementById('sharp');
+  if (!sharpData || !(sharpData.markets || []).length) {
+    el.innerHTML = empty('No Sharp Market Data',
+      'Run <code>ingestion/ingest_kalshi.py</code> then <code>generate_data.py</code>.');
+    return;
+  }
+
+  const all = sharpData.markets || [];
+  const sources = ['ALL', ...new Set(all.map(m => m.book).filter(Boolean).map(b => b.toUpperCase()))].sort((a,b) => {
+    if (a==='ALL') return -1; if (b==='ALL') return 1; return a.localeCompare(b);
+  });
+  const filtered = sharpFilter === 'ALL' ? all : all.filter(m => (m.book||'').toUpperCase() === sharpFilter);
+
+  const flagged    = filtered.filter(m => m.flagged);
+  const totalEdge  = flagged.length;
+
+  // Group by pitcher to show all thresholds
+  const byPitcher = {};
+  filtered.forEach(m => {
+    const k = m.pitcher_id;
+    if (!byPitcher[k]) byPitcher[k] = { name: m.pitcher_name, team: m.pitcher_team, mu: m.predicted_mu, markets: [] };
+    byPitcher[k].markets.push(m);
+  });
+
+  const pitcherCards = Object.values(byPitcher).map(pitcher => {
+    const markets = pitcher.markets.sort((a,b) => b.threshold - a.threshold);
+    const best    = markets.find(m => m.flagged) || markets[0];
+    const bestEV  = best ? best.best_ev * 100 : 0;
+
+    const rows = markets.map(m => {
+      const side    = m.best_side;  // YES or NO
+      const odds    = m.best_odds;
+      const ev      = m.best_ev * 100;
+      const p       = m.best_p;
+      const kelly   = m.best_kelly_pct;
+      const flagCls = m.flagged ? (side==='YES' ? 'color:var(--green)' : 'color:var(--red)') : 'color:var(--muted)';
+      const oddsStr = odds != null ? (odds > 0 ? '+'+odds : ''+odds) : '—';
+      const kDollars = kelly != null ? Math.round(bankroll * kelly / 100) : null;
+
+      return `<tr style="${m.flagged ? '' : 'opacity:.55'}">
+        <td style="font-family:var(--fm);font-size:.75rem;color:var(--dim)">${m.threshold}+</td>
+        <td style="font-family:var(--fm);font-size:.75rem;${flagCls};font-weight:${m.flagged?'600':'400'}">${side}</td>
+        <td class="r" style="font-family:var(--fm);font-size:.75rem">${oddsStr}</td>
+        <td class="r" style="font-family:var(--fm);font-size:.75rem;color:var(--dim)">${(p*100).toFixed(1)}%</td>
+        <td class="r" style="font-family:var(--fm);font-size:.75rem;color:${ev>0?'var(--green)':'var(--red)'};font-weight:${ev>0?'600':'400'}">${ev>=0?'+$':'-$'}${Math.abs(ev).toFixed(2)}</td>
+        <td class="r" style="font-family:var(--fm);font-size:.75rem;color:var(--gold)">${kelly!=null?kelly.toFixed(1)+'%':'—'}</td>
+        <td class="r" style="font-family:var(--fm);font-size:.75rem;color:var(--text)">${kDollars!=null?'$'+kDollars:'—'}</td>
+      </tr>`;
+    }).join('');
+
+    const borderColor = bestEV > 0 ? 'var(--green)' : 'var(--border)';
+    return `
+      <div style="background:var(--bg3);border:1px solid ${borderColor};border-radius:8px;padding:1.1rem 1.25rem;margin-bottom:.85rem">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:.7rem;flex-wrap:wrap;gap:.5rem">
+          <div>
+            <span style="font-family:var(--fh);font-size:1.2rem;letter-spacing:.04em">${esc(pitcher.name)}</span>
+            <span style="font-size:.62rem;font-family:var(--fm);color:var(--dim);margin-left:.5rem">${esc(pitcher.team||'')}</span>
+          </div>
+          <div style="font-family:var(--fm);font-size:.72rem;color:var(--dim)">Model: <span style="color:var(--accent)">${pitcher.mu} Ks projected</span></div>
+        </div>
+        <div style="font-size:.6rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem">
+          Pick your threshold — best EV highlighted
+        </div>
+        <div class="tw"><table>
+          <thead><tr>
+            <th>Line</th><th>Side</th>
+            <th class="r">Odds</th><th class="r">P(Win)</th>
+            <th class="r">EV/100</th><th class="r">Kelly%</th><th class="r">$${bankroll.toLocaleString()}</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>
+      </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="stats-row">
+      <div class="stat"><div class="stat-label">Markets</div><div class="stat-val a">${filtered.length}</div></div>
+      <div class="stat"><div class="stat-label">+EV Lines</div><div class="stat-val gold">${totalEdge}</div></div>
+      <div class="stat"><div class="stat-label">Pitchers</div><div class="stat-val" style="color:var(--dim)">${Object.keys(byPitcher).length}</div></div>
+      <div class="stat"><div class="stat-label">Date</div><div class="stat-val" style="font-size:.9rem;color:var(--dim)">${sharpData.date||'—'}</div></div>
+    </div>
+
+    <div style="margin-bottom:.5rem;font-size:.6rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">Source</div>
+    <div class="filter-row" style="margin-bottom:1.5rem">
+      ${sources.map(s => `<button class="fbtn ${sharpFilter===s?'active':''}" onclick="setSharpFilter('${s}')">${s==='ALL'?'All Sources':s}</button>`).join('')}
+    </div>
+
+    <div style="font-size:.68rem;color:var(--muted);margin-bottom:1rem;line-height:1.6">
+      Unlike sportsbooks, Kalshi lets you choose your own threshold. Each row is a separate binary contract —
+      buy <span style="color:var(--green)">YES</span> (pitcher records X+ Ks) or <span style="color:var(--red)">NO</span> (pitcher falls short).
+      Greyed rows are negative EV at current prices.
+    </div>
+
+    ${pitcherCards || empty('No Markets', 'No markets match this filter.')}`;
+}
+
+function setSharpFilter(s) { sharpFilter = s; drawSharp(); }
 
 // ── Stuff Grades ───────────────────────────────────────────────
 let stuffSort = 'whiff_rate';

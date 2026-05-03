@@ -90,17 +90,6 @@
       "velo_vs_avg": 2.716
     },
     {
-      "pitcher_id": 1645455,
-      "pitcher_name": "Grant Taylor",
-      "pitcher_team": "Chicago White Sox",
-      "pitch_count": 50,
-      "avg_velo": 98.816,
-      "avg_spin": 2417.58,
-      "avg_ivb": 16.22,
-      "whiff_rate": 0.62,
-      "velo_vs_avg": 4.139
-    },
-    {
       "pitcher_id": 3816,
       "pitcher_name": "Luis Severino",
       "pitcher_team": "Oakland Athletics",
@@ -110,6 +99,17 @@
       "avg_ivb": 15.82,
       "whiff_rate": 0.62,
       "velo_vs_avg": 2.183
+    },
+    {
+      "pitcher_id": 1645455,
+      "pitcher_name": "Grant Taylor",
+      "pitcher_team": "Chicago White Sox",
+      "pitch_count": 50,
+      "avg_velo": 98.816,
+      "avg_spin": 2417.58,
+      "avg_ivb": 16.22,
+      "whiff_rate": 0.62,
+      "velo_vs_avg": 4.139
     },
     {
       "pitcher_id": 393,
@@ -453,17 +453,6 @@
       "velo_vs_avg": -2.692
     },
     {
-      "pitcher_id": 32,
-      "pitcher_name": "Eduardo Rodriguez",
-      "pitcher_team": "Arizona Diamondbacks",
-      "pitch_count": 75,
-      "avg_velo": 91.987,
-      "avg_spin": 2275.013,
-      "avg_ivb": 16.107,
-      "whiff_rate": 0.52,
-      "velo_vs_avg": -2.691
-    },
-    {
       "pitcher_id": 4556,
       "pitcher_name": "Shane McClanahan",
       "pitcher_team": "Tampa Bay Rays",
@@ -473,6 +462,17 @@
       "avg_ivb": 16.6,
       "whiff_rate": 0.52,
       "velo_vs_avg": 0.609
+    },
+    {
+      "pitcher_id": 32,
+      "pitcher_name": "Eduardo Rodriguez",
+      "pitcher_team": "Arizona Diamondbacks",
+      "pitch_count": 75,
+      "avg_velo": 91.987,
+      "avg_spin": 2275.013,
+      "avg_ivb": 16.107,
+      "whiff_rate": 0.52,
+      "velo_vs_avg": -2.691
     },
     {
       "pitcher_id": 668262,

@@ -96,6 +96,19 @@ def expected_value(our_prob: float, market_odds: int) -> float:
     return round(ev, 4)
 
 
+def kelly_fraction(p_win: float, american_odds: int) -> float | None:
+    """
+    Half Kelly fraction, capped at 5% of bankroll.
+    Returns a value in [0, 0.05] or None if inputs are missing.
+    """
+    if p_win is None or american_odds is None:
+        return None
+    payout = 100 / abs(american_odds) if american_odds < 0 else american_odds / 100
+    f = (p_win * payout - (1 - p_win)) / payout
+    half_f = f / 2
+    return round(min(max(half_f, 0), 0.05), 4)  # cap at 5%, floor at 0
+
+
 def compute_pricing(predicted_ks: float, line: float,
                     over_odds: int, under_odds: int,
                     negbinom_r: float = None) -> dict:
@@ -222,14 +235,14 @@ def generate_predictions(con, target_date: str) -> list:
         pitcher_id   = int(row['pitcher_id'])
         pitcher_name = row.get('pitcher_name') or f'ID {pitcher_id}'
         pitcher_team = row.get('pitcher_team') or '—'
-        game_id      = int(row['game_id'])
+        game_id      = int(row['game_id']) if pd.notna(row['game_id']) else None
 
         # Game context
-        g         = games_map.get(game_id, {})
+        g         = games_map.get(game_id, {}) if game_id is not None else {}
         home_team = g.get('home_team_name', '—')
         away_team = g.get('away_team_name', '—')
         venue     = g.get('venue', '—')
-        matchup   = f"{away_team} @ {home_team}" if home_team != '—' else f"Game {game_id}"
+        matchup   = f"{away_team} @ {home_team}" if home_team != '—' else f"Game {game_id or '?'}"
 
         # Line freshness
         recorded_at = str(row.get('recorded_at', ''))
@@ -285,6 +298,30 @@ def generate_predictions(con, target_date: str) -> list:
         else:
             flagged = abs(edge) >= 0.75 if edge else False
 
+        # Kelly sizing
+        prob_over_val  = pricing.get('our_prob_over')
+        prob_under_val = pricing.get('our_prob_under')
+        k_over  = kelly_fraction(prob_over_val,  over_odds_val)
+        k_under = kelly_fraction(prob_under_val, under_odds_val)
+
+        # Determine which direction the flagged bet is on (best EV side)
+        ev_over_val  = pricing.get('ev_over')
+        ev_under_val = pricing.get('ev_under')
+        if ev_over_val is not None and ev_under_val is not None:
+            best_dir = 'OVER' if ev_over_val >= ev_under_val else 'UNDER'
+        else:
+            best_dir = ('OVER' if edge > 0 else 'UNDER') if edge else None
+
+        if best_dir == 'OVER':
+            kelly_best = k_over
+        elif best_dir == 'UNDER':
+            kelly_best = k_under
+        else:
+            kelly_best = None
+
+        # kelly_pct: best direction kelly as a percentage (0-5 scale)
+        kelly_pct_val = round(kelly_best * 100, 2) if kelly_best is not None else None
+
         results.append({
             'pitcher_id':         pitcher_id,
             'pitcher_name':       pitcher_name,
@@ -302,6 +339,10 @@ def generate_predictions(con, target_date: str) -> list:
             'line_updated':       line_updated,
             'flagged':            flagged,
             **pricing,
+            'kelly_over':         k_over,
+            'kelly_under':        k_under,
+            'kelly_pct':          kelly_pct_val,
+            'kelly_dir':          best_dir if flagged else None,
         })
 
     return sorted(results, key=lambda x: abs(x['edge'] or 0), reverse=True)
@@ -566,6 +607,139 @@ def generate_accuracy(con) -> dict:
 
 
 
+def generate_sharp_markets(con, target_date: str) -> list:
+    """
+    Evaluate every Kalshi threshold market for target_date against the model.
+
+    For each pitcher, we have N liquid threshold markets (e.g. 4+, 5+, 6+).
+    We compute P(K > threshold - 1) via NegBinom for each, compare to the
+    Kalshi Yes price, and return ALL markets sorted by EV so the UI can
+    show the best opportunity per pitcher and let the user explore the rest.
+
+    Returns list of dicts, one per (pitcher, threshold), sorted by ev desc.
+    """
+    sql = f"""
+        SELECT
+            pp.prop_id, pp.game_id, pp.player_id AS pitcher_id,
+            pp.line, pp.over_odds, pp.under_odds, pp.book, pp.recorded_at,
+            pl.full_name AS pitcher_name, pl.team_name AS pitcher_team
+        FROM player_props pp
+        LEFT JOIN players pl ON pp.player_id = pl.player_id
+        WHERE pp.book = 'kalshi'
+          AND pp.market_type = 'pitcher_strikeouts'
+          AND DATE_TRUNC('day', pp.recorded_at) = '{target_date}'::DATE
+        ORDER BY pp.player_id, pp.line
+    """
+    props = con.execute(sql).df()
+    if props.empty:
+        return []
+
+    model, features, negbinom_r = load_latest_model()
+    if model is None:
+        return []
+
+    results_df  = get_pitcher_game_results(con)
+    results_df  = add_rolling_features(results_df)
+    stuff_raw   = get_pitch_stuff_grades(con)
+    stuff_pivot = pivot_stuff_grades(stuff_raw)
+    parks       = get_park_k_factors(con)
+    current_season = date.today().year
+
+    # Build predicted μ per pitcher (cached — same across thresholds)
+    pitcher_mu: dict = {}
+    for pitcher_id in props['pitcher_id'].unique():
+        hist = results_df[results_df['pitcher_id'] == pitcher_id]
+        if hist.empty:
+            continue
+        latest = hist.sort_values('game_date').iloc[-1].copy()
+
+        ps = stuff_pivot[(stuff_pivot['pitcher_id'] == pitcher_id) &
+                         (stuff_pivot['season'] == current_season)]
+        if ps.empty:
+            ps = stuff_pivot[stuff_pivot['pitcher_id'] == pitcher_id].sort_values('season').tail(1)
+        if not ps.empty:
+            for col in ps.columns:
+                if col not in ['pitcher_id', 'season']:
+                    latest[col] = ps.iloc[0][col]
+
+        latest['park_k_factor']         = 1.0
+        latest['pitcher_hand_enc']       = 1 if latest.get('pitcher_hand') == 'R' else 0
+        latest['month']                  = pd.Timestamp(target_date).month
+        latest['lineup_k_rate_weighted'] = 0.228
+        latest['lineup_k_rate_raw']      = 0.228
+
+        feat_vec = {f: (0 if pd.isna(latest.get(f, 0)) else latest.get(f, 0)) for f in features}
+        X = np.array([feat_vec[f] for f in features]).reshape(1, -1)
+        pitcher_mu[int(pitcher_id)] = float(np.clip(model.predict(X)[0], 0, 20))
+
+    r = negbinom_r or 40.0
+    rows = []
+    for _, row in props.iterrows():
+        pitcher_id = int(row['pitcher_id'])
+        mu = pitcher_mu.get(pitcher_id)
+        if mu is None:
+            continue
+
+        line         = float(row['line'])
+        over_odds    = int(row['over_odds'])  if pd.notna(row['over_odds'])  else None
+        under_odds   = int(row['under_odds']) if pd.notna(row['under_odds']) else None
+
+        # NegBinom probabilities at this threshold
+        p_param  = r / (r + mu)
+        p_yes    = float(1 - nbinom.cdf(int(line), r, p_param))   # P(K > floor(line)) = P(Yes)
+        p_no     = 1.0 - p_yes
+
+        # Kalshi implied probs from American odds
+        kalshi_p_yes = american_to_prob(over_odds)  if over_odds  else None
+        kalshi_p_no  = american_to_prob(under_odds) if under_odds else None
+
+        ev_yes = expected_value(p_yes, over_odds)  if over_odds  else None
+        ev_no  = expected_value(p_no,  under_odds) if under_odds else None
+
+        edge_yes = round(p_yes - kalshi_p_yes, 4) if kalshi_p_yes else None
+        edge_no  = round(p_no  - kalshi_p_no,  4) if kalshi_p_no  else None
+
+        k_yes = kelly_fraction(p_yes, over_odds)  if over_odds  else None
+        k_no  = kelly_fraction(p_no,  under_odds) if under_odds else None
+
+        # Best side
+        evs = [(ev_yes, 'YES', over_odds, p_yes, edge_yes, k_yes),
+               (ev_no,  'NO',  under_odds, p_no, edge_no,  k_no)]
+        evs = [(e, s, o, p, eg, k) for e, s, o, p, eg, k in evs if e is not None]
+        if not evs:
+            continue
+        best_ev, best_side, best_odds, best_p, best_edge, best_k = max(evs, key=lambda x: x[0])
+
+        rows.append({
+            'pitcher_id':    pitcher_id,
+            'pitcher_name':  row.get('pitcher_name') or f'ID {pitcher_id}',
+            'pitcher_team':  row.get('pitcher_team') or '—',
+            'book':          row['book'],
+            'line':          line,
+            'threshold':     int(line) + 1,   # e.g. line=4.5 → threshold=5 ("5+ Ks")
+            'predicted_mu':  round(mu, 2),
+            'p_yes':         round(p_yes, 4),
+            'p_no':          round(p_no, 4),
+            'ev_yes':        round(ev_yes, 4) if ev_yes is not None else None,
+            'ev_no':         round(ev_no,  4) if ev_no  is not None else None,
+            'edge_yes':      edge_yes,
+            'edge_no':       edge_no,
+            'kelly_yes':     round(k_yes * 100, 2) if k_yes else None,
+            'kelly_no':      round(k_no  * 100, 2) if k_no  else None,
+            'over_odds':     over_odds,
+            'under_odds':    under_odds,
+            'best_side':     best_side,        # 'YES' or 'NO'
+            'best_ev':       round(best_ev, 4),
+            'best_edge':     best_edge,
+            'best_odds':     best_odds,
+            'best_p':        round(best_p, 4),
+            'best_kelly_pct': round(best_k * 100, 2) if best_k else None,
+            'flagged':       best_ev > 0,
+        })
+
+    return sorted(rows, key=lambda x: x['best_ev'], reverse=True)
+
+
 def generate_park_factors(con) -> list:
     """Park K factors for current and prior season."""
     current_season = date.today().year
@@ -626,11 +800,21 @@ def main():
 
     print("\n  Predictions...")
     predictions = generate_predictions(con, target_date)
+    flagged_preds = [p for p in predictions if p.get('flagged')]
+    # Deduplicate by pitcher_id — keep highest kelly_pct per pitcher
+    seen_pitchers: set = set()
+    deduped_flagged = []
+    for p in sorted(flagged_preds, key=lambda x: x.get('kelly_pct') or 0, reverse=True):
+        if p['pitcher_id'] not in seen_pitchers:
+            seen_pitchers.add(p['pitcher_id'])
+            deduped_flagged.append(p)
+    top_plays = deduped_flagged[:3]
     write_json({
         'date': target_date,
         'generated_at': str(pd.Timestamp.now()),
         'predictions': predictions,
         'edges_flagged': sum(1 for p in predictions if p.get('flagged')),
+        'top_plays': top_plays,
     }, 'predictions.json')
 
     print("  Stuff grades...")
@@ -645,9 +829,17 @@ def main():
     parks = generate_park_factors(con)
     write_json({'parks': parks}, 'park_factors.json')
 
+    print("  Sharp markets (Kalshi)...")
+    sharp = generate_sharp_markets(con, target_date)
+    write_json({
+        'date': target_date,
+        'markets': sharp,
+        'flagged': sum(1 for m in sharp if m.get('flagged')),
+    }, 'sharp_markets.json')
+
     con.close()
     print(f"\n✅ Dashboard data written to {OUT_DIR}")
-    print(f"   {len(predictions)} predictions, {len(stuff)} pitchers, {len(parks)} parks")
+    print(f"   {len(predictions)} predictions, {len(stuff)} pitchers, {len(parks)} parks, {len(sharp)} sharp markets")
 
 
 if __name__ == "__main__":
