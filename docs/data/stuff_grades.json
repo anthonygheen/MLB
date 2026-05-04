@@ -464,17 +464,6 @@
       "velo_vs_avg": -0.941
     },
     {
-      "pitcher_id": 2504,
-      "pitcher_name": "Chris Paddack",
-      "pitcher_team": "Miami Marlins",
-      "pitch_count": 53,
-      "avg_velo": 92.242,
-      "avg_spin": 2144.019,
-      "avg_ivb": 18.623,
-      "whiff_rate": 0.528,
-      "velo_vs_avg": -2.444
-    },
-    {
       "pitcher_id": 555,
       "pitcher_name": "Garrett Crochet",
       "pitcher_team": "Boston Red Sox",
@@ -484,6 +473,17 @@
       "avg_ivb": 16.868,
       "whiff_rate": 0.528,
       "velo_vs_avg": 0.971
+    },
+    {
+      "pitcher_id": 2504,
+      "pitcher_name": "Chris Paddack",
+      "pitcher_team": "Miami Marlins",
+      "pitch_count": 53,
+      "avg_velo": 92.242,
+      "avg_spin": 2144.019,
+      "avg_ivb": 18.623,
+      "whiff_rate": 0.528,
+      "velo_vs_avg": -2.444
     },
     {
       "pitcher_id": 10,
@@ -530,17 +530,6 @@
       "velo_vs_avg": -2.7
     },
     {
-      "pitcher_id": 4556,
-      "pitcher_name": "Shane McClanahan",
-      "pitcher_team": "Tampa Bay Rays",
-      "pitch_count": 50,
-      "avg_velo": 95.286,
-      "avg_spin": 2246.12,
-      "avg_ivb": 16.6,
-      "whiff_rate": 0.52,
-      "velo_vs_avg": 0.601
-    },
-    {
       "pitcher_id": 32,
       "pitcher_name": "Eduardo Rodriguez",
       "pitcher_team": "Arizona Diamondbacks",
@@ -550,6 +539,17 @@
       "avg_ivb": 16.107,
       "whiff_rate": 0.52,
       "velo_vs_avg": -2.699
+    },
+    {
+      "pitcher_id": 4556,
+      "pitcher_name": "Shane McClanahan",
+      "pitcher_team": "Tampa Bay Rays",
+      "pitch_count": 50,
+      "avg_velo": 95.286,
+      "avg_spin": 2246.12,
+      "avg_ivb": 16.6,
+      "whiff_rate": 0.52,
+      "velo_vs_avg": 0.601
     }
   ]
 }
