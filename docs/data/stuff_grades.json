@@ -57,17 +57,6 @@
       "velo_vs_avg": -0.652
     },
     {
-      "pitcher_id": 356,
-      "pitcher_name": "Spencer Arrighetti",
-      "pitcher_team": "Houston Astros",
-      "pitch_count": 56,
-      "avg_velo": 92.589,
-      "avg_spin": 2321.839,
-      "avg_ivb": 13.411,
-      "whiff_rate": 0.643,
-      "velo_vs_avg": -2.117
-    },
-    {
       "pitcher_id": 239,
       "pitcher_name": "Sean Manaea",
       "pitcher_team": "New York Mets",
@@ -77,6 +66,17 @@
       "avg_ivb": 11.321,
       "whiff_rate": 0.643,
       "velo_vs_avg": -4.742
+    },
+    {
+      "pitcher_id": 356,
+      "pitcher_name": "Spencer Arrighetti",
+      "pitcher_team": "Houston Astros",
+      "pitch_count": 56,
+      "avg_velo": 92.589,
+      "avg_spin": 2321.839,
+      "avg_ivb": 13.411,
+      "whiff_rate": 0.643,
+      "velo_vs_avg": -2.117
     },
     {
       "pitcher_id": 1680889,

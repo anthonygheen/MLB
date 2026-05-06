@@ -281,17 +281,17 @@
       "park_k_factor": 0.9647
     },
     {
-      "venue": "Rate Field",
-      "season": 2025,
-      "total_pa": 6049,
-      "venue_k_rate": 0.2136,
-      "park_k_factor": 0.9638
-    },
-    {
       "venue": "Wrigley Field",
       "season": 2026,
       "total_pa": 552,
       "venue_k_rate": 0.2101,
+      "park_k_factor": 0.9638
+    },
+    {
+      "venue": "Rate Field",
+      "season": 2025,
+      "total_pa": 6049,
+      "venue_k_rate": 0.2136,
       "park_k_factor": 0.9638
     },
     {

@@ -1,0 +1,41 @@
+shap_rank,feature,group,description,gbm_importance,shap_mean_abs,shap_value_corr
+1,strikeouts_last10,Rolling form,Total Ks over last 10 starts,0.4197,0.4572,0.971
+2,lineup_k_rate_weighted,Lineup,Opposing lineup K rate weighted by batting order position,0.0399,0.2895,0.725
+3,park_k_factor,Context,Ballpark K rate multiplier vs league average,0.0633,0.1796,0.946
+4,ff_whiff_z,Stuff grades,4-seam fastball whiff rate z-score vs league avg,0.0508,0.1729,0.886
+5,lineup_k_rate_raw,Lineup,Opposing lineup raw K rate (unweighted average),0.02,0.1417,-0.913
+6,days_rest,Context,Days since last start,0.0406,0.1331,-0.939
+7,sl_whiff_z,Stuff grades,Slider whiff rate z-score vs league avg,0.0288,0.109,0.784
+8,pitch_count_last3,Rolling form,Average pitch count over last 3 starts,0.0359,0.0884,0.931
+9,si_whiff_z,Stuff grades,Sinker whiff rate z-score vs league avg,0.0176,0.0838,0.855
+10,cu_whiff_z,Stuff grades,Curveball whiff rate z-score vs league avg,0.0149,0.0738,0.871
+11,ch_whiff_z,Stuff grades,Changeup whiff rate z-score vs league avg,0.0142,0.0737,0.766
+12,ff_spin_z,Stuff grades,4-seam fastball spin rate z-score vs league avg,0.0162,0.0698,0.917
+13,pitch_count_last5,Rolling form,Average pitch count over last 5 starts,0.0229,0.0682,0.83
+14,strikeouts_last5,Rolling form,Total Ks over last 5 starts,0.031,0.0648,0.871
+15,ff_velo_z,Stuff grades,4-seam fastball velocity z-score vs league avg,0.0234,0.0607,0.871
+16,ff_avg_velo,Stuff grades,"4-seam fastball average velocity (mph, raw)",0.016,0.0359,0.536
+17,k_rate_last10,Rolling form,K/PA rate over last 10 starts,0.0096,0.0333,-0.845
+18,mix_ch_last3,Pitch mix,Changeup usage % over last 3 starts,0.0079,0.032,-0.911
+19,mix_ff_last3,Pitch mix,4-seam fastball usage % over last 3 starts,0.0126,0.0304,0.753
+20,mix_sl_last3,Pitch mix,Slider usage % over last 3 starts,0.0066,0.0254,-0.769
+21,ch_velo_z,Stuff grades,Changeup velocity z-score vs league avg,0.008,0.0239,0.812
+22,k_rate_last5,Rolling form,K/PA rate over last 5 starts,0.0079,0.0233,-0.768
+23,swstr_pct_last5,Rolling form,Swinging strike % over last 5 starts,0.007,0.0203,-0.576
+24,zone_pct_last3,Rolling form,Pitches in strike zone % over last 3 starts,0.0058,0.0198,-0.737
+25,cu_spin_z,Stuff grades,Curveball spin rate z-score vs league avg,0.005,0.0197,0.671
+26,bb_rate_last5,Rolling form,Walk rate (BB/PA) over last 5 starts,0.006,0.0187,0.726
+27,zone_pct_last5,Rolling form,Pitches in strike zone % over last 5 starts,0.0068,0.0179,-0.75
+28,swstr_pct_last3,Rolling form,Swinging strike % over last 3 starts,0.0059,0.0162,-0.605
+29,mix_si_last3,Pitch mix,Sinker usage % over last 3 starts,0.0081,0.0161,-0.45
+30,ch_ivb_z,Stuff grades,Changeup induced vertical break z-score vs league avg,0.0075,0.015,-0.04
+31,si_velo_z,Stuff grades,Sinker velocity z-score vs league avg,0.0061,0.0131,0.889
+32,bb_rate_last3,Rolling form,Walk rate (BB/PA) over last 3 starts,0.0053,0.0131,0.494
+33,k_rate_last3,Rolling form,K/PA rate over last 3 starts,0.0062,0.0129,-0.549
+34,mix_cu_last3,Pitch mix,Curveball usage % over last 3 starts,0.0054,0.0105,-0.474
+35,sl_velo_z,Stuff grades,Slider velocity z-score vs league avg,0.0035,0.01,0.292
+36,strikeouts_last3,Rolling form,Total Ks over last 3 starts,0.0037,0.0077,0.631
+37,pitcher_hand_enc,Context,"Pitcher handedness (0=L, 1=R)",0.0009,0.0073,-0.862
+38,month,Context,"Calendar month (1=Apr, captures seasonal fatigue)",0.0022,0.0048,-0.666
+39,sl_spin_z,Stuff grades,Slider spin rate z-score vs league avg,0.0029,0.0046,0.294
+40,sl_ivb_z,Stuff grades,Slider induced vertical break z-score vs league avg,0.0039,0.0039,0.017
