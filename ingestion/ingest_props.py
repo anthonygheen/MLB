@@ -42,6 +42,9 @@ BASE_URL = "https://api.balldontlie.io/mlb/v1"
 # K prop type strings to match
 K_PROP_TYPES = {'pitcher_strikeouts', 'strikeouts', 'pitcher_ks'}
 
+# Books to skip — unavailable in the US
+EXCLUDED_BOOKS = {'betrivers'}
+
 
 def get_game_ids_for_date(target_date: str) -> list:
     """Always pull game IDs from API — don't rely on DB."""
@@ -111,6 +114,9 @@ def ingest_props_for_date(target_date: str, debug: bool = False):
         for prop in k_props:
             player_id  = prop.get('player_id')
             vendor     = prop.get('vendor', 'unknown')
+
+            if vendor in EXCLUDED_BOOKS:
+                continue
             line_value = prop.get('line_value')
             market     = prop.get('market', {})
             mkt_type   = (market.get('type') or '').lower()

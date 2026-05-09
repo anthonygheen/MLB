@@ -187,6 +187,7 @@ def generate_predictions(con, target_date: str) -> list:
         LEFT JOIN players pl ON pp.player_id = pl.player_id
         WHERE pp.market_type = 'pitcher_strikeouts'
           AND DATE_TRUNC('day', pp.recorded_at) = '{target_date}'::DATE
+          AND pp.book NOT IN ('betrivers')
     """
     props = con.execute(sql).df()
     if props.empty:
@@ -428,6 +429,7 @@ def generate_accuracy(con) -> dict:
                 ROUND(AVG(mp.result), 2)        AS avg_actual
             FROM model_predictions mp
             WHERE mp.correct IS NOT NULL
+              AND mp.prediction_id NOT LIKE '%_betrivers'
             GROUP BY pred_date
             ORDER BY pred_date DESC
             LIMIT 90
@@ -457,7 +459,9 @@ def generate_accuracy(con) -> dict:
                 ON mp.player_id = pp.player_id
                 AND mp.game_id  = pp.game_id
                 AND pp.market_type = 'pitcher_strikeouts'
+                AND pp.book = SPLIT_PART(mp.prediction_id, '_', 3)
             WHERE mp.correct IS NOT NULL
+              AND mp.prediction_id NOT LIKE '%_betrivers'
             ORDER BY mp.predicted_at DESC, ABS(mp.edge) DESC
             LIMIT 500
         """
@@ -481,8 +485,10 @@ def generate_accuracy(con) -> dict:
                 ON mp.player_id = pp.player_id
                 AND mp.game_id  = pp.game_id
                 AND pp.market_type = 'pitcher_strikeouts'
+                AND pp.book = SPLIT_PART(mp.prediction_id, '_', 3)
             WHERE mp.correct IS NOT NULL
               AND pp.book IS NOT NULL
+              AND pp.book NOT IN ('betrivers')
             GROUP BY pp.book
             HAVING COUNT(*) >= 5
             ORDER BY accuracy DESC
@@ -497,6 +503,7 @@ def generate_accuracy(con) -> dict:
                     CASE WHEN predicted_value > line THEN 'OVER' ELSE 'UNDER' END AS direction
                 FROM model_predictions
                 WHERE correct IS NOT NULL AND confidence IS NOT NULL
+                  AND prediction_id NOT LIKE '%_betrivers'
                 ORDER BY game_id, player_id, inserted_at
             )
             SELECT
@@ -529,7 +536,9 @@ def generate_accuracy(con) -> dict:
                 SUM(CASE WHEN correct THEN 1 ELSE 0 END) as correct
             FROM (
                 SELECT DISTINCT game_id, player_id, correct
-                FROM model_predictions WHERE correct IS NOT NULL
+                FROM model_predictions
+                WHERE correct IS NOT NULL
+                  AND prediction_id NOT LIKE '%_betrivers'
             )
         """).fetchone()
         # -- Threshold analysis --
@@ -550,7 +559,9 @@ def generate_accuracy(con) -> dict:
             FROM (
                 SELECT DISTINCT game_id, player_id,
                        predicted_value, line, correct
-                FROM model_predictions WHERE correct IS NOT NULL
+                FROM model_predictions
+                WHERE correct IS NOT NULL
+                  AND prediction_id NOT LIKE '%_betrivers'
             )
             GROUP BY direction, edge_bucket
             ORDER BY direction, edge_bucket DESC
@@ -801,10 +812,12 @@ def main():
     print("\n  Predictions...")
     predictions = generate_predictions(con, target_date)
     flagged_preds = [p for p in predictions if p.get('flagged')]
+    # Top plays: sportsbook lines only (Kalshi is a prediction market with different dynamics)
+    sportsbook_flagged = [p for p in flagged_preds if p.get('book') != 'kalshi']
     # Deduplicate by pitcher_id — keep highest kelly_pct per pitcher
     seen_pitchers: set = set()
     deduped_flagged = []
-    for p in sorted(flagged_preds, key=lambda x: x.get('kelly_pct') or 0, reverse=True):
+    for p in sorted(sportsbook_flagged, key=lambda x: x.get('kelly_pct') or 0, reverse=True):
         if p['pitcher_id'] not in seen_pitchers:
             seen_pitchers.add(p['pitcher_id'])
             deduped_flagged.append(p)

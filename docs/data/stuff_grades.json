@@ -332,17 +332,6 @@
       "velo_vs_avg": 3.403
     },
     {
-      "pitcher_id": 2043,
-      "pitcher_name": "Carl Edwards Jr.",
-      "pitcher_team": "New York Mets",
-      "pitch_count": 53,
-      "avg_velo": 92.453,
-      "avg_spin": 2539.17,
-      "avg_ivb": 18.321,
-      "whiff_rate": 0.566,
-      "velo_vs_avg": -2.268
-    },
-    {
       "pitcher_id": 6584,
       "pitcher_name": "Drew Anderson",
       "pitcher_team": "Detroit Tigers",
@@ -352,6 +341,17 @@
       "avg_ivb": 15.925,
       "whiff_rate": 0.566,
       "velo_vs_avg": 1.186
+    },
+    {
+      "pitcher_id": 2043,
+      "pitcher_name": "Carl Edwards Jr.",
+      "pitcher_team": "New York Mets",
+      "pitch_count": 53,
+      "avg_velo": 92.453,
+      "avg_spin": 2539.17,
+      "avg_ivb": 18.321,
+      "whiff_rate": 0.566,
+      "velo_vs_avg": -2.268
     },
     {
       "pitcher_id": 543,
@@ -497,17 +497,6 @@
       "velo_vs_avg": 2.724
     },
     {
-      "pitcher_id": 11,
-      "pitcher_name": "Slade Cecconi",
-      "pitcher_team": "Cleveland Guardians",
-      "pitch_count": 54,
-      "avg_velo": 93.42,
-      "avg_spin": 2327.37,
-      "avg_ivb": 16.259,
-      "whiff_rate": 0.537,
-      "velo_vs_avg": -1.301
-    },
-    {
       "pitcher_id": 559,
       "pitcher_name": "Enyel De Los Santos",
       "pitcher_team": "Houston Astros",
@@ -517,6 +506,17 @@
       "avg_ivb": 13.093,
       "whiff_rate": 0.537,
       "velo_vs_avg": 0.181
+    },
+    {
+      "pitcher_id": 11,
+      "pitcher_name": "Slade Cecconi",
+      "pitcher_team": "Cleveland Guardians",
+      "pitch_count": 54,
+      "avg_velo": 93.42,
+      "avg_spin": 2327.37,
+      "avg_ivb": 16.259,
+      "whiff_rate": 0.537,
+      "velo_vs_avg": -1.301
     },
     {
       "pitcher_id": 56,

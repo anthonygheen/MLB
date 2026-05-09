@@ -246,6 +246,7 @@ def get_props_for_date(con, target_date: str) -> dict:
         FROM player_props
         WHERE market_type = 'pitcher_strikeouts'
           AND DATE_TRUNC('day', recorded_at) = '{target_date}'::DATE
+          AND book NOT IN ('betrivers')
         ORDER BY game_id, book
     """
     df = con.execute(sql).df()
