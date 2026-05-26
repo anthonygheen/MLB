@@ -1,0 +1,84 @@
+name: MLB Daily Pipeline
+
+on:
+  schedule:
+    - cron: '0 20 * * *'  # 4 PM ET (20:00 UTC) — props posted, last night's games final
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Target date YYYY-MM-DD (default: today)'
+        required: false
+        type: string
+      min_ev:
+        description: 'Min EV per $100 risked (default: 3.0)'
+        required: false
+        default: '3.0'
+        type: string
+      skip_ingest:
+        description: 'Skip game ingestion (if already run)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to commit docs/data/ back to repo
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Get today's date
+        id: date
+        run: echo "today=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Restore DB from cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: data/mlb_modeling.db
+          key: mlb-db-${{ steps.date.outputs.today }}
+          restore-keys: mlb-db-
+
+      - name: Seed DB (cache miss only)
+        if: steps.cache.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p data
+          if gh release download --pattern "mlb_modeling.db" -D data/ 2>/dev/null; then
+            echo "DB restored from release asset"
+          else
+            echo "No release asset found — initializing empty schema (first-time setup)"
+            python ingestion/schema.py
+          fi
+
+      - name: Run daily pipeline
+        env:
+          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
+          DB_PATH: ${{ github.workspace }}/data/mlb_modeling.db
+        run: |
+          ARGS=""
+          [ -n "${{ inputs.date }}" ]              && ARGS="$ARGS --date ${{ inputs.date }}"
+          [ -n "${{ inputs.min_ev }}" ]            && ARGS="$ARGS --min-ev ${{ inputs.min_ev }}"
+          [ "${{ inputs.skip_ingest }}" = "true" ] && ARGS="$ARGS --skip-ingest"
+          python run_daily.py $ARGS
+
+      - name: Commit dashboard data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/
+          git diff --staged --quiet || git commit -m "Dashboard: ${{ steps.date.outputs.today }}"
+          git push
