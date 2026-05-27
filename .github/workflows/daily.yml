@@ -53,8 +53,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/mlb_modeling.db
-          key: mlb-db-${{ steps.date.outputs.today }}
-          restore-keys: mlb-db-
+          key: mlb-db-v2-${{ steps.date.outputs.today }}
+          restore-keys: mlb-db-v2-
 
       - name: Seed DB (cache miss only)
         if: steps.cache.outputs.cache-hit != 'true'
