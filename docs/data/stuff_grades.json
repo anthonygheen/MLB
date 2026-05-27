@@ -1,4 +1,16 @@
 {
   "season": 2026,
-  "pitchers": []
+  "pitchers": [
+    {
+      "pitcher_id": 1905390,
+      "pitcher_name": "Chase Burns",
+      "pitcher_team": "Cincinnati Reds",
+      "pitch_count": 58,
+      "avg_velo": 98.038,
+      "avg_spin": 2602.741,
+      "avg_ivb": 18.776,
+      "whiff_rate": 0.552,
+      "velo_vs_avg": 3.249
+    }
+  ]
 }
