@@ -3,14 +3,14 @@
   "pitchers": [
     {
       "pitcher_id": 1680889,
-      "pitcher_name": 0,
-      "pitcher_team": 0,
+      "pitcher_name": "Jacob Misiorowski",
+      "pitcher_team": "Milwaukee Brewers",
       "pitch_count": 73,
       "avg_velo": 101.056,
       "avg_spin": 2645.685,
       "avg_ivb": 14.685,
       "whiff_rate": 0.671,
-      "velo_vs_avg": 6.204
+      "velo_vs_avg": 6.222
     }
   ]
 }
