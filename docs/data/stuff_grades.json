@@ -2,15 +2,37 @@
   "season": 2026,
   "pitchers": [
     {
-      "pitcher_id": 1905390,
-      "pitcher_name": "Chase Burns",
+      "pitcher_id": 5437,
+      "pitcher_name": "Eric Lauer",
+      "pitcher_team": "Los Angeles Dodgers",
+      "pitch_count": 51,
+      "avg_velo": 91.11,
+      "avg_spin": 2148.804,
+      "avg_ivb": 14.314,
+      "whiff_rate": 0.549,
+      "velo_vs_avg": -3.406
+    },
+    {
+      "pitcher_id": 741,
+      "pitcher_name": "Kevin Gausman",
+      "pitcher_team": "Toronto Blue Jays",
+      "pitch_count": 59,
+      "avg_velo": 94.269,
+      "avg_spin": 2269.22,
+      "avg_ivb": 16.203,
+      "whiff_rate": 0.542,
+      "velo_vs_avg": -0.246
+    },
+    {
+      "pitcher_id": 533,
+      "pitcher_name": "Andrew Abbott",
       "pitcher_team": "Cincinnati Reds",
-      "pitch_count": 58,
-      "avg_velo": 98.038,
-      "avg_spin": 2602.741,
-      "avg_ivb": 18.776,
-      "whiff_rate": 0.552,
-      "velo_vs_avg": 3.249
+      "pitch_count": 53,
+      "avg_velo": 93.042,
+      "avg_spin": 2351.151,
+      "avg_ivb": 16.302,
+      "whiff_rate": 0.472,
+      "velo_vs_avg": -1.474
     }
   ]
 }

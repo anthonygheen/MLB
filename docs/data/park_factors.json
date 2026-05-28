@@ -1,3 +1,11 @@
 {
-  "parks": []
+  "parks": [
+    {
+      "venue": "Sutter Health Park",
+      "season": 2026,
+      "total_pa": 230,
+      "venue_k_rate": 0.2174,
+      "park_k_factor": 1.0
+    }
+  ]
 }
