@@ -5,7 +5,14 @@
       "season": 2026,
       "total_pa": 230,
       "venue_k_rate": 0.2174,
-      "park_k_factor": 1.0
+      "park_k_factor": 1.0509
+    },
+    {
+      "venue": "Dodger Stadium",
+      "season": 2026,
+      "total_pa": 219,
+      "venue_k_rate": 0.1963,
+      "park_k_factor": 0.9491
     }
   ]
 }
