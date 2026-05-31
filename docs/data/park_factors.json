@@ -3,44 +3,58 @@
     {
       "venue": "PNC Park",
       "season": 2026,
-      "total_pa": 240,
-      "venue_k_rate": 0.275,
-      "park_k_factor": 1.3577
+      "total_pa": 329,
+      "venue_k_rate": 0.2432,
+      "park_k_factor": 1.2041
     },
     {
-      "venue": "Sutter Health Park",
+      "venue": "Citi Field",
       "season": 2026,
-      "total_pa": 230,
-      "venue_k_rate": 0.2174,
-      "park_k_factor": 1.0732
-    },
-    {
-      "venue": "Globe Life Field",
-      "season": 2026,
-      "total_pa": 217,
-      "venue_k_rate": 0.2028,
-      "park_k_factor": 1.001
+      "total_pa": 234,
+      "venue_k_rate": 0.2137,
+      "park_k_factor": 1.0581
     },
     {
       "venue": "Dodger Stadium",
       "season": 2026,
-      "total_pa": 219,
-      "venue_k_rate": 0.1963,
-      "park_k_factor": 0.9693
+      "total_pa": 280,
+      "venue_k_rate": 0.2107,
+      "park_k_factor": 1.0434
+    },
+    {
+      "venue": "Progressive Field",
+      "season": 2026,
+      "total_pa": 222,
+      "venue_k_rate": 0.2072,
+      "park_k_factor": 1.0261
     },
     {
       "venue": "Rate Field",
       "season": 2026,
-      "total_pa": 223,
-      "venue_k_rate": 0.1928,
-      "park_k_factor": 0.952
+      "total_pa": 292,
+      "venue_k_rate": 0.2021,
+      "park_k_factor": 1.0005
+    },
+    {
+      "venue": "Globe Life Field",
+      "season": 2026,
+      "total_pa": 373,
+      "venue_k_rate": 0.1957,
+      "park_k_factor": 0.9691
+    },
+    {
+      "venue": "Sutter Health Park",
+      "season": 2026,
+      "total_pa": 309,
+      "venue_k_rate": 0.1942,
+      "park_k_factor": 0.9615
     },
     {
       "venue": "Oriole Park at Camden Yards",
       "season": 2026,
-      "total_pa": 229,
-      "venue_k_rate": 0.131,
-      "park_k_factor": 0.6468
+      "total_pa": 309,
+      "venue_k_rate": 0.1489,
+      "park_k_factor": 0.7372
     }
   ]
 }
