@@ -53,8 +53,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/mlb_modeling.db
-          key: mlb-db-v2-${{ steps.date.outputs.today }}
-          restore-keys: mlb-db-v2-
+          key: mlb-db-v3-${{ steps.date.outputs.today }}
+          restore-keys: mlb-db-v3-
 
       - name: Seed DB (cache miss only)
         if: steps.cache.outputs.cache-hit != 'true'
@@ -62,12 +62,36 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p data
-          if gh release download --pattern "mlb_modeling.db" -D data/ 2>/dev/null; then
-            echo "DB restored from release asset"
-          else
-            echo "No release asset found — initializing empty schema (first-time setup)"
-            python ingestion/schema.py
+          echo "Cache miss — attempting to download DB from latest release..."
+          gh release download --pattern "mlb_modeling.db" -D data/
+          SIZE=$(stat -c%s data/mlb_modeling.db 2>/dev/null || echo 0)
+          echo "Downloaded DB: ${SIZE} bytes"
+          if [ "$SIZE" -lt 50000000 ]; then
+            echo "ERROR: DB is only ${SIZE} bytes — release asset is missing or corrupt."
+            echo "Create a release with: gh release create v1.0-db-seed data/mlb_modeling.db"
+            exit 1
           fi
+          echo "DB seed successful."
+
+      - name: DB diagnostics
+        env:
+          DB_PATH: ${{ github.workspace }}/data/mlb_modeling.db
+        run: |
+          python - <<'EOF'
+          import os, duckdb
+          db = os.environ["DB_PATH"]
+          size = os.path.getsize(db) if os.path.exists(db) else 0
+          print(f"DB file: {db}")
+          print(f"DB size: {size:,} bytes ({size//1024//1024} MB)")
+          con = duckdb.connect(db, read_only=True)
+          for t in ["games","plate_appearances","pitches","players","player_props","model_predictions"]:
+              try:
+                  n = con.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
+                  print(f"  {t}: {n:,} rows")
+              except Exception as e:
+                  print(f"  {t}: ERROR - {e}")
+          con.close()
+          EOF
 
       - name: Sync players
         env:
