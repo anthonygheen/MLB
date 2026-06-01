@@ -112,17 +112,6 @@
       "velo_vs_avg": -0.081
     },
     {
-      "pitcher_id": 4667530,
-      "pitcher_name": "Riley Martin",
-      "pitcher_team": "Chicago Cubs",
-      "pitch_count": 64,
-      "avg_velo": 94.566,
-      "avg_spin": 2408.484,
-      "avg_ivb": 17.381,
-      "whiff_rate": 0.594,
-      "velo_vs_avg": -0.073
-    },
-    {
       "pitcher_id": 2994425,
       "pitcher_name": "Joel Peguero",
       "pitcher_team": "San Francisco Giants",
@@ -132,6 +121,17 @@
       "avg_ivb": 13.75,
       "whiff_rate": 0.594,
       "velo_vs_avg": 5.221
+    },
+    {
+      "pitcher_id": 4667530,
+      "pitcher_name": "Riley Martin",
+      "pitcher_team": "Chicago Cubs",
+      "pitch_count": 64,
+      "avg_velo": 94.566,
+      "avg_spin": 2408.484,
+      "avg_ivb": 17.381,
+      "whiff_rate": 0.594,
+      "velo_vs_avg": -0.073
     },
     {
       "pitcher_id": 1680889,
