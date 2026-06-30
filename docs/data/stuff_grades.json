@@ -2,28 +2,6 @@
   "season": 2026,
   "pitchers": [
     {
-      "pitcher_id": 882,
-      "pitcher_name": "Louis Varland",
-      "pitcher_team": "Toronto Blue Jays",
-      "pitch_count": 88,
-      "avg_velo": 98.522,
-      "avg_spin": 2246.25,
-      "avg_ivb": 15.989,
-      "whiff_rate": 0.648,
-      "velo_vs_avg": 3.894
-    },
-    {
-      "pitcher_id": 2636,
-      "pitcher_name": "Kirby Yates",
-      "pitcher_team": "Los Angeles Angels",
-      "pitch_count": 77,
-      "avg_velo": 90.395,
-      "avg_spin": 2232.792,
-      "avg_ivb": 12.494,
-      "whiff_rate": 0.623,
-      "velo_vs_avg": -4.233
-    },
-    {
       "pitcher_id": 1210255,
       "pitcher_name": 0,
       "pitcher_team": 0,
@@ -32,7 +10,7 @@
       "avg_spin": 2515.758,
       "avg_ivb": 16.431,
       "whiff_rate": 0.621,
-      "velo_vs_avg": 0.199
+      "velo_vs_avg": 0.201
     },
     {
       "pitcher_id": 2994425,
@@ -43,7 +21,18 @@
       "avg_spin": 2216.635,
       "avg_ivb": 14.212,
       "whiff_rate": 0.615,
-      "velo_vs_avg": 5.055
+      "velo_vs_avg": 5.058
+    },
+    {
+      "pitcher_id": 2636,
+      "pitcher_name": "Kirby Yates",
+      "pitcher_team": "Los Angeles Angels",
+      "pitch_count": 70,
+      "avg_velo": 90.337,
+      "avg_spin": 2216.114,
+      "avg_ivb": 12.414,
+      "whiff_rate": 0.614,
+      "velo_vs_avg": -4.288
     },
     {
       "pitcher_id": 4873209,
@@ -54,7 +43,7 @@
       "avg_spin": 2274.654,
       "avg_ivb": 15.977,
       "whiff_rate": 0.609,
-      "velo_vs_avg": 3.655
+      "velo_vs_avg": 3.658
     },
     {
       "pitcher_id": 228464,
@@ -65,7 +54,7 @@
       "avg_spin": 2400.908,
       "avg_ivb": 10.077,
       "whiff_rate": 0.609,
-      "velo_vs_avg": -0.031
+      "velo_vs_avg": -0.029
     },
     {
       "pitcher_id": 667,
@@ -76,18 +65,7 @@
       "avg_spin": 2299.308,
       "avg_ivb": 14.802,
       "whiff_rate": 0.607,
-      "velo_vs_avg": -0.171
-    },
-    {
-      "pitcher_id": 819402,
-      "pitcher_name": "David Morgan",
-      "pitcher_team": "San Diego Padres",
-      "pitch_count": 76,
-      "avg_velo": 97.561,
-      "avg_spin": 2492.039,
-      "avg_ivb": 15.237,
-      "whiff_rate": 0.605,
-      "velo_vs_avg": 2.933
+      "velo_vs_avg": -0.168
     },
     {
       "pitcher_id": 1680889,
@@ -98,7 +76,7 @@
       "avg_spin": 2606.176,
       "avg_ivb": 15.415,
       "whiff_rate": 0.604,
-      "velo_vs_avg": 5.204
+      "velo_vs_avg": 5.207
     },
     {
       "pitcher_id": 4667991,
@@ -109,7 +87,7 @@
       "avg_spin": 2062.417,
       "avg_ivb": 17.816,
       "whiff_rate": 0.601,
-      "velo_vs_avg": 1.211
+      "velo_vs_avg": 1.214
     },
     {
       "pitcher_id": 276,
@@ -120,7 +98,7 @@
       "avg_spin": 1957.567,
       "avg_ivb": 15.25,
       "whiff_rate": 0.6,
-      "velo_vs_avg": -5.204
+      "velo_vs_avg": -5.202
     },
     {
       "pitcher_id": 473,
@@ -131,7 +109,29 @@
       "avg_spin": 2438.067,
       "avg_ivb": 14.014,
       "whiff_rate": 0.598,
-      "velo_vs_avg": 0.228
+      "velo_vs_avg": 0.231
+    },
+    {
+      "pitcher_id": 477,
+      "pitcher_name": "Gabe Speier",
+      "pitcher_team": "Seattle Mariners",
+      "pitch_count": 67,
+      "avg_velo": 94.558,
+      "avg_spin": 2258.149,
+      "avg_ivb": 14.985,
+      "whiff_rate": 0.597,
+      "velo_vs_avg": -0.067
+    },
+    {
+      "pitcher_id": 795,
+      "pitcher_name": "Tim Herrin",
+      "pitcher_team": "Cleveland Guardians",
+      "pitch_count": 62,
+      "avg_velo": 94.226,
+      "avg_spin": 2355.419,
+      "avg_ivb": 11.903,
+      "whiff_rate": 0.597,
+      "velo_vs_avg": -0.399
     },
     {
       "pitcher_id": 4667530,
@@ -142,7 +142,18 @@
       "avg_spin": 2408.484,
       "avg_ivb": 17.381,
       "whiff_rate": 0.594,
-      "velo_vs_avg": -0.062
+      "velo_vs_avg": -0.059
+    },
+    {
+      "pitcher_id": 405,
+      "pitcher_name": "Emerson Hancock",
+      "pitcher_team": "Seattle Mariners",
+      "pitch_count": 340,
+      "avg_velo": 95.099,
+      "avg_spin": 2410.679,
+      "avg_ivb": 10.46,
+      "whiff_rate": 0.588,
+      "velo_vs_avg": 0.474
     },
     {
       "pitcher_id": 596119,
@@ -153,7 +164,7 @@
       "avg_spin": 2382.588,
       "avg_ivb": 17.6,
       "whiff_rate": 0.588,
-      "velo_vs_avg": -1.52
+      "velo_vs_avg": -1.517
     },
     {
       "pitcher_id": 8866,
@@ -164,7 +175,7 @@
       "avg_spin": 2482.429,
       "avg_ivb": 19.397,
       "whiff_rate": 0.587,
-      "velo_vs_avg": -0.436
+      "velo_vs_avg": -0.433
     },
     {
       "pitcher_id": 393,
@@ -175,7 +186,7 @@
       "avg_spin": 2080.05,
       "avg_ivb": 16.661,
       "whiff_rate": 0.586,
-      "velo_vs_avg": 0.686
+      "velo_vs_avg": 0.689
     },
     {
       "pitcher_id": 854,
@@ -186,40 +197,18 @@
       "avg_spin": 2347.737,
       "avg_ivb": 14.596,
       "whiff_rate": 0.586,
-      "velo_vs_avg": 0.275
+      "velo_vs_avg": 0.278
     },
     {
-      "pitcher_id": 429,
-      "pitcher_name": "Ranger Suarez",
-      "pitcher_team": "Boston Red Sox",
-      "pitch_count": 135,
-      "avg_velo": 91.834,
-      "avg_spin": 2054.119,
-      "avg_ivb": 12.756,
-      "whiff_rate": 0.585,
-      "velo_vs_avg": -2.794
-    },
-    {
-      "pitcher_id": 795,
-      "pitcher_name": "Tim Herrin",
-      "pitcher_team": "Cleveland Guardians",
-      "pitch_count": 65,
-      "avg_velo": 94.263,
-      "avg_spin": 2352.215,
-      "avg_ivb": 11.892,
-      "whiff_rate": 0.585,
-      "velo_vs_avg": -0.365
-    },
-    {
-      "pitcher_id": 3618,
-      "pitcher_name": "Jonathan Loaisiga",
-      "pitcher_team": "Arizona Diamondbacks",
-      "pitch_count": 60,
-      "avg_velo": 97.34,
-      "avg_spin": 2411.933,
-      "avg_ivb": 13.7,
-      "whiff_rate": 0.583,
-      "velo_vs_avg": 2.712
+      "pitcher_id": 819402,
+      "pitcher_name": "David Morgan",
+      "pitcher_team": "San Diego Padres",
+      "pitch_count": 67,
+      "avg_velo": 97.443,
+      "avg_spin": 2476.701,
+      "avg_ivb": 15.119,
+      "whiff_rate": 0.582,
+      "velo_vs_avg": 2.818
     },
     {
       "pitcher_id": 319,
@@ -230,7 +219,40 @@
       "avg_spin": 2468.764,
       "avg_ivb": 15.018,
       "whiff_rate": 0.582,
-      "velo_vs_avg": 4.445
+      "velo_vs_avg": 4.448
+    },
+    {
+      "pitcher_id": 882,
+      "pitcher_name": "Louis Varland",
+      "pitcher_team": "Toronto Blue Jays",
+      "pitch_count": 86,
+      "avg_velo": 98.405,
+      "avg_spin": 2243.802,
+      "avg_ivb": 16.151,
+      "whiff_rate": 0.581,
+      "velo_vs_avg": 3.78
+    },
+    {
+      "pitcher_id": 1005,
+      "pitcher_name": "Drew Rasmussen",
+      "pitcher_team": "Tampa Bay Rays",
+      "pitch_count": 234,
+      "avg_velo": 95.97,
+      "avg_spin": 2516.483,
+      "avg_ivb": 16.752,
+      "whiff_rate": 0.581,
+      "velo_vs_avg": 1.345
+    },
+    {
+      "pitcher_id": 740,
+      "pitcher_name": "Jhoan Duran",
+      "pitcher_team": "Philadelphia Phillies",
+      "pitch_count": 74,
+      "avg_velo": 99.973,
+      "avg_spin": 2074.743,
+      "avg_ivb": 13.162,
+      "whiff_rate": 0.581,
+      "velo_vs_avg": 5.348
     },
     {
       "pitcher_id": 6703,
@@ -241,18 +263,18 @@
       "avg_spin": 2246.495,
       "avg_ivb": 12.924,
       "whiff_rate": 0.581,
-      "velo_vs_avg": -0.482
+      "velo_vs_avg": -0.479
     },
     {
       "pitcher_id": 2116,
       "pitcher_name": "Caleb Thielbar",
       "pitcher_team": "Chicago Cubs",
-      "pitch_count": 114,
-      "avg_velo": 93.425,
-      "avg_spin": 2318.535,
-      "avg_ivb": 19.132,
+      "pitch_count": 107,
+      "avg_velo": 93.468,
+      "avg_spin": 2326.617,
+      "avg_ivb": 19.299,
       "whiff_rate": 0.579,
-      "velo_vs_avg": -1.202
+      "velo_vs_avg": -1.157
     },
     {
       "pitcher_id": 2183925,
@@ -263,29 +285,7 @@
       "avg_spin": 2453.732,
       "avg_ivb": 16.825,
       "whiff_rate": 0.579,
-      "velo_vs_avg": 3.201
-    },
-    {
-      "pitcher_id": 1005,
-      "pitcher_name": "Drew Rasmussen",
-      "pitcher_team": "Tampa Bay Rays",
-      "pitch_count": 257,
-      "avg_velo": 95.967,
-      "avg_spin": 2521.28,
-      "avg_ivb": 16.813,
-      "whiff_rate": 0.576,
-      "velo_vs_avg": 1.34
-    },
-    {
-      "pitcher_id": 413,
-      "pitcher_name": "Matt Strahm",
-      "pitcher_team": "Kansas City Royals",
-      "pitch_count": 106,
-      "avg_velo": 91.076,
-      "avg_spin": 2549.981,
-      "avg_ivb": 16.708,
-      "whiff_rate": 0.575,
-      "velo_vs_avg": -3.551
+      "velo_vs_avg": 3.204
     },
     {
       "pitcher_id": 1133611,
@@ -296,29 +296,40 @@
       "avg_spin": 1976.356,
       "avg_ivb": 15.342,
       "whiff_rate": 0.575,
-      "velo_vs_avg": -3.423
-    },
-    {
-      "pitcher_id": 405,
-      "pitcher_name": "Emerson Hancock",
-      "pitcher_team": "Seattle Mariners",
-      "pitch_count": 373,
-      "avg_velo": 95.246,
-      "avg_spin": 2405.748,
-      "avg_ivb": 10.137,
-      "whiff_rate": 0.574,
-      "velo_vs_avg": 0.619
+      "velo_vs_avg": -3.421
     },
     {
       "pitcher_id": 1070,
       "pitcher_name": "Bryan Hudson",
       "pitcher_team": "Chicago White Sox",
-      "pitch_count": 284,
-      "avg_velo": 91.786,
-      "avg_spin": 2178.021,
-      "avg_ivb": 12.521,
-      "whiff_rate": 0.57,
-      "velo_vs_avg": -2.841
+      "pitch_count": 273,
+      "avg_velo": 91.792,
+      "avg_spin": 2180.07,
+      "avg_ivb": 12.62,
+      "whiff_rate": 0.575,
+      "velo_vs_avg": -2.833
+    },
+    {
+      "pitcher_id": 429,
+      "pitcher_name": "Ranger Suarez",
+      "pitcher_team": "Boston Red Sox",
+      "pitch_count": 162,
+      "avg_velo": 91.86,
+      "avg_spin": 2049.302,
+      "avg_ivb": 12.42,
+      "whiff_rate": 0.574,
+      "velo_vs_avg": -2.765
+    },
+    {
+      "pitcher_id": 1044,
+      "pitcher_name": "Matt Festa",
+      "pitcher_team": "Cleveland Guardians",
+      "pitch_count": 157,
+      "avg_velo": 91.841,
+      "avg_spin": 2481.452,
+      "avg_ivb": 11.834,
+      "whiff_rate": 0.573,
+      "velo_vs_avg": -2.784
     },
     {
       "pitcher_id": 437,
@@ -329,7 +340,7 @@
       "avg_spin": 2560.6,
       "avg_ivb": 18.89,
       "whiff_rate": 0.57,
-      "velo_vs_avg": 2.378
+      "velo_vs_avg": 2.381
     },
     {
       "pitcher_id": 3816,
@@ -340,18 +351,7 @@
       "avg_spin": 2241.39,
       "avg_ivb": 15.664,
       "whiff_rate": 0.57,
-      "velo_vs_avg": 2.184
-    },
-    {
-      "pitcher_id": 477,
-      "pitcher_name": "Gabe Speier",
-      "pitcher_team": "Seattle Mariners",
-      "pitch_count": 72,
-      "avg_velo": 94.715,
-      "avg_spin": 2263.958,
-      "avg_ivb": 14.917,
-      "whiff_rate": 0.569,
-      "velo_vs_avg": 0.088
+      "velo_vs_avg": 2.187
     },
     {
       "pitcher_id": 741,
@@ -362,7 +362,7 @@
       "avg_spin": 2262.714,
       "avg_ivb": 16.672,
       "whiff_rate": 0.569,
-      "velo_vs_avg": -0.787
+      "velo_vs_avg": -0.784
     },
     {
       "pitcher_id": 469,
@@ -373,7 +373,7 @@
       "avg_spin": 2436.432,
       "avg_ivb": 18.989,
       "whiff_rate": 0.568,
-      "velo_vs_avg": 0.261
+      "velo_vs_avg": 0.264
     },
     {
       "pitcher_id": 2712,
@@ -384,7 +384,7 @@
       "avg_spin": 2341.173,
       "avg_ivb": 16.13,
       "whiff_rate": 0.568,
-      "velo_vs_avg": -1.658
+      "velo_vs_avg": -1.656
     },
     {
       "pitcher_id": 299,
@@ -395,18 +395,7 @@
       "avg_spin": 2122.23,
       "avg_ivb": 15.189,
       "whiff_rate": 0.568,
-      "velo_vs_avg": -2.761
-    },
-    {
-      "pitcher_id": 978,
-      "pitcher_name": "Mason Montgomery",
-      "pitcher_team": "Pittsburgh Pirates",
-      "pitch_count": 217,
-      "avg_velo": 98.368,
-      "avg_spin": 2248.65,
-      "avg_ivb": 18.267,
-      "whiff_rate": 0.567,
-      "velo_vs_avg": 3.74
+      "velo_vs_avg": -2.759
     },
     {
       "pitcher_id": 647,
@@ -417,7 +406,18 @@
       "avg_spin": 2233.672,
       "avg_ivb": 12.737,
       "whiff_rate": 0.567,
-      "velo_vs_avg": 2.557
+      "velo_vs_avg": 2.56
+    },
+    {
+      "pitcher_id": 4452,
+      "pitcher_name": "Jeff Hoffman",
+      "pitcher_team": "Toronto Blue Jays",
+      "pitch_count": 159,
+      "avg_velo": 96.826,
+      "avg_spin": 2544.101,
+      "avg_ivb": 15.654,
+      "whiff_rate": 0.566,
+      "velo_vs_avg": 2.201
     },
     {
       "pitcher_id": 2043,
@@ -428,18 +428,18 @@
       "avg_spin": 2539.17,
       "avg_ivb": 18.321,
       "whiff_rate": 0.566,
-      "velo_vs_avg": -2.175
+      "velo_vs_avg": -2.172
     },
     {
-      "pitcher_id": 4452,
-      "pitcher_name": "Jeff Hoffman",
-      "pitcher_team": "Toronto Blue Jays",
-      "pitch_count": 170,
-      "avg_velo": 96.729,
-      "avg_spin": 2539.882,
-      "avg_ivb": 15.624,
-      "whiff_rate": 0.565,
-      "velo_vs_avg": 2.102
+      "pitcher_id": 978,
+      "pitcher_name": "Mason Montgomery",
+      "pitcher_team": "Pittsburgh Pirates",
+      "pitch_count": 228,
+      "avg_velo": 98.397,
+      "avg_spin": 2246.667,
+      "avg_ivb": 18.224,
+      "whiff_rate": 0.566,
+      "velo_vs_avg": 3.772
     },
     {
       "pitcher_id": 619,
@@ -450,18 +450,18 @@
       "avg_spin": 2347.582,
       "avg_ivb": 17.1,
       "whiff_rate": 0.564,
-      "velo_vs_avg": -1.13
+      "velo_vs_avg": -1.128
     },
     {
-      "pitcher_id": 12961,
-      "pitcher_name": "Jack Dreyer",
-      "pitcher_team": "Los Angeles Dodgers",
-      "pitch_count": 183,
-      "avg_velo": 93.265,
-      "avg_spin": 2448.519,
-      "avg_ivb": 19.421,
+      "pitcher_id": 413,
+      "pitcher_name": "Matt Strahm",
+      "pitcher_team": "Kansas City Royals",
+      "pitch_count": 103,
+      "avg_velo": 91.083,
+      "avg_spin": 2548.854,
+      "avg_ivb": 16.738,
       "whiff_rate": 0.563,
-      "velo_vs_avg": -1.363
+      "velo_vs_avg": -3.542
     },
     {
       "pitcher_id": 32,
@@ -472,18 +472,18 @@
       "avg_spin": 2275.901,
       "avg_ivb": 15.149,
       "whiff_rate": 0.563,
-      "velo_vs_avg": -2.655
+      "velo_vs_avg": -2.652
     },
     {
-      "pitcher_id": 1044,
-      "pitcher_name": "Matt Festa",
-      "pitcher_team": "Cleveland Guardians",
-      "pitch_count": 159,
-      "avg_velo": 91.85,
-      "avg_spin": 2481.44,
-      "avg_ivb": 11.786,
-      "whiff_rate": 0.56,
-      "velo_vs_avg": -2.778
+      "pitcher_id": 3618,
+      "pitcher_name": "Jonathan Loaisiga",
+      "pitcher_team": "Arizona Diamondbacks",
+      "pitch_count": 57,
+      "avg_velo": 97.309,
+      "avg_spin": 2415.158,
+      "avg_ivb": 13.667,
+      "whiff_rate": 0.561,
+      "velo_vs_avg": 2.684
     },
     {
       "pitcher_id": 914,
@@ -494,7 +494,7 @@
       "avg_spin": 2430.543,
       "avg_ivb": 18.047,
       "whiff_rate": 0.559,
-      "velo_vs_avg": 2.457
+      "velo_vs_avg": 2.46
     },
     {
       "pitcher_id": 208,
@@ -505,7 +505,7 @@
       "avg_spin": 2495.739,
       "avg_ivb": 14.084,
       "whiff_rate": 0.559,
-      "velo_vs_avg": 3.198
+      "velo_vs_avg": 3.201
     },
     {
       "pitcher_id": 4851,
@@ -516,18 +516,7 @@
       "avg_spin": 2140.942,
       "avg_ivb": 16.105,
       "whiff_rate": 0.558,
-      "velo_vs_avg": -1.123
-    },
-    {
-      "pitcher_id": 3198,
-      "pitcher_name": "Brandon Woodruff",
-      "pitcher_team": "Milwaukee Brewers",
-      "pitch_count": 215,
-      "avg_velo": 92.125,
-      "avg_spin": 2347.033,
-      "avg_ivb": 17.605,
-      "whiff_rate": 0.558,
-      "velo_vs_avg": -2.502
+      "velo_vs_avg": -1.12
     },
     {
       "pitcher_id": 192,
@@ -538,7 +527,18 @@
       "avg_spin": 2248.084,
       "avg_ivb": 16.664,
       "whiff_rate": 0.557,
-      "velo_vs_avg": 0.79
+      "velo_vs_avg": 0.793
+    },
+    {
+      "pitcher_id": 12961,
+      "pitcher_name": "Jack Dreyer",
+      "pitcher_team": "Los Angeles Dodgers",
+      "pitch_count": 171,
+      "avg_velo": 93.184,
+      "avg_spin": 2447.895,
+      "avg_ivb": 19.363,
+      "whiff_rate": 0.556,
+      "velo_vs_avg": -1.441
     },
     {
       "pitcher_id": 2274,
@@ -549,7 +549,7 @@
       "avg_spin": 2218.254,
       "avg_ivb": 14.762,
       "whiff_rate": 0.556,
-      "velo_vs_avg": -0.24
+      "velo_vs_avg": -0.238
     }
   ]
 }
