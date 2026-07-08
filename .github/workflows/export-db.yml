@@ -1,0 +1,49 @@
+name: Export DB to Release
+
+# Manually dispatched: restores the daily pipeline's cached DuckDB and
+# uploads it to the seed release so it can be downloaded locally with:
+#   gh release download v1.0-db-seed --pattern "mlb_modeling.db" -D data/ --clobber
+# Also serves as a durable backup — the Actions cache evicts after ~7 idle
+# days, and without this the only fallback is the original stale seed.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get today's date
+        id: date
+        run: echo "today=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Restore DB from cache
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: data/mlb_modeling.db
+          key: mlb-db-v3-${{ steps.date.outputs.today }}
+          restore-keys: mlb-db-v3-
+
+      - name: Verify DB
+        run: |
+          SIZE=$(stat -c%s data/mlb_modeling.db 2>/dev/null || echo 0)
+          echo "DB size: ${SIZE} bytes"
+          if [ "$SIZE" -lt 50000000 ]; then
+            echo "ERROR: cache restore failed or DB too small — aborting upload."
+            exit 1
+          fi
+
+      - name: Upload to seed release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload v1.0-db-seed data/mlb_modeling.db --clobber
+          echo "Uploaded. Download locally with:"
+          echo "  gh release download v1.0-db-seed --pattern mlb_modeling.db -D data/ --clobber"
