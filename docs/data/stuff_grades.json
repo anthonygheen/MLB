@@ -398,17 +398,6 @@
       "velo_vs_avg": 2.555
     },
     {
-      "pitcher_id": 2043,
-      "pitcher_name": "Carl Edwards Jr.",
-      "pitcher_team": "New York Mets",
-      "pitch_count": 53,
-      "avg_velo": 92.453,
-      "avg_spin": 2539.17,
-      "avg_ivb": 18.321,
-      "whiff_rate": 0.566,
-      "velo_vs_avg": -2.177
-    },
-    {
       "pitcher_id": 4452,
       "pitcher_name": "Jeff Hoffman",
       "pitcher_team": "Toronto Blue Jays",
@@ -418,6 +407,17 @@
       "avg_ivb": 15.654,
       "whiff_rate": 0.566,
       "velo_vs_avg": 2.196
+    },
+    {
+      "pitcher_id": 2043,
+      "pitcher_name": "Carl Edwards Jr.",
+      "pitcher_team": "New York Mets",
+      "pitch_count": 53,
+      "avg_velo": 92.453,
+      "avg_spin": 2539.17,
+      "avg_ivb": 18.321,
+      "whiff_rate": 0.566,
+      "velo_vs_avg": -2.177
     },
     {
       "pitcher_id": 619,
