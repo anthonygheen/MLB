@@ -486,17 +486,6 @@
       "velo_vs_avg": 3.196
     },
     {
-      "pitcher_id": 299,
-      "pitcher_name": "Tanner Banks",
-      "pitcher_team": "Philadelphia Phillies",
-      "pitch_count": 77,
-      "avg_velo": 91.891,
-      "avg_spin": 2121.688,
-      "avg_ivb": 15.065,
-      "whiff_rate": 0.558,
-      "velo_vs_avg": -2.739
-    },
-    {
       "pitcher_id": 4851,
       "pitcher_name": "Connor Seabold",
       "pitcher_team": "Detroit Tigers",
@@ -506,6 +495,17 @@
       "avg_ivb": 16.105,
       "whiff_rate": 0.558,
       "velo_vs_avg": -1.126
+    },
+    {
+      "pitcher_id": 299,
+      "pitcher_name": "Tanner Banks",
+      "pitcher_team": "Philadelphia Phillies",
+      "pitch_count": 77,
+      "avg_velo": 91.891,
+      "avg_spin": 2121.688,
+      "avg_ivb": 15.065,
+      "whiff_rate": 0.558,
+      "velo_vs_avg": -2.739
     },
     {
       "pitcher_id": 192,
@@ -530,15 +530,15 @@
       "velo_vs_avg": 0.35
     },
     {
-      "pitcher_id": 12961,
-      "pitcher_name": "Jack Dreyer",
-      "pitcher_team": "Los Angeles Dodgers",
-      "pitch_count": 171,
-      "avg_velo": 93.184,
-      "avg_spin": 2447.895,
-      "avg_ivb": 19.363,
+      "pitcher_id": 1645455,
+      "pitcher_name": "Grant Taylor",
+      "pitcher_team": "Chicago White Sox",
+      "pitch_count": 252,
+      "avg_velo": 98.336,
+      "avg_spin": 2387.246,
+      "avg_ivb": 16.671,
       "whiff_rate": 0.556,
-      "velo_vs_avg": -1.446
+      "velo_vs_avg": 3.705
     },
     {
       "pitcher_id": 2274,
