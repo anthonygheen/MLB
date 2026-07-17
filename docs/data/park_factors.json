@@ -12,7 +12,7 @@
       "season": 2026,
       "total_pa": 2093,
       "venue_k_rate": 0.2489,
-      "park_k_factor": 1.1282
+      "park_k_factor": 1.1281
     },
     {
       "venue": "T-Mobile Park",
@@ -40,7 +40,7 @@
       "season": 2026,
       "total_pa": 1889,
       "venue_k_rate": 0.2398,
-      "park_k_factor": 1.0869
+      "park_k_factor": 1.0868
     },
     {
       "venue": "Angel Stadium",
@@ -54,7 +54,7 @@
       "season": 2026,
       "total_pa": 1993,
       "venue_k_rate": 0.2383,
-      "park_k_factor": 1.0802
+      "park_k_factor": 1.0801
     },
     {
       "venue": "Citi Field",
@@ -73,16 +73,16 @@
     {
       "venue": "Citizens Bank Park",
       "season": 2026,
-      "total_pa": 2291,
-      "venue_k_rate": 0.2335,
-      "park_k_factor": 1.0584
+      "total_pa": 2360,
+      "venue_k_rate": 0.2339,
+      "park_k_factor": 1.06
     },
     {
       "venue": "Progressive Field",
       "season": 2026,
       "total_pa": 1937,
       "venue_k_rate": 0.2328,
-      "park_k_factor": 1.0553
+      "park_k_factor": 1.0552
     },
     {
       "venue": "Rogers Centre",
@@ -194,28 +194,28 @@
       "season": 2026,
       "total_pa": 2020,
       "venue_k_rate": 0.2233,
-      "park_k_factor": 1.0119
+      "park_k_factor": 1.0118
     },
     {
       "venue": "Fenway Park",
       "season": 2026,
       "total_pa": 1858,
       "venue_k_rate": 0.2228,
-      "park_k_factor": 1.0099
+      "park_k_factor": 1.0098
     },
     {
       "venue": "Oriole Park at Camden Yards",
       "season": 2026,
       "total_pa": 2155,
       "venue_k_rate": 0.2227,
-      "park_k_factor": 1.0095
+      "park_k_factor": 1.0094
     },
     {
       "venue": "Globe Life Field",
       "season": 2026,
       "total_pa": 1565,
       "venue_k_rate": 0.2224,
-      "park_k_factor": 1.0078
+      "park_k_factor": 1.0077
     },
     {
       "venue": "Petco Park",
@@ -250,7 +250,7 @@
       "season": 2026,
       "total_pa": 1840,
       "venue_k_rate": 0.2185,
-      "park_k_factor": 0.9902
+      "park_k_factor": 0.9901
     },
     {
       "venue": "Wrigley Field",
@@ -285,7 +285,7 @@
       "season": 2026,
       "total_pa": 1927,
       "venue_k_rate": 0.2133,
-      "park_k_factor": 0.9667
+      "park_k_factor": 0.9666
     },
     {
       "venue": "Oracle Park",
@@ -334,7 +334,7 @@
       "season": 2026,
       "total_pa": 2210,
       "venue_k_rate": 0.2081,
-      "park_k_factor": 0.9434
+      "park_k_factor": 0.9433
     },
     {
       "venue": "loanDepot park",
@@ -355,7 +355,7 @@
       "season": 2026,
       "total_pa": 1927,
       "venue_k_rate": 0.2055,
-      "park_k_factor": 0.9314
+      "park_k_factor": 0.9313
     },
     {
       "venue": "Chase Field",
@@ -376,7 +376,7 @@
       "season": 2026,
       "total_pa": 1832,
       "venue_k_rate": 0.1992,
-      "park_k_factor": 0.903
+      "park_k_factor": 0.9029
     },
     {
       "venue": "Coors Field",
@@ -411,7 +411,7 @@
       "season": 2026,
       "total_pa": 1908,
       "venue_k_rate": 0.1819,
-      "park_k_factor": 0.8243
+      "park_k_factor": 0.8242
     },
     {
       "venue": "Busch Stadium",
